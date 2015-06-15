@@ -1,0 +1,13 @@
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+target 'ViewMonitor_Example', :exclusive => true do
+  pod "ViewMonitor", :path => "../"
+end
+
+target 'ViewMonitor_Tests', :exclusive => true do
+  pod "ViewMonitor", :path => "../"
+
+#  pod 'Quick'
+#  pod 'Nimble'
+end
