@@ -36,7 +36,7 @@ Please these files to your project manually.
 Add all ```/Sources/*``` files to your project.
 
 ## How to use
-Add ```ViewMonitor.start()``` when application started. 
+Execute ```ViewMonitor.start()``` after application started. 
 Like this
 ```
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
@@ -54,3 +54,6 @@ After that, execution button appear.
 
 ## License
 ViewMonitor is available under the MIT license. See the LICENSE file for more info.
+
+## Other
+[How to measure UIView position on Native App](http://www.slideshare.net/daisukeyamashita180/18potatotips-yamashita) at potatotips #18
