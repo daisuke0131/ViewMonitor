@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="ViewMonitorExample" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ViewMonitor Library" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ery-w5-39b">
+                                <rect key="frame" x="16" y="328" width="568" height="22"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Ginza" translatesAutoresizingMaskIntoConstraints="NO" id="Luw-bx-xO9">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="320"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="320" id="6k6-HZ-5ST"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="02u-u2-cvx">
+                                <rect key="frame" x="16" y="358" width="568" height="234"/>
+                                <color key="backgroundColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
+                                <string key="text">This is Example.
+ViewMonitor library can monitor own detail.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="Luw-bx-xO9" secondAttribute="trailing" id="5M6-w0-17a"/>
+                            <constraint firstAttribute="trailing" secondItem="02u-u2-cvx" secondAttribute="trailing" constant="16" id="7Nc-Ei-wTF"/>
+                            <constraint firstItem="Luw-bx-xO9" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="8Ye-SD-3zd"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="02u-u2-cvx" secondAttribute="bottom" constant="8" id="MxD-WB-037"/>
+                            <constraint firstAttribute="trailing" secondItem="Ery-w5-39b" secondAttribute="trailing" constant="16" id="cXw-7j-N7C"/>
+                            <constraint firstItem="02u-u2-cvx" firstAttribute="top" secondItem="Ery-w5-39b" secondAttribute="bottom" constant="8" id="heR-2U-Qiy"/>
+                            <constraint firstItem="Luw-bx-xO9" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="mH8-Fd-WMH"/>
+                            <constraint firstItem="Ery-w5-39b" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="16" id="oLq-Qb-kKv"/>
+                            <constraint firstItem="02u-u2-cvx" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="16" id="onz-Xz-oXl"/>
+                            <constraint firstItem="Ery-w5-39b" firstAttribute="top" secondItem="Luw-bx-xO9" secondAttribute="bottom" constant="8" id="yga-Kc-wUK"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Ginza" width="1000" height="667"/>
+    </resources>
+</document>

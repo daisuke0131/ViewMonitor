@@ -1,9 +1,6 @@
 //
 //  ViewController.swift
-//  ViewMonitor
-//
-//  Created by Daisuke Yamashita on 06/10/2015.
-//  Copyright (c) 06/10/2015 Daisuke Yamashita. All rights reserved.
+//  ViewMonitorExample
 //
 
 import UIKit
@@ -19,6 +16,7 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+
 
 }
 

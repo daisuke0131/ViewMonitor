@@ -1,13 +1,9 @@
 //
 //  AppDelegate.swift
-//  ViewMonitor
-//
-//  Created by Daisuke Yamashita on 06/10/2015.
-//  Copyright (c) 06/10/2015 Daisuke Yamashita. All rights reserved.
+//  ViewMonitorExample
 //
 
 import UIKit
-import ViewMonitor
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
