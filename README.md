@@ -5,6 +5,10 @@
 [![License](https://img.shields.io/cocoapods/l/ViewMonitor.svg?style=flat)](http://cocoapods.org/pods/ViewMonitor)
 [![Platform](https://img.shields.io/cocoapods/p/ViewMonitor.svg?style=flat)](http://cocoapods.org/pods/ViewMonitor)
 
+## Like this
+
+![demo](assets/demo.gif)
+
 ## Usage
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
