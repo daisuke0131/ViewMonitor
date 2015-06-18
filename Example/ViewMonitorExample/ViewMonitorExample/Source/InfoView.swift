@@ -41,7 +41,7 @@ class InfoView: UIView {
                     width.text = "width:\(target.frame.size.width)"
                     height.text = "height:\(target.frame.size.height)"
                     if let background = target.backgroundColor{
-                        if let hex = background.toHexString(){
+                        if let hex = toHexString(background){
                             bkColor.text = "background:#\(hex)"
                         }
                     }
@@ -94,14 +94,31 @@ class InfoView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-
-    /*
-    // Only override drawRect: if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func drawRect(rect: CGRect) {
-        // Drawing code
+    private func toHexString(color:UIColor) -> String?{
+        return rgbHexString(color.CGColor)
     }
-    */
+    
+    private func rgbHexString(cg:CGColor) -> String?{
+        if let rgb = rgb(cg){
+            let hex = rgb.r * 0x10000 + rgb.g * 0x100 + rgb.b
+            return String(format:"%06x", hex)
+        }else{
+            return nil
+        }
+    }
+    
+    func rgb(cg:CGColor) -> (r:Int,g:Int,b:Int)?{
+        let cs = CGColorGetColorSpace(cg)
+        let csModel = CGColorSpaceGetModel(cs)
+        if csModel.value == kCGColorSpaceModelRGB.value {
+            let components = CGColorGetComponents(cg)
+            let r: Int = Int(components[0] * 255.0)
+            let g: Int = Int(components[1] * 255.0)
+            let b: Int = Int(components[2] * 255.0)
+            return (r, g, b)
+        } else {
+            return nil
+        }
+    }
 
 }

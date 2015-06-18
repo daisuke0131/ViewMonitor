@@ -13,13 +13,11 @@
 		1BC3F4FC1B2FB0A800CEB59D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BC3F4FB1B2FB0A800CEB59D /* Images.xcassets */; };
 		1BC3F4FF1B2FB0A800CEB59D /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1BC3F4FD1B2FB0A800CEB59D /* LaunchScreen.xib */; };
 		1BC3F50B1B2FB0A800CEB59D /* ViewMonitorExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC3F50A1B2FB0A800CEB59D /* ViewMonitorExampleTests.swift */; };
-		1BC3F51E1B2FB0EA00CEB59D /* button.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BC3F5161B2FB0EA00CEB59D /* button.png */; };
-		1BC3F51F1B2FB0EA00CEB59D /* button_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BC3F5171B2FB0EA00CEB59D /* button_selected.png */; };
-		1BC3F5201B2FB0EA00CEB59D /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC3F5181B2FB0EA00CEB59D /* InfoView.swift */; };
-		1BC3F5211B2FB0EA00CEB59D /* MonitorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC3F5191B2FB0EA00CEB59D /* MonitorButton.swift */; };
-		1BC3F5221B2FB0EA00CEB59D /* UIColor+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC3F51A1B2FB0EA00CEB59D /* UIColor+extension.swift */; };
-		1BC3F5231B2FB0EA00CEB59D /* UIImage+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC3F51B1B2FB0EA00CEB59D /* UIImage+extension.swift */; };
-		1BC3F5241B2FB0EA00CEB59D /* ViewMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC3F51C1B2FB0EA00CEB59D /* ViewMonitor.swift */; };
+		7ECE64351B32FB0800D9FAEB /* button.png in Resources */ = {isa = PBXBuildFile; fileRef = 7ECE642F1B32FB0800D9FAEB /* button.png */; };
+		7ECE64361B32FB0800D9FAEB /* button_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 7ECE64301B32FB0800D9FAEB /* button_selected.png */; };
+		7ECE64371B32FB0800D9FAEB /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECE64311B32FB0800D9FAEB /* InfoView.swift */; };
+		7ECE64381B32FB0800D9FAEB /* MonitorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECE64321B32FB0800D9FAEB /* MonitorButton.swift */; };
+		7ECE64391B32FB0800D9FAEB /* ViewMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECE64331B32FB0800D9FAEB /* ViewMonitor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,13 +41,11 @@
 		1BC3F5041B2FB0A800CEB59D /* ViewMonitorExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViewMonitorExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BC3F5091B2FB0A800CEB59D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1BC3F50A1B2FB0A800CEB59D /* ViewMonitorExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewMonitorExampleTests.swift; sourceTree = "<group>"; };
-		1BC3F5161B2FB0EA00CEB59D /* button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button.png; sourceTree = "<group>"; };
-		1BC3F5171B2FB0EA00CEB59D /* button_selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button_selected.png; sourceTree = "<group>"; };
-		1BC3F5181B2FB0EA00CEB59D /* InfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoView.swift; sourceTree = "<group>"; };
-		1BC3F5191B2FB0EA00CEB59D /* MonitorButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonitorButton.swift; sourceTree = "<group>"; };
-		1BC3F51A1B2FB0EA00CEB59D /* UIColor+extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+extension.swift"; sourceTree = "<group>"; };
-		1BC3F51B1B2FB0EA00CEB59D /* UIImage+extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+extension.swift"; sourceTree = "<group>"; };
-		1BC3F51C1B2FB0EA00CEB59D /* ViewMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewMonitor.swift; sourceTree = "<group>"; };
+		7ECE642F1B32FB0800D9FAEB /* button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button.png; sourceTree = "<group>"; };
+		7ECE64301B32FB0800D9FAEB /* button_selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button_selected.png; sourceTree = "<group>"; };
+		7ECE64311B32FB0800D9FAEB /* InfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoView.swift; sourceTree = "<group>"; };
+		7ECE64321B32FB0800D9FAEB /* MonitorButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonitorButton.swift; sourceTree = "<group>"; };
+		7ECE64331B32FB0800D9FAEB /* ViewMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewMonitor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,7 +87,7 @@
 		1BC3F4F11B2FB0A800CEB59D /* ViewMonitorExample */ = {
 			isa = PBXGroup;
 			children = (
-				1BC3F5141B2FB0EA00CEB59D /* Source */,
+				7ECE642D1B32FB0800D9FAEB /* Source */,
 				1BC3F4F41B2FB0A800CEB59D /* AppDelegate.swift */,
 				1BC3F4F61B2FB0A800CEB59D /* ViewController.swift */,
 				1BC3F4F81B2FB0A800CEB59D /* Main.storyboard */,
@@ -127,16 +123,14 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		1BC3F5141B2FB0EA00CEB59D /* Source */ = {
+		7ECE642D1B32FB0800D9FAEB /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				1BC3F5161B2FB0EA00CEB59D /* button.png */,
-				1BC3F5171B2FB0EA00CEB59D /* button_selected.png */,
-				1BC3F5181B2FB0EA00CEB59D /* InfoView.swift */,
-				1BC3F5191B2FB0EA00CEB59D /* MonitorButton.swift */,
-				1BC3F51A1B2FB0EA00CEB59D /* UIColor+extension.swift */,
-				1BC3F51B1B2FB0EA00CEB59D /* UIImage+extension.swift */,
-				1BC3F51C1B2FB0EA00CEB59D /* ViewMonitor.swift */,
+				7ECE642F1B32FB0800D9FAEB /* button.png */,
+				7ECE64301B32FB0800D9FAEB /* button_selected.png */,
+				7ECE64311B32FB0800D9FAEB /* InfoView.swift */,
+				7ECE64321B32FB0800D9FAEB /* MonitorButton.swift */,
+				7ECE64331B32FB0800D9FAEB /* ViewMonitor.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -220,9 +214,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BC3F51F1B2FB0EA00CEB59D /* button_selected.png in Resources */,
+				7ECE64361B32FB0800D9FAEB /* button_selected.png in Resources */,
 				1BC3F4FA1B2FB0A800CEB59D /* Main.storyboard in Resources */,
-				1BC3F51E1B2FB0EA00CEB59D /* button.png in Resources */,
+				7ECE64351B32FB0800D9FAEB /* button.png in Resources */,
 				1BC3F4FF1B2FB0A800CEB59D /* LaunchScreen.xib in Resources */,
 				1BC3F4FC1B2FB0A800CEB59D /* Images.xcassets in Resources */,
 			);
@@ -243,12 +237,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BC3F4F71B2FB0A800CEB59D /* ViewController.swift in Sources */,
-				1BC3F5201B2FB0EA00CEB59D /* InfoView.swift in Sources */,
-				1BC3F5221B2FB0EA00CEB59D /* UIColor+extension.swift in Sources */,
-				1BC3F5231B2FB0EA00CEB59D /* UIImage+extension.swift in Sources */,
-				1BC3F5241B2FB0EA00CEB59D /* ViewMonitor.swift in Sources */,
-				1BC3F5211B2FB0EA00CEB59D /* MonitorButton.swift in Sources */,
+				7ECE64371B32FB0800D9FAEB /* InfoView.swift in Sources */,
+				7ECE64381B32FB0800D9FAEB /* MonitorButton.swift in Sources */,
 				1BC3F4F51B2FB0A800CEB59D /* AppDelegate.swift in Sources */,
+				7ECE64391B32FB0800D9FAEB /* ViewMonitor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -446,6 +438,7 @@
 				1BC3F5101B2FB0A800CEB59D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1BC3F5111B2FB0A800CEB59D /* Build configuration list for PBXNativeTarget "ViewMonitorExampleTests" */ = {
 			isa = XCConfigurationList;
@@ -454,6 +447,7 @@
 				1BC3F5131B2FB0A800CEB59D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -4,6 +4,7 @@
 //
 
 import UIKit
+import Foundation
 
 final public class ViewMonitor{
     
@@ -30,26 +31,39 @@ final public class ViewMonitor{
     private let targetClassNames:[String] = ["UIButton","UILabel","UIImageView"]
     
     public class func start(){
-        sharedInstance.fookViewEvent()
-        sharedInstance.started = true
+        if !sharedInstance.started{
+            sharedInstance.fookViewEvent()
+            sharedInstance.started = true
+            
+        }
     }
     
     public class func stop(){
-        sharedInstance.terminate()
+        if sharedInstance.started{
+            sharedInstance.terminate()
+            sharedInstance.started = false
+        }
     }
     
     private func execute(){
-        started = true
+        makeMonitorView()
         analyzeAllViews()
-        initializeInfoView()
-        addInfoView()
     }
     
     private func terminate(){
-        started = false
         deleteAllMonitorViews()
         deleteInfoView()
-        executeButton = nil
+    }
+
+    private func makeMonitorView(){
+        addInfoView()
+    }
+    
+    private func deleteExecuteButton(){
+        if let executeButton = executeButton{
+            executeButton.removeFromSuperview()
+            self.executeButton = nil
+        }
     }
     
     private func deleteInfoView(){
@@ -66,31 +80,30 @@ final public class ViewMonitor{
     //viewDidAppear event handling
     public class func detectedViewDidAppear(vc:AnyObject){
         if sharedInstance.started{
-            if !sharedInstance.buttons.isEmpty{
-                sharedInstance.deleteAllMonitorViews()
-                sharedInstance.deleteInfoView()
-            }
+            sharedInstance.deleteInfoView()
+            sharedInstance.deleteExecuteButton()
+            sharedInstance.deleteAllMonitorViews()
+            
             let window = UIApplication.sharedApplication().keyWindow
             sharedInstance.rootView = window?.rootViewController?.view
-            sharedInstance.showExecuteButton()
-            sharedInstance.initializeInfoView()
-            sharedInstance.addInfoView()
+
+            sharedInstance.addExecuteButton()
         }
     }
     
-    private func showExecuteButton(){
+    private func addExecuteButton(){
         if executeButton == nil{
             let deviceSize:CGSize = UIScreen.mainScreen().bounds.size
             executeButton = MonitorButton(frame: CGRectMake(deviceSize.width - 100.0, 20.0, 72.0, 49.0))
             if let buttonImage = UIImage(named: "button"){
                 executeButton?.setBackgroundImage(buttonImage, forState: UIControlState.Normal)
             }else{
-                executeButton?.setBackgroundImage(UIImage.monitorCreateImageFromUIColor(UIColor.blackColor()), forState: UIControlState.Normal)
+                executeButton?.setBackgroundImage(createImageFromUIColor(UIColor.blackColor()), forState: UIControlState.Normal)
             }
             if let buttonSelectedImage = UIImage(named: "button_selected"){
                 executeButton?.setBackgroundImage(buttonSelectedImage, forState: UIControlState.Selected)
             }else{
-                executeButton?.setBackgroundImage(UIImage.monitorCreateImageFromUIColor(UIColor.redColor()), forState: UIControlState.Selected)
+                executeButton?.setBackgroundImage(createImageFromUIColor(UIColor.redColor()), forState: UIControlState.Selected)
             }
             executeButton?.addTarget(self, action: "manualExecute:", forControlEvents: UIControlEvents.TouchUpInside)
 
@@ -109,26 +122,15 @@ final public class ViewMonitor{
         }
     }
     
-    //viewWillDisappear event handling
-    public class func detectedViewWillDisappear(vc:AnyObject){
-        sharedInstance.deleteAllMonitorViews()
-        if !sharedInstance.started{
-            sharedInstance.terminate()
-        }
-    }
-    
     //make 100 * 100 information view
     // have to set tag to reject.
-    private func initializeInfoView(){
+    private func addInfoView(){
         let deviceSize:CGSize = UIScreen.mainScreen().bounds.size
         infoView = InfoView(frame: CGRect(x: deviceSize.width - 220.0, y: 70.0, width: 200.0, height: 150.0))
         let color = UIColor.blackColor()
         let alphaColor = color.colorWithAlphaComponent(0.6)
         infoView?.backgroundColor = alphaColor
         infoView?.hidden = true
-    }
-    
-    private func addInfoView(){
         rootView?.addSubview(infoView!)
         rootView?.bringSubviewToFront(infoView!)
     }
@@ -137,6 +139,7 @@ final public class ViewMonitor{
         for button in buttons{
             button.removeFromSuperview()
         }
+        buttons.removeAll(keepCapacity: false)
     }
 
     private func analyzeAllViews(){
@@ -145,15 +148,6 @@ final public class ViewMonitor{
     
     private func analyzeView(view:UIView){
         let window = UIApplication.sharedApplication().keyWindow
-        
-        let className = NSStringFromClass(view.classForCoder)
-        //have to set "true" in userInteractionEnabled?
-        if className == "UIButtonLabel"{
-            view.userInteractionEnabled = false
-        }else{
-            view.userInteractionEnabled = true
-        }
-        println("class:\(className)")
         if !checkRejectView(view){
             drawViewOn(view)
         }else{
@@ -171,12 +165,15 @@ final public class ViewMonitor{
     private func drawViewOn(view:UIView){
         if checkTargetView(view){
             let button = MonitorButton(frame: CGRectMake(0.0, 0.0, view.frame.size.width, view.frame.size.height))
-            button.setBackgroundImage(UIImage.monitorCreateImageFromUIColor(UIColor.hexStr("#7ED321", alpha: 0.7)), forState: UIControlState.Normal)
+            button.setBackgroundImage(createImageFromUIColor(hexStr("#7ED321", alpha: 0.7)), forState: UIControlState.Normal)
             button.titleLabel?.font = UIFont.systemFontOfSize(15.0)
             button.addTarget(self, action: "openEditor:", forControlEvents: UIControlEvents.TouchUpInside)
             button.targetView = view
             button.alpha = 0.2
             buttons.append(button)
+            if !view.userInteractionEnabled{
+                view.userInteractionEnabled = true
+            }
             view.addSubview(button)
         }
         
@@ -217,12 +214,36 @@ final public class ViewMonitor{
             }
         }
     }
+    
+    private func hexStr(var hexStr : NSString, var alpha : CGFloat) -> UIColor {
+        hexStr = hexStr.stringByReplacingOccurrencesOfString("#", withString: "")
+        let scanner = NSScanner(string: hexStr as String)
+        var color: UInt32 = 0
+        if scanner.scanHexInt(&color) {
+            let r = CGFloat((color & 0xFF0000) >> 16) / 255.0
+            let g = CGFloat((color & 0x00FF00) >> 8) / 255.0
+            let b = CGFloat(color & 0x0000FF) / 255.0
+            return UIColor(red:r,green:g,blue:b,alpha:alpha)
+        } else {
+            return UIColor.whiteColor();
+        }
+    }
+    
+    private func createImageFromUIColor(color:UIColor) -> UIImage {
+        let rect = CGRectMake(0, 0, 1, 1)
+        UIGraphicsBeginImageContext(rect.size)
+        let contextRef = UIGraphicsGetCurrentContext()
+        CGContextSetFillColorWithColor(contextRef, color.CGColor)
+        CGContextFillRect(contextRef, rect)
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return img
+    }
 }
 
 extension UIViewController{
     class func monitor_methodSwizzling_didAppearWillDisappear() {
         monitor_methodSwizzling_exchange(fromSelector: "viewDidAppear:", toSelector: "monitor_methodSwizzling_viewDidAppear:")
-        monitor_methodSwizzling_exchange(fromSelector: "viewWillDisappear:", toSelector: "monitor_methodSwizzling_viewWillDisappear:")
     }
     
     private class func monitor_methodSwizzling_exchange(#fromSelector: Selector, toSelector: Selector) {
@@ -234,10 +255,5 @@ extension UIViewController{
     func monitor_methodSwizzling_viewDidAppear(animated: Bool) {
         monitor_methodSwizzling_viewDidAppear(animated)
         ViewMonitor.detectedViewDidAppear(self)
-    }
-    
-    func monitor_methodSwizzling_viewWillDisappear(animated: Bool) {
-        monitor_methodSwizzling_viewWillDisappear(animated)
-        ViewMonitor.detectedViewWillDisappear(self)
     }
 }
