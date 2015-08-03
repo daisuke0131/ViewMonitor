@@ -29,22 +29,22 @@ after that, please run
 pod install
 ```
 
-But,```/Sources/*.png``` isn`t installed.
-Please these files to your project manually.
-
-### Manually
-Add all ```/Sources/*``` files to your project.
-
 ## How to use
+First, ```import ViewMonitor```
+
 Execute ```ViewMonitor.start()``` after application started. 
 Like this
 ```
+import ViewMonitor
+
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
   ViewMonitor.start()
   return true
 }
 ```
 After that, execution button appear.
+
+Please,refer to Example/ViewMonitorExample
 
 ## Author
 ### developer
