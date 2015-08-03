@@ -1,0 +1,554 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		054788BBE39F90298F27D4D374AF8FC3 /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7F833761548E8D5D919FB5EE3DCAD /* InfoView.swift */; };
+		142AB27E5DAF15D9D5ECFD5134A146E7 /* ViewMonitor-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A18D00D79E47A174DE14F2DD6C65C402 /* ViewMonitor-dummy.m */; };
+		267D41113B57A2046CF57805BB5D9DC1 /* ViewMonitor-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 7782FB0B5FC773E8CBD0AF75E975175D /* ViewMonitor-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		336D205B3BA343021201E5330F1EA0FF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 007DA20496B70FBF8AC1829FE421A42E /* Foundation.framework */; };
+		50604521DDEDD423C7C3CF68E5CB6B81 /* Pods-ViewMonitorExample-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A539E5D82F5FDEE2868D58005E09AF1E /* Pods-ViewMonitorExample-dummy.m */; };
+		5A5A2E9B35EEEC0E5AB77B70DCC27E23 /* MonitorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 681D8A259E3ED64DC94CFFD7BBA6093F /* MonitorButton.swift */; };
+		89D6CB17F25EE5F40C5E824CEE78C6A2 /* button_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 89EE645C6609835BD6D457C4547061E9 /* button_selected.png */; };
+		C2F5EB8D40BACCA89236221B134C9C7E /* button.png in Resources */ = {isa = PBXBuildFile; fileRef = C162330300EA7E80B8060D4D8002BA0A /* button.png */; };
+		D9693512D47B40D0938AED8CEB356D2B /* ViewMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6D3431D5B79E54B043BF330C0DD289 /* ViewMonitor.swift */; };
+		E836D7E07A90306192ED82BAC61CCACA /* Pods-ViewMonitorExample-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAD48FB17534775B423AF2190F0F01D /* Pods-ViewMonitorExample-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F583D28BE120B3FBFEA63D5834D31DC0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 007DA20496B70FBF8AC1829FE421A42E /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		33D74142D6B62DDE1C4606BEF86DB3A7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FC6B39DCEB50779F07A9B3AC2F21E07A;
+			remoteInfo = ViewMonitor;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		007DA20496B70FBF8AC1829FE421A42E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		03D5BA749D66E9A44E1A5BEC41AA2ABC /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0B845ABCDD43DC387B707B1A8C2E33D5 /* Pods-ViewMonitorExample-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-ViewMonitorExample-acknowledgements.plist"; sourceTree = "<group>"; };
+		1AAD48FB17534775B423AF2190F0F01D /* Pods-ViewMonitorExample-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-ViewMonitorExample-umbrella.h"; sourceTree = "<group>"; };
+		1CC7F833761548E8D5D919FB5EE3DCAD /* InfoView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InfoView.swift; sourceTree = "<group>"; };
+		1E7A4748BE95E9B38D5854E3CAAC763E /* Pods_ViewMonitorExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ViewMonitorExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		28BC6BCE1A3DF5E3FC47A97A7C261716 /* Pods-ViewMonitorExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-ViewMonitorExample.debug.xcconfig"; sourceTree = "<group>"; };
+		315636188A424C76CDF970E20B4284A6 /* Pods-ViewMonitorExample.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-ViewMonitorExample.modulemap"; sourceTree = "<group>"; };
+		4924C7CFB0786501FAE5042736ABD567 /* ViewMonitor-Private.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "ViewMonitor-Private.xcconfig"; sourceTree = "<group>"; };
+		681D8A259E3ED64DC94CFFD7BBA6093F /* MonitorButton.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MonitorButton.swift; sourceTree = "<group>"; };
+		6F83E94564834C5D47160AA607A07BEE /* ViewMonitor.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = ViewMonitor.xcconfig; sourceTree = "<group>"; };
+		7782FB0B5FC773E8CBD0AF75E975175D /* ViewMonitor-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "ViewMonitor-umbrella.h"; sourceTree = "<group>"; };
+		89EE645C6609835BD6D457C4547061E9 /* button_selected.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = button_selected.png; sourceTree = "<group>"; };
+		8E6D3431D5B79E54B043BF330C0DD289 /* ViewMonitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ViewMonitor.swift; sourceTree = "<group>"; };
+		98D5C0477978E7946ABF4222D796A88D /* Pods-ViewMonitorExample-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-ViewMonitorExample-frameworks.sh"; sourceTree = "<group>"; };
+		9A4AFF328F2A5062B832C884E6B220FC /* Pods-ViewMonitorExample-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-ViewMonitorExample-acknowledgements.markdown"; sourceTree = "<group>"; };
+		9E08F00FECCE8F25C99634BA0A402CEE /* ViewMonitor.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = ViewMonitor.modulemap; sourceTree = "<group>"; };
+		A18D00D79E47A174DE14F2DD6C65C402 /* ViewMonitor-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "ViewMonitor-dummy.m"; sourceTree = "<group>"; };
+		A539E5D82F5FDEE2868D58005E09AF1E /* Pods-ViewMonitorExample-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-ViewMonitorExample-dummy.m"; sourceTree = "<group>"; };
+		AE497E36FBCCA649DBC4F917DC24D76E /* ViewMonitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ViewMonitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3EBB88533FDB4A4ED5E07E6F2A380F8 /* ViewMonitor-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "ViewMonitor-prefix.pch"; sourceTree = "<group>"; };
+		BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		BDD31C16DF36AA8739CB1D6D9E9D3FD9 /* Pods-ViewMonitorExample-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-ViewMonitorExample-resources.sh"; sourceTree = "<group>"; };
+		C0E75469AD381A53C6290AB1E3C08579 /* Pods-ViewMonitorExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-ViewMonitorExample.release.xcconfig"; sourceTree = "<group>"; };
+		C162330300EA7E80B8060D4D8002BA0A /* button.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = button.png; sourceTree = "<group>"; };
+		F7924B1321985AF1F14C5756BC82D0C9 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2DDF3C637F2C1CF1579E2B9388CA3E9D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F583D28BE120B3FBFEA63D5834D31DC0 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3FA583FAD0FF9F57863AC0B509BA7E1A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				336D205B3BA343021201E5330F1EA0FF /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		156209C32F65038652E1904DC5C23F7B /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				26269A0579DC86CE3B222E3927D1B39F /* Pods-ViewMonitorExample */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		1BA50A8D5378ED613E47A070C08BC591 /* ViewMonitor */ = {
+			isa = PBXGroup;
+			children = (
+				9858610416950A3B7B98AD35ACEDF848 /* Resources */,
+				DBB94A598B93647D2CD1FF4A0E0199A3 /* Source */,
+				3D540C695226834DF354AB96BF44A36A /* Support Files */,
+			);
+			name = ViewMonitor;
+			path = ../../..;
+			sourceTree = "<group>";
+		};
+		1D3437E2CC53DF8533A419FDD48FC927 /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				1BA50A8D5378ED613E47A070C08BC591 /* ViewMonitor */,
+			);
+			name = "Development Pods";
+			sourceTree = "<group>";
+		};
+		26269A0579DC86CE3B222E3927D1B39F /* Pods-ViewMonitorExample */ = {
+			isa = PBXGroup;
+			children = (
+				F7924B1321985AF1F14C5756BC82D0C9 /* Info.plist */,
+				315636188A424C76CDF970E20B4284A6 /* Pods-ViewMonitorExample.modulemap */,
+				9A4AFF328F2A5062B832C884E6B220FC /* Pods-ViewMonitorExample-acknowledgements.markdown */,
+				0B845ABCDD43DC387B707B1A8C2E33D5 /* Pods-ViewMonitorExample-acknowledgements.plist */,
+				A539E5D82F5FDEE2868D58005E09AF1E /* Pods-ViewMonitorExample-dummy.m */,
+				98D5C0477978E7946ABF4222D796A88D /* Pods-ViewMonitorExample-frameworks.sh */,
+				BDD31C16DF36AA8739CB1D6D9E9D3FD9 /* Pods-ViewMonitorExample-resources.sh */,
+				1AAD48FB17534775B423AF2190F0F01D /* Pods-ViewMonitorExample-umbrella.h */,
+				28BC6BCE1A3DF5E3FC47A97A7C261716 /* Pods-ViewMonitorExample.debug.xcconfig */,
+				C0E75469AD381A53C6290AB1E3C08579 /* Pods-ViewMonitorExample.release.xcconfig */,
+			);
+			name = "Pods-ViewMonitorExample";
+			path = "Target Support Files/Pods-ViewMonitorExample";
+			sourceTree = "<group>";
+		};
+		3D540C695226834DF354AB96BF44A36A /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				03D5BA749D66E9A44E1A5BEC41AA2ABC /* Info.plist */,
+				9E08F00FECCE8F25C99634BA0A402CEE /* ViewMonitor.modulemap */,
+				6F83E94564834C5D47160AA607A07BEE /* ViewMonitor.xcconfig */,
+				4924C7CFB0786501FAE5042736ABD567 /* ViewMonitor-Private.xcconfig */,
+				A18D00D79E47A174DE14F2DD6C65C402 /* ViewMonitor-dummy.m */,
+				B3EBB88533FDB4A4ED5E07E6F2A380F8 /* ViewMonitor-prefix.pch */,
+				7782FB0B5FC773E8CBD0AF75E975175D /* ViewMonitor-umbrella.h */,
+			);
+			name = "Support Files";
+			path = "Example/ViewMonitorExample/Pods/Target Support Files/ViewMonitor";
+			sourceTree = "<group>";
+		};
+		51598EE2B894B2CADA602EF2C5D3ED1A /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				C162330300EA7E80B8060D4D8002BA0A /* button.png */,
+				89EE645C6609835BD6D457C4547061E9 /* button_selected.png */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		53F661C0CA7190D2CF05023FB33D61E4 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				007DA20496B70FBF8AC1829FE421A42E /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				BA6428E9F66FD5A23C0A2E06ED26CD2F /* Podfile */,
+				1D3437E2CC53DF8533A419FDD48FC927 /* Development Pods */,
+				BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */,
+				CCA510CFBEA2D207524CDA0D73C3B561 /* Products */,
+				156209C32F65038652E1904DC5C23F7B /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		9858610416950A3B7B98AD35ACEDF848 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				51598EE2B894B2CADA602EF2C5D3ED1A /* Source */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				53F661C0CA7190D2CF05023FB33D61E4 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CCA510CFBEA2D207524CDA0D73C3B561 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1E7A4748BE95E9B38D5854E3CAAC763E /* Pods_ViewMonitorExample.framework */,
+				AE497E36FBCCA649DBC4F917DC24D76E /* ViewMonitor.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DBB94A598B93647D2CD1FF4A0E0199A3 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				1CC7F833761548E8D5D919FB5EE3DCAD /* InfoView.swift */,
+				681D8A259E3ED64DC94CFFD7BBA6093F /* MonitorButton.swift */,
+				8E6D3431D5B79E54B043BF330C0DD289 /* ViewMonitor.swift */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8D1FC8AF8C8ED3471836B86D50AB533D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E836D7E07A90306192ED82BAC61CCACA /* Pods-ViewMonitorExample-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1B092F4A4578AF6F3260E6B839BBFD8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				267D41113B57A2046CF57805BB5D9DC1 /* ViewMonitor-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		08F7CF3697F86A72D473778F31DAAA90 /* Pods-ViewMonitorExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 546931B6236D3AFC1D5C10F481FB85AD /* Build configuration list for PBXNativeTarget "Pods-ViewMonitorExample" */;
+			buildPhases = (
+				123C7EAB03E55ECC37F4707A5846B605 /* Sources */,
+				2DDF3C637F2C1CF1579E2B9388CA3E9D /* Frameworks */,
+				8D1FC8AF8C8ED3471836B86D50AB533D /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				572A4B0985CF6D6C6D2B3CF6D5084D29 /* PBXTargetDependency */,
+			);
+			name = "Pods-ViewMonitorExample";
+			productName = "Pods-ViewMonitorExample";
+			productReference = 1E7A4748BE95E9B38D5854E3CAAC763E /* Pods_ViewMonitorExample.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		FC6B39DCEB50779F07A9B3AC2F21E07A /* ViewMonitor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6DDEFB01A3738887748C318EEC26BA40 /* Build configuration list for PBXNativeTarget "ViewMonitor" */;
+			buildPhases = (
+				A6872ACF79214CB224E81B978001D301 /* Sources */,
+				3FA583FAD0FF9F57863AC0B509BA7E1A /* Frameworks */,
+				5030C7905BCDB44214166727C40E50DD /* Resources */,
+				A1B092F4A4578AF6F3260E6B839BBFD8 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ViewMonitor;
+			productName = ViewMonitor;
+			productReference = AE497E36FBCCA649DBC4F917DC24D76E /* ViewMonitor.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = CCA510CFBEA2D207524CDA0D73C3B561 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				08F7CF3697F86A72D473778F31DAAA90 /* Pods-ViewMonitorExample */,
+				FC6B39DCEB50779F07A9B3AC2F21E07A /* ViewMonitor */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5030C7905BCDB44214166727C40E50DD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2F5EB8D40BACCA89236221B134C9C7E /* button.png in Resources */,
+				89D6CB17F25EE5F40C5E824CEE78C6A2 /* button_selected.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		123C7EAB03E55ECC37F4707A5846B605 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				50604521DDEDD423C7C3CF68E5CB6B81 /* Pods-ViewMonitorExample-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A6872ACF79214CB224E81B978001D301 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				054788BBE39F90298F27D4D374AF8FC3 /* InfoView.swift in Sources */,
+				5A5A2E9B35EEEC0E5AB77B70DCC27E23 /* MonitorButton.swift in Sources */,
+				142AB27E5DAF15D9D5ECFD5134A146E7 /* ViewMonitor-dummy.m in Sources */,
+				D9693512D47B40D0938AED8CEB356D2B /* ViewMonitor.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		572A4B0985CF6D6C6D2B3CF6D5084D29 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ViewMonitor;
+			target = FC6B39DCEB50779F07A9B3AC2F21E07A /* ViewMonitor */;
+			targetProxy = 33D74142D6B62DDE1C4606BEF86DB3A7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		10DE1947DAC0ED28F6C0A9F9BD75D546 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		522D2550D8F9A847F3732D7C9FBE88B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4924C7CFB0786501FAE5042736ABD567 /* ViewMonitor-Private.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1.0.1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = "$(CURRENT_PROJECT_VERSION)";
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/ViewMonitor/ViewMonitor-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/ViewMonitor/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/ViewMonitor/ViewMonitor.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = ViewMonitor;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		552D02D5BA751AC2E8790D2811D496CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				ONLY_ACTIVE_ARCH = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		89498AEC13C39A36238F9CAA18B77751 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C0E75469AD381A53C6290AB1E3C08579 /* Pods-ViewMonitorExample.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-ViewMonitorExample/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/Pods-ViewMonitorExample/Pods-ViewMonitorExample.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_NAME = Pods_ViewMonitorExample;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		EC7F6CC50163A8F5B309B808E07D10F5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4924C7CFB0786501FAE5042736ABD567 /* ViewMonitor-Private.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1.0.1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = "$(CURRENT_PROJECT_VERSION)";
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/ViewMonitor/ViewMonitor-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/ViewMonitor/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/ViewMonitor/ViewMonitor.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = ViewMonitor;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		FA152364D222A58000BFB1503A0B9EC8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 28BC6BCE1A3DF5E3FC47A97A7C261716 /* Pods-ViewMonitorExample.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-ViewMonitorExample/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/Pods-ViewMonitorExample/Pods-ViewMonitorExample.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_NAME = Pods_ViewMonitorExample;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				552D02D5BA751AC2E8790D2811D496CA /* Debug */,
+				10DE1947DAC0ED28F6C0A9F9BD75D546 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		546931B6236D3AFC1D5C10F481FB85AD /* Build configuration list for PBXNativeTarget "Pods-ViewMonitorExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FA152364D222A58000BFB1503A0B9EC8 /* Debug */,
+				89498AEC13C39A36238F9CAA18B77751 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6DDEFB01A3738887748C318EEC26BA40 /* Build configuration list for PBXNativeTarget "ViewMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC7F6CC50163A8F5B309B808E07D10F5 /* Debug */,
+				522D2550D8F9A847F3732D7C9FBE88B5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}

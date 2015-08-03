@@ -13,11 +13,7 @@
 		1BC3F4FC1B2FB0A800CEB59D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BC3F4FB1B2FB0A800CEB59D /* Images.xcassets */; };
 		1BC3F4FF1B2FB0A800CEB59D /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1BC3F4FD1B2FB0A800CEB59D /* LaunchScreen.xib */; };
 		1BC3F50B1B2FB0A800CEB59D /* ViewMonitorExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC3F50A1B2FB0A800CEB59D /* ViewMonitorExampleTests.swift */; };
-		7ECE64351B32FB0800D9FAEB /* button.png in Resources */ = {isa = PBXBuildFile; fileRef = 7ECE642F1B32FB0800D9FAEB /* button.png */; };
-		7ECE64361B32FB0800D9FAEB /* button_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 7ECE64301B32FB0800D9FAEB /* button_selected.png */; };
-		7ECE64371B32FB0800D9FAEB /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECE64311B32FB0800D9FAEB /* InfoView.swift */; };
-		7ECE64381B32FB0800D9FAEB /* MonitorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECE64321B32FB0800D9FAEB /* MonitorButton.swift */; };
-		7ECE64391B32FB0800D9FAEB /* ViewMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECE64331B32FB0800D9FAEB /* ViewMonitor.swift */; };
+		2F74D0D460754588FC45A906 /* Pods_ViewMonitorExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A63BCEDEF9BE09E8CD58B0F /* Pods_ViewMonitorExample.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,11 +37,9 @@
 		1BC3F5041B2FB0A800CEB59D /* ViewMonitorExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViewMonitorExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BC3F5091B2FB0A800CEB59D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1BC3F50A1B2FB0A800CEB59D /* ViewMonitorExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewMonitorExampleTests.swift; sourceTree = "<group>"; };
-		7ECE642F1B32FB0800D9FAEB /* button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button.png; sourceTree = "<group>"; };
-		7ECE64301B32FB0800D9FAEB /* button_selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button_selected.png; sourceTree = "<group>"; };
-		7ECE64311B32FB0800D9FAEB /* InfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoView.swift; sourceTree = "<group>"; };
-		7ECE64321B32FB0800D9FAEB /* MonitorButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonitorButton.swift; sourceTree = "<group>"; };
-		7ECE64331B32FB0800D9FAEB /* ViewMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewMonitor.swift; sourceTree = "<group>"; };
+		5C903C39667736E61D7560CF /* Pods-ViewMonitorExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViewMonitorExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViewMonitorExample/Pods-ViewMonitorExample.debug.xcconfig"; sourceTree = "<group>"; };
+		8A63BCEDEF9BE09E8CD58B0F /* Pods_ViewMonitorExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ViewMonitorExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3E176C3D1DBA5F0347176AF /* Pods-ViewMonitorExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViewMonitorExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViewMonitorExample/Pods-ViewMonitorExample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F74D0D460754588FC45A906 /* Pods_ViewMonitorExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,6 +67,8 @@
 				1BC3F4F11B2FB0A800CEB59D /* ViewMonitorExample */,
 				1BC3F5071B2FB0A800CEB59D /* ViewMonitorExampleTests */,
 				1BC3F4F01B2FB0A800CEB59D /* Products */,
+				3581FD2F12AE37CE88581363 /* Pods */,
+				7338DD55CB6CEA71BD918A90 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -87,7 +84,6 @@
 		1BC3F4F11B2FB0A800CEB59D /* ViewMonitorExample */ = {
 			isa = PBXGroup;
 			children = (
-				7ECE642D1B32FB0800D9FAEB /* Source */,
 				1BC3F4F41B2FB0A800CEB59D /* AppDelegate.swift */,
 				1BC3F4F61B2FB0A800CEB59D /* ViewController.swift */,
 				1BC3F4F81B2FB0A800CEB59D /* Main.storyboard */,
@@ -123,16 +119,21 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		7ECE642D1B32FB0800D9FAEB /* Source */ = {
+		3581FD2F12AE37CE88581363 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				7ECE642F1B32FB0800D9FAEB /* button.png */,
-				7ECE64301B32FB0800D9FAEB /* button_selected.png */,
-				7ECE64311B32FB0800D9FAEB /* InfoView.swift */,
-				7ECE64321B32FB0800D9FAEB /* MonitorButton.swift */,
-				7ECE64331B32FB0800D9FAEB /* ViewMonitor.swift */,
+				5C903C39667736E61D7560CF /* Pods-ViewMonitorExample.debug.xcconfig */,
+				F3E176C3D1DBA5F0347176AF /* Pods-ViewMonitorExample.release.xcconfig */,
 			);
-			path = Source;
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		7338DD55CB6CEA71BD918A90 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8A63BCEDEF9BE09E8CD58B0F /* Pods_ViewMonitorExample.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -142,9 +143,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1BC3F50E1B2FB0A800CEB59D /* Build configuration list for PBXNativeTarget "ViewMonitorExample" */;
 			buildPhases = (
+				1C91E50915256394DB37751A /* Check Pods Manifest.lock */,
 				1BC3F4EB1B2FB0A800CEB59D /* Sources */,
 				1BC3F4EC1B2FB0A800CEB59D /* Frameworks */,
 				1BC3F4ED1B2FB0A800CEB59D /* Resources */,
+				BDF6FB28E5DDB94D2ED2FAD9 /* Embed Pods Frameworks */,
+				1B85D21E4F01A319A3252D8B /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -214,9 +218,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7ECE64361B32FB0800D9FAEB /* button_selected.png in Resources */,
 				1BC3F4FA1B2FB0A800CEB59D /* Main.storyboard in Resources */,
-				7ECE64351B32FB0800D9FAEB /* button.png in Resources */,
 				1BC3F4FF1B2FB0A800CEB59D /* LaunchScreen.xib in Resources */,
 				1BC3F4FC1B2FB0A800CEB59D /* Images.xcassets in Resources */,
 			);
@@ -231,16 +233,61 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1B85D21E4F01A319A3252D8B /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ViewMonitorExample/Pods-ViewMonitorExample-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		1C91E50915256394DB37751A /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		BDF6FB28E5DDB94D2ED2FAD9 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ViewMonitorExample/Pods-ViewMonitorExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		1BC3F4EB1B2FB0A800CEB59D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				1BC3F4F71B2FB0A800CEB59D /* ViewController.swift in Sources */,
-				7ECE64371B32FB0800D9FAEB /* InfoView.swift in Sources */,
-				7ECE64381B32FB0800D9FAEB /* MonitorButton.swift in Sources */,
 				1BC3F4F51B2FB0A800CEB59D /* AppDelegate.swift in Sources */,
-				7ECE64391B32FB0800D9FAEB /* ViewMonitor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,6 +414,7 @@
 		};
 		1BC3F50F1B2FB0A800CEB59D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C903C39667736E61D7560CF /* Pods-ViewMonitorExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ViewMonitorExample/Info.plist;
@@ -377,6 +425,7 @@
 		};
 		1BC3F5101B2FB0A800CEB59D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F3E176C3D1DBA5F0347176AF /* Pods-ViewMonitorExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = ViewMonitorExample/Info.plist;

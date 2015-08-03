@@ -95,12 +95,13 @@ final public class ViewMonitor{
         if executeButton == nil{
             let deviceSize:CGSize = UIScreen.mainScreen().bounds.size
             executeButton = MonitorButton(frame: CGRectMake(deviceSize.width - 100.0, 20.0, 72.0, 49.0))
-            if let buttonImage = UIImage(named: "button"){
+            let frameworkBundle = NSBundle(forClass: ViewMonitor.self)
+            if let buttonPath = frameworkBundle.pathForResource("button", ofType: "png"),let buttonImage = UIImage(named: buttonPath){
                 executeButton?.setBackgroundImage(buttonImage, forState: UIControlState.Normal)
             }else{
                 executeButton?.setBackgroundImage(createImageFromUIColor(UIColor.blackColor()), forState: UIControlState.Normal)
             }
-            if let buttonSelectedImage = UIImage(named: "button_selected"){
+            if let selectedButtonPath = frameworkBundle.pathForResource("button_selected", ofType: "png"),let buttonSelectedImage = UIImage(named: selectedButtonPath){
                 executeButton?.setBackgroundImage(buttonSelectedImage, forState: UIControlState.Selected)
             }else{
                 executeButton?.setBackgroundImage(createImageFromUIColor(UIColor.redColor()), forState: UIControlState.Selected)

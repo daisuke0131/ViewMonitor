@@ -4,6 +4,8 @@
 //
 
 import UIKit
+import ViewMonitor
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
