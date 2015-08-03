@@ -1,0 +1,85 @@
+GIT
+  remote: https://github.com/CocoaPods/CLAide.git
+  revision: 675dd608cd5b3f8b62a4f34da48aff5d0b75d41f
+  specs:
+    claide (0.9.1)
+
+GIT
+  remote: https://github.com/CocoaPods/CocoaPods.git
+  revision: 82edf681cf469a27fbaccb16c867a4ba241cc434
+  specs:
+    cocoapods (0.38.2)
+      activesupport (>= 3.2.15)
+      claide (~> 0.9.1)
+      cocoapods-core (= 0.38.2)
+      cocoapods-downloader (~> 0.9.1)
+      cocoapods-plugins (~> 0.4.2)
+      cocoapods-stats (~> 0.5.3)
+      cocoapods-trunk (~> 0.6.1)
+      cocoapods-try (~> 0.4.5)
+      colored (~> 1.2)
+      escape (~> 0.0.4)
+      molinillo (~> 0.3.1)
+      nap (~> 0.8)
+      xcodeproj (~> 0.26.3)
+
+GIT
+  remote: https://github.com/CocoaPods/Core.git
+  revision: 74f8fdcfd840a332fa8aee46112e26ea6a6090c8
+  specs:
+    cocoapods-core (0.38.2)
+      activesupport (>= 3.2.15)
+      fuzzy_match (~> 2.0.4)
+      nap (~> 0.8.0)
+
+GIT
+  remote: https://github.com/CocoaPods/Xcodeproj.git
+  revision: 186cd802eb8b3b929fbf8bf70b66b6ae52dda72e
+  specs:
+    xcodeproj (0.26.3)
+      activesupport (>= 3)
+      claide (~> 0.9.1)
+      colored (~> 1.2)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activesupport (4.2.3)
+      i18n (~> 0.7)
+      json (~> 1.7, >= 1.7.7)
+      minitest (~> 5.1)
+      thread_safe (~> 0.3, >= 0.3.4)
+      tzinfo (~> 1.1)
+    cocoapods-downloader (0.9.1)
+    cocoapods-plugins (0.4.2)
+      nap
+    cocoapods-stats (0.5.3)
+      nap (~> 0.8)
+    cocoapods-trunk (0.6.1)
+      nap (>= 0.8)
+      netrc (= 0.7.8)
+    cocoapods-try (0.4.5)
+    colored (1.2)
+    escape (0.0.4)
+    fuzzy_match (2.0.4)
+    i18n (0.7.0)
+    json (1.8.3)
+    minitest (5.7.0)
+    molinillo (0.3.1)
+    nap (0.8.0)
+    netrc (0.7.8)
+    thread_safe (0.3.5)
+    tzinfo (1.2.2)
+      thread_safe (~> 0.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  claide!
+  cocoapods!
+  cocoapods-core!
+  xcodeproj!
+
+BUNDLED WITH
+   1.10.6
