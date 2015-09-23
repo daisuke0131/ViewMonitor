@@ -24,6 +24,9 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod "ViewMonitor"
 ```
+This library use swift.
+so, you have to add `use_frameworks!` in Podfile.
+
 after that, please run 
 ```ruby
 pod install
