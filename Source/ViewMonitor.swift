@@ -148,7 +148,6 @@ final public class ViewMonitor{
     }
     
     private func analyzeView(view:UIView){
-        let window = UIApplication.sharedApplication().keyWindow
         if !checkRejectView(view){
             drawViewOn(view)
         }else{
