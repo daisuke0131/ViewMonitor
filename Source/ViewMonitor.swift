@@ -160,7 +160,7 @@ final public class ViewMonitor{
             return
         }
         for (var i = 0 ; i < childViews.count ; i++){
-            analyzeView(childViews[i] as! UIView)
+            analyzeView(childViews[i] )
         }
     }
     private func drawViewOn(view:UIView){
@@ -216,7 +216,7 @@ final public class ViewMonitor{
         }
     }
     
-    private func hexStr(var hexStr : NSString, var alpha : CGFloat) -> UIColor {
+    private func hexStr(var hexStr : NSString, alpha : CGFloat) -> UIColor {
         hexStr = hexStr.stringByReplacingOccurrencesOfString("#", withString: "")
         let scanner = NSScanner(string: hexStr as String)
         var color: UInt32 = 0
@@ -247,7 +247,7 @@ extension UIViewController{
         monitor_methodSwizzling_exchange(fromSelector: "viewDidAppear:", toSelector: "monitor_methodSwizzling_viewDidAppear:")
     }
     
-    private class func monitor_methodSwizzling_exchange(#fromSelector: Selector, toSelector: Selector) {
+    private class func monitor_methodSwizzling_exchange(fromSelector fromSelector: Selector, toSelector: Selector) {
         let fromMethod = class_getInstanceMethod(UIViewController.self, fromSelector)
         let toMethod = class_getInstanceMethod(UIViewController.self, toSelector)
         method_exchangeImplementations(fromMethod, toMethod)

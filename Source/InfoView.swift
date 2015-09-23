@@ -90,7 +90,7 @@ class InfoView: UIView {
         self.layer.cornerRadius = 20.0
     }
 
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -110,7 +110,7 @@ class InfoView: UIView {
     func rgb(cg:CGColor) -> (r:Int,g:Int,b:Int)?{
         let cs = CGColorGetColorSpace(cg)
         let csModel = CGColorSpaceGetModel(cs)
-        if csModel.value == kCGColorSpaceModelRGB.value {
+        if csModel.rawValue == CGColorSpaceModel.RGB.rawValue {
             let components = CGColorGetComponents(cg)
             let r: Int = Int(components[0] * 255.0)
             let g: Int = Int(components[1] * 255.0)

@@ -21,7 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		33D74142D6B62DDE1C4606BEF86DB3A7 /* PBXContainerItemProxy */ = {
+		8DBA590E1EE800FCD237DA5B614F9B8A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
 			proxyType = 1;
@@ -235,7 +235,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				572A4B0985CF6D6C6D2B3CF6D5084D29 /* PBXTargetDependency */,
+				22C4C851E33E699D5471949CE5574CC0 /* PBXTargetDependency */,
 			);
 			name = "Pods-ViewMonitorExample";
 			productName = "Pods-ViewMonitorExample";
@@ -322,11 +322,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		572A4B0985CF6D6C6D2B3CF6D5084D29 /* PBXTargetDependency */ = {
+		22C4C851E33E699D5471949CE5574CC0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = ViewMonitor;
 			target = FC6B39DCEB50779F07A9B3AC2F21E07A /* ViewMonitor */;
-			targetProxy = 33D74142D6B62DDE1C4606BEF86DB3A7 /* PBXContainerItemProxy */;
+			targetProxy = 8DBA590E1EE800FCD237DA5B614F9B8A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
