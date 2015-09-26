@@ -27,6 +27,9 @@ final public class ViewMonitor{
     private let rejectClassNames:[String] = ["MonitorButton","UITabBar","UINavigationBar","InfoView","_UILayoutGuide"]
     private let kRejectTag = 5292739
     
+    /* userInteractionEnabled */
+    private var enabledViews:[UIView] = [UIView]()
+    
     /** monitor these views */
     private let targetClassNames:[String] = [""]
     
@@ -52,6 +55,7 @@ final public class ViewMonitor{
     private func terminate(){
         deleteAllMonitorViews()
         deleteInfoView()
+        resetAllInteractionEnabled()
     }
 
     private func makeMonitorView(){
@@ -70,7 +74,7 @@ final public class ViewMonitor{
             infoView.removeFromSuperview()
         }
     }
-    
+
     // swizzling viewDidAppear and viewWillDisappear
     private func fookViewEvent(){
         UIViewController.monitor_methodSwizzling_didAppearWillDisappear()
@@ -82,10 +86,9 @@ final public class ViewMonitor{
             sharedInstance.deleteInfoView()
             sharedInstance.deleteExecuteButton()
             sharedInstance.deleteAllMonitorViews()
-            
+            sharedInstance.resetAllInteractionEnabled()
             let window = UIApplication.sharedApplication().keyWindow
             sharedInstance.rootView = window?.rootViewController?.view
-
             sharedInstance.addExecuteButton()
         }
     }
@@ -112,6 +115,7 @@ final public class ViewMonitor{
         }
     
     }
+
     //execute
     @objc func manualExecute(sender:MonitorButton){
         sender.selected = !sender.selected
@@ -134,7 +138,7 @@ final public class ViewMonitor{
         rootView?.addSubview(infoView!)
         rootView?.bringSubviewToFront(infoView!)
     }
-    
+
     private func deleteAllMonitorViews(){
         for button in buttons{
             button.removeFromSuperview()
@@ -145,7 +149,7 @@ final public class ViewMonitor{
     private func analyzeAllViews(){
         analyzeView(rootView!)
     }
-    
+
     private func analyzeView(view:UIView){
         if !checkRejectView(view){
             drawViewOn(view)
@@ -161,6 +165,7 @@ final public class ViewMonitor{
             analyzeView(childViews[i] )
         }
     }
+
     private func drawViewOn(view:UIView){
         if checkTargetView(view){
             let button = MonitorButton(frame: CGRectMake(0.0, 0.0, view.frame.size.width, view.frame.size.height))
@@ -171,13 +176,20 @@ final public class ViewMonitor{
             button.alpha = 0.2
             buttons.append(button)
             if !view.userInteractionEnabled{
+                enabledViews.append(view)
                 view.userInteractionEnabled = true
             }
             view.addSubview(button)
         }
-        
     }
-    
+
+    private func resetAllInteractionEnabled(){
+        for view in enabledViews{
+            view.userInteractionEnabled = false
+        }
+        enabledViews.removeAll()
+    }
+
     //true: targetList include view
     private func checkTargetView(view:UIView) -> Bool{
         if view is UILabel ||  view is UIImageView || view is UIButton{
