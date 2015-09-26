@@ -24,17 +24,16 @@ final public class ViewMonitor{
     private var started:Bool = false
     
     /** do not get these views */
-    private let rejectClassNames:[String] = ["MonitorButton","UITabBar","UINavigationBar","InfoView"]
+    private let rejectClassNames:[String] = ["MonitorButton","UITabBar","UINavigationBar","InfoView","_UILayoutGuide"]
     private let kRejectTag = 5292739
     
     /** monitor these views */
-    private let targetClassNames:[String] = ["UIButton","UILabel","UIImageView"]
+    private let targetClassNames:[String] = [""]
     
     public class func start(){
         if !sharedInstance.started{
             sharedInstance.fookViewEvent()
             sharedInstance.started = true
-            
         }
     }
     
@@ -181,6 +180,10 @@ final public class ViewMonitor{
     
     //true: targetList include view
     private func checkTargetView(view:UIView) -> Bool{
+        if view is UILabel ||  view is UIImageView || view is UIButton{
+            return true
+        }
+        
         for className in targetClassNames {
             if let viewClass = NSStringFromClass(view.classForCoder).componentsSeparatedByString(".").last where viewClass == className {
                 return true
