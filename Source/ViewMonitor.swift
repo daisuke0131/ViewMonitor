@@ -88,7 +88,7 @@ final public class ViewMonitor{
             sharedInstance.deleteAllMonitorViews()
             sharedInstance.resetAllInteractionEnabled()
             let window = UIApplication.sharedApplication().keyWindow
-            sharedInstance.rootView = window?.rootViewController?.view
+            sharedInstance.rootView = window?.viewForBaselineLayout()
             sharedInstance.addExecuteButton()
         }
     }
@@ -100,10 +100,14 @@ final public class ViewMonitor{
             let frameworkBundle = NSBundle(forClass: ViewMonitor.self)
             if let buttonPath = frameworkBundle.pathForResource("button", ofType: "png"),let buttonImage = UIImage(named: buttonPath){
                 executeButton?.setBackgroundImage(buttonImage, forState: UIControlState.Normal)
+            }else if let buttonImage = UIImage(named: "button"){
+                executeButton?.setBackgroundImage(buttonImage, forState: UIControlState.Normal)
             }else{
                 executeButton?.setBackgroundImage(createImageFromUIColor(UIColor.blackColor()), forState: UIControlState.Normal)
             }
             if let selectedButtonPath = frameworkBundle.pathForResource("button_selected", ofType: "png"),let buttonSelectedImage = UIImage(named: selectedButtonPath){
+                executeButton?.setBackgroundImage(buttonSelectedImage, forState: UIControlState.Selected)
+            }else if let buttonSelectedImage = UIImage(named: "button_selected"){
                 executeButton?.setBackgroundImage(buttonSelectedImage, forState: UIControlState.Selected)
             }else{
                 executeButton?.setBackgroundImage(createImageFromUIColor(UIColor.redColor()), forState: UIControlState.Selected)
