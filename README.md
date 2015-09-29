@@ -17,10 +17,14 @@ behave like this.
 
 To run the example project, clone the repo.
 
+## Requirements
+- iOS 8.0+
+- Xcode 7.0+
+
 ## Installation
 ### cocoaPods
 ViewMonitor is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+it, simply add the following line in your Podfile:
 ```ruby
 pod "ViewMonitor"
 ```
@@ -31,6 +35,20 @@ after that, please run
 ```ruby
 pod install
 ```
+### Carthage
+To install, you can also use [Carthage](https://github.com/Carthage/Carthage).
+
+You can install Carthage with [Homebrew](http://brew.sh/).
+```
+$ brew update
+$ brew install carthage
+```
+To integrate ViewMonitor into your Xcode project using Carthage, write the following line in your Cartfile.
+```
+github "daisuke0131/ViewMonitor"
+```
+### Manually
+If you don't use CocoaPods and Carthage, you should add `Source/*` files in your project.
 
 ## How to use
 First, ```import ViewMonitor```
