@@ -1,6 +1,0 @@
-framework module Pods_ViewMonitorExample {
-  umbrella header "Pods-ViewMonitorExample-umbrella.h"
-
-  export *
-  module * { export * }
-}
