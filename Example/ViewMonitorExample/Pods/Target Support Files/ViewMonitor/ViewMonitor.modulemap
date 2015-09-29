@@ -1,6 +1,0 @@
-framework module ViewMonitor {
-  umbrella header "ViewMonitor-umbrella.h"
-
-  export *
-  module * { export * }
-}

@@ -88,7 +88,11 @@ final public class ViewMonitor{
             sharedInstance.deleteAllMonitorViews()
             sharedInstance.resetAllInteractionEnabled()
             let window = UIApplication.sharedApplication().keyWindow
-            sharedInstance.rootView = window?.viewForBaselineLayout()
+            if #available(iOS 9.0, *) {
+                sharedInstance.rootView = window?.viewForFirstBaselineLayout
+            } else {
+                sharedInstance.rootView = window?.viewForBaselineLayout()
+            }
             sharedInstance.addExecuteButton()
         }
     }
