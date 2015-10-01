@@ -10,7 +10,13 @@ This library is to check design sheet from native app.
 
 behave like this.
 
+- UIViewController
+
 ![demo](assets/demo.gif)
+
+- UITableViewController
+
+<img src="assets/table_demo.gif" width=300>
 
 ## Usage
 
