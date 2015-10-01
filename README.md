@@ -5,7 +5,7 @@
 ![Carthage](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)
 
 ## What's ViewMonitor
-ViewMonitor can measure View positions with accuracy.
+ViewMonitor can measure view positions with accuracy.
 This library is to check design sheet from native app.
 
 behave like this.
