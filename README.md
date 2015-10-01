@@ -1,9 +1,8 @@
 # ViewMonitor
 
-[![CI Status](http://img.shields.io/travis/Daisuke Yamashita/ViewMonitor.svg?style=flat)](https://travis-ci.org/Daisuke Yamashita/ViewMonitor)
 [![Version](https://img.shields.io/cocoapods/v/ViewMonitor.svg?style=flat)](http://cocoapods.org/pods/ViewMonitor)
 [![License](https://img.shields.io/cocoapods/l/ViewMonitor.svg?style=flat)](http://cocoapods.org/pods/ViewMonitor)
-[![Platform](https://img.shields.io/cocoapods/p/ViewMonitor.svg?style=flat)](http://cocoapods.org/pods/ViewMonitor)
+![Carthage](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)
 
 ## What's ViewMonitor
 ViewMonitor can measure View positions with accuracy.
