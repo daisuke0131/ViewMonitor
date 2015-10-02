@@ -250,9 +250,10 @@ final public class ViewMonitor{
             if sender.selected{
                 infoView.hidden = false
                 infoView.targetView = sender.targetView
-            }else{
-                infoView.hidden = true
+                sender.layer.borderWidth = 2.0
+                sender.layer.borderColor = UIColor.redColor().CGColor
             }
+            let _ = buttons.filter(){ $0 !== sender}.map(){ $0.layer.borderWidth = 0.0; $0.selected = false }
         }
     }
     
