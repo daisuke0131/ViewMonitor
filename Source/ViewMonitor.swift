@@ -118,7 +118,7 @@ final public class ViewMonitor{
             }
             self.executeButton?.addTarget(self, action: "manualExecute:", forControlEvents: UIControlEvents.TouchUpInside)
 
-            let pan = UIPanGestureRecognizer(target: self, action: "dragExecuteButton:")
+            let pan = UIPanGestureRecognizer(target: self, action: "dragEvent:")
             self.executeButton?.addGestureRecognizer(pan)
             rootView?.addSubview(self.executeButton!)
             rootView?.bringSubviewToFront(self.executeButton!)
@@ -128,9 +128,11 @@ final public class ViewMonitor{
         rootView?.bringSubviewToFront(executeButton)
     }
 
-    @objc private func dragExecuteButton(sender:UIPanGestureRecognizer){
-        let location = sender.locationInView(rootView)
-        executeButton?.frame = CGRectMake(location.x, location.y, executeButton!.frame.width, executeButton!.frame.height)
+    @objc private func dragEvent(sender:UIPanGestureRecognizer){
+        let diff = sender.translationInView(rootView)
+        let center = CGPointMake(sender.view!.center.x + diff.x, sender.view!.center.y + diff.y)
+        sender.view?.center = center
+        sender.setTranslation(CGPointZero, inView: rootView)
     }
     
     //execute
@@ -148,12 +150,12 @@ final public class ViewMonitor{
     private func addInfoView(){
         guard let infoView = infoView else{
             let deviceSize:CGSize = UIScreen.mainScreen().bounds.size
-            self.infoView = InfoView(frame: CGRect(x: deviceSize.width - 220.0, y: 70.0, width: 200.0, height: 150.0))
+            self.infoView = InfoView(frame: CGRect(x: deviceSize.width - 220.0, y: 70.0, width: 200.0, height: 160.0))
             let color = UIColor.blackColor()
             let alphaColor = color.colorWithAlphaComponent(0.6)
             self.infoView!.backgroundColor = alphaColor
             self.infoView!.hidden = true
-            let pan = UIPanGestureRecognizer(target: self, action: "dragInfoView:")
+            let pan = UIPanGestureRecognizer(target: self, action: "dragEvent:")
             self.infoView!.addGestureRecognizer(pan)
             rootView?.addSubview(self.infoView!)
             rootView?.bringSubviewToFront(self.infoView!)
@@ -161,11 +163,6 @@ final public class ViewMonitor{
         }
         rootView?.addSubview(infoView)
         rootView?.bringSubviewToFront(infoView)
-    }
-    
-    @objc private func dragInfoView(sender:UIPanGestureRecognizer){
-        let location = sender.locationInView(rootView)
-        infoView?.frame = CGRectMake(location.x, location.y, infoView!.frame.width, infoView!.frame.height)
     }
 
     private func deleteAllMonitorViews(){
