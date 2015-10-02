@@ -13,6 +13,7 @@ class InfoView: UIView {
     let height:UILabel
     let bkColor:UILabel
     let fontSize:UILabel
+    let fontColor:UILabel
     let margin:CGFloat = 22.0
     
     var targetView:AnyObject?{
@@ -24,6 +25,7 @@ class InfoView: UIView {
                 height.text = "height:None"
                 bkColor.text = "background:None"
                 fontSize.text = "fontSize:None"
+                fontColor.text = "fontColor:None"
                 
                 x.font = UIFont.systemFontOfSize(11)
                 y.font = UIFont.systemFontOfSize(11)
@@ -31,6 +33,7 @@ class InfoView: UIView {
                 height.font = UIFont.systemFontOfSize(11)
                 bkColor.font = UIFont.systemFontOfSize(11)
                 fontSize.font = UIFont.systemFontOfSize(11)
+                fontColor.font = UIFont.systemFontOfSize(11)
 
                 let window = UIApplication.sharedApplication().keyWindow
                 //coordinate　conversion
@@ -48,8 +51,13 @@ class InfoView: UIView {
                 }
                 
                 if let target: AnyObject = targetView{
-                    if NSStringFromClass(target.classForCoder) == "UILabel"{
+                    if target is UILabel{
                         fontSize.text = "fontSize:\((target as! UILabel).font.pointSize)"
+                        if let color = (target as! UILabel).textColor{
+                            if let hex = toHexString(color){
+                                fontColor.text = "fontColor:#\(hex)"
+                            }
+                        }
                     }
                 }
                 
@@ -80,6 +88,9 @@ class InfoView: UIView {
         fontSize = UILabel(frame: CGRect(x: margin, y: 110.0, width: frame.size.width - 20.0, height: 20.0))
         fontSize.text = "fontSize:None"
         fontSize.textColor = UIColor.whiteColor()
+        fontColor = UILabel(frame: CGRect(x: margin, y: 130.0, width: frame.size.width - 20.0, height: 20.0))
+        fontColor.text = "fontColor:None"
+        fontColor.textColor = UIColor.whiteColor()
         super.init(frame: frame)
         self.addSubview(x)
         self.addSubview(y)
@@ -87,7 +98,8 @@ class InfoView: UIView {
         self.addSubview(height)
         self.addSubview(bkColor)
         self.addSubview(fontSize)
-        self.layer.cornerRadius = 20.0
+        self.addSubview(fontColor)
+        self.layer.cornerRadius = 10.0
     }
 
     required init?(coder aDecoder: NSCoder) {

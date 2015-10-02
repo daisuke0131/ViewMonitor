@@ -98,32 +98,43 @@ final public class ViewMonitor{
     }
     
     private func addExecuteButton(){
-        if executeButton == nil{
+        guard let executeButton = executeButton else{
             let deviceSize:CGSize = UIScreen.mainScreen().bounds.size
-            executeButton = MonitorButton(frame: CGRectMake(deviceSize.width - 100.0, 20.0, 72.0, 49.0))
+            self.executeButton = MonitorButton(frame: CGRectMake(deviceSize.width - 100.0, 20.0, 72.0, 49.0))
             let frameworkBundle = NSBundle(forClass: ViewMonitor.self)
             if let buttonPath = frameworkBundle.pathForResource("button", ofType: "png"),let buttonImage = UIImage(named: buttonPath){
-                executeButton?.setBackgroundImage(buttonImage, forState: UIControlState.Normal)
+                self.executeButton?.setBackgroundImage(buttonImage, forState: UIControlState.Normal)
             }else if let buttonImage = UIImage(named: "button"){
-                executeButton?.setBackgroundImage(buttonImage, forState: UIControlState.Normal)
+                self.executeButton?.setBackgroundImage(buttonImage, forState: UIControlState.Normal)
             }else{
-                executeButton?.setBackgroundImage(createImageFromUIColor(UIColor.blackColor()), forState: UIControlState.Normal)
+                self.executeButton?.setBackgroundImage(createImageFromUIColor(UIColor.blackColor()), forState: UIControlState.Normal)
             }
             if let selectedButtonPath = frameworkBundle.pathForResource("button_selected", ofType: "png"),let buttonSelectedImage = UIImage(named: selectedButtonPath){
-                executeButton?.setBackgroundImage(buttonSelectedImage, forState: UIControlState.Selected)
+                self.executeButton?.setBackgroundImage(buttonSelectedImage, forState: UIControlState.Selected)
             }else if let buttonSelectedImage = UIImage(named: "button_selected"){
-                executeButton?.setBackgroundImage(buttonSelectedImage, forState: UIControlState.Selected)
+                self.executeButton?.setBackgroundImage(buttonSelectedImage, forState: UIControlState.Selected)
             }else{
-                executeButton?.setBackgroundImage(createImageFromUIColor(UIColor.redColor()), forState: UIControlState.Selected)
+                self.executeButton?.setBackgroundImage(createImageFromUIColor(UIColor.redColor()), forState: UIControlState.Selected)
             }
-            executeButton?.addTarget(self, action: "manualExecute:", forControlEvents: UIControlEvents.TouchUpInside)
+            self.executeButton?.addTarget(self, action: "manualExecute:", forControlEvents: UIControlEvents.TouchUpInside)
 
-            rootView?.addSubview(executeButton!)
-            rootView?.bringSubviewToFront(executeButton!)
+            let pan = UIPanGestureRecognizer(target: self, action: "dragEvent:")
+            self.executeButton?.addGestureRecognizer(pan)
+            rootView?.addSubview(self.executeButton!)
+            rootView?.bringSubviewToFront(self.executeButton!)
+            return
         }
-    
+        rootView?.addSubview(executeButton)
+        rootView?.bringSubviewToFront(executeButton)
     }
 
+    @objc private func dragEvent(sender:UIPanGestureRecognizer){
+        let diff = sender.translationInView(rootView)
+        let center = CGPointMake(sender.view!.center.x + diff.x, sender.view!.center.y + diff.y)
+        sender.view?.center = center
+        sender.setTranslation(CGPointZero, inView: rootView)
+    }
+    
     //execute
     @objc func manualExecute(sender:MonitorButton){
         sender.selected = !sender.selected
@@ -137,14 +148,21 @@ final public class ViewMonitor{
     //make 100 * 100 information view
     // have to set tag to reject.
     private func addInfoView(){
-        let deviceSize:CGSize = UIScreen.mainScreen().bounds.size
-        infoView = InfoView(frame: CGRect(x: deviceSize.width - 220.0, y: 70.0, width: 200.0, height: 150.0))
-        let color = UIColor.blackColor()
-        let alphaColor = color.colorWithAlphaComponent(0.6)
-        infoView?.backgroundColor = alphaColor
-        infoView?.hidden = true
-        rootView?.addSubview(infoView!)
-        rootView?.bringSubviewToFront(infoView!)
+        guard let infoView = infoView else{
+            let deviceSize:CGSize = UIScreen.mainScreen().bounds.size
+            self.infoView = InfoView(frame: CGRect(x: deviceSize.width - 220.0, y: 70.0, width: 200.0, height: 160.0))
+            let color = UIColor.blackColor()
+            let alphaColor = color.colorWithAlphaComponent(0.6)
+            self.infoView!.backgroundColor = alphaColor
+            self.infoView!.hidden = true
+            let pan = UIPanGestureRecognizer(target: self, action: "dragEvent:")
+            self.infoView!.addGestureRecognizer(pan)
+            rootView?.addSubview(self.infoView!)
+            rootView?.bringSubviewToFront(self.infoView!)
+            return
+        }
+        rootView?.addSubview(infoView)
+        rootView?.bringSubviewToFront(infoView)
     }
 
     private func deleteAllMonitorViews(){
