@@ -166,9 +166,7 @@ final public class ViewMonitor{
     }
 
     private func deleteAllMonitorViews(){
-        for button in buttons{
-            button.removeFromSuperview()
-        }
+        let _ = buttons.map(){ $0.removeFromSuperview() }
         buttons.removeAll(keepCapacity: false)
     }
 
@@ -177,19 +175,17 @@ final public class ViewMonitor{
     }
 
     private func analyzeView(view:UIView){
-        if !checkRejectView(view){
-            drawViewOn(view)
-        }else{
+        if checkRejectView(view){
             return
         }
+        drawViewOn(view)
+
         //to get child views
         let childViews = view.subviews
-        if childViews.count == 0{
+        if childViews.isEmpty{
             return
         }
-        for (var i = 0 ; i < childViews.count ; i++){
-            analyzeView(childViews[i] )
-        }
+        let _ = childViews.map(){ analyzeView($0) }
     }
 
     private func drawViewOn(view:UIView){
@@ -210,10 +206,8 @@ final public class ViewMonitor{
     }
 
     private func resetAllInteractionEnabled(){
-        for view in enabledViews{
-            view.userInteractionEnabled = false
-        }
-        enabledViews.removeAll()
+        let _ = enabledViews.map(){ $0.userInteractionEnabled = false }
+        enabledViews.removeAll(keepCapacity: false)
     }
 
     //true: targetList include view
