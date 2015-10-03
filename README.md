@@ -16,7 +16,7 @@ behave like this.
 
 - UITableViewController
 
-<img src="assets/table_demo.gif" width=300>
+![demo](assets/table_demo.gif)
 
 ## Usage
 
