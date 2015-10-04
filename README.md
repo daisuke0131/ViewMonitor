@@ -1,4 +1,4 @@
-# ViewMonitor
+![ViewMonitor](assets/viewmonitor.png)
 
 [![Version](https://img.shields.io/cocoapods/v/ViewMonitor.svg?style=flat)](http://cocoapods.org/pods/ViewMonitor)
 [![License](https://img.shields.io/cocoapods/l/ViewMonitor.svg?style=flat)](http://cocoapods.org/pods/ViewMonitor)
