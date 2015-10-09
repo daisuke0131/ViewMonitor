@@ -36,6 +36,7 @@ final public class ViewMonitor{
     public class func start(){
         if !sharedInstance.started{
             sharedInstance.fookViewEvent()
+            sharedInstance.setNotification()
             sharedInstance.started = true
         }
     }
@@ -43,6 +44,7 @@ final public class ViewMonitor{
     public class func stop(){
         if sharedInstance.started{
             sharedInstance.terminate()
+            sharedInstance.removeNotification()
             sharedInstance.started = false
         }
     }
@@ -72,9 +74,29 @@ final public class ViewMonitor{
     private func deleteInfoView(){
         if let infoView = infoView{
             infoView.removeFromSuperview()
+            self.infoView = nil
         }
     }
-
+    
+    private func setNotification(){
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("orientationChanged:"), name: UIDeviceOrientationDidChangeNotification, object: nil)
+    }
+    
+    private func removeNotification(){
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIDeviceOrientationDidChangeNotification, object: nil)
+    }
+    
+    @objc private func orientationChanged(notification: NSNotification){
+        if started{
+            deleteInfoView()
+            deleteExecuteButton()
+            deleteAllMonitorViews()
+            resetAllInteractionEnabled()
+            rootView = UIApplication.sharedApplication().keyWindow
+            addExecuteButton()
+        }
+    }
+    
     // swizzling viewDidAppear and viewWillDisappear
     private func fookViewEvent(){
         UIViewController.monitor_methodSwizzling_didAppearWillDisappear()
@@ -87,13 +109,9 @@ final public class ViewMonitor{
             sharedInstance.deleteExecuteButton()
             sharedInstance.deleteAllMonitorViews()
             sharedInstance.resetAllInteractionEnabled()
-            let window = UIApplication.sharedApplication().keyWindow
-            if #available(iOS 9.0, *) {
-                sharedInstance.rootView = window?.viewForFirstBaselineLayout
-            } else {
-                sharedInstance.rootView = window?.viewForBaselineLayout()
-            }
+            sharedInstance.rootView = UIApplication.sharedApplication().keyWindow
             sharedInstance.addExecuteButton()
+            sharedInstance.addInfoView()
         }
     }
     
@@ -148,21 +166,16 @@ final public class ViewMonitor{
     //make 100 * 100 information view
     // have to set tag to reject.
     private func addInfoView(){
-        guard let infoView = infoView else{
-            let deviceSize:CGSize = UIScreen.mainScreen().bounds.size
-            self.infoView = InfoView(frame: CGRect(x: deviceSize.width - 220.0, y: 70.0, width: 200.0, height: 160.0))
-            let color = UIColor.blackColor()
-            let alphaColor = color.colorWithAlphaComponent(0.6)
-            self.infoView!.backgroundColor = alphaColor
-            self.infoView!.hidden = true
-            let pan = UIPanGestureRecognizer(target: self, action: "dragEvent:")
-            self.infoView!.addGestureRecognizer(pan)
-            rootView?.addSubview(self.infoView!)
-            rootView?.bringSubviewToFront(self.infoView!)
-            return
-        }
-        rootView?.addSubview(infoView)
-        rootView?.bringSubviewToFront(infoView)
+        let deviceSize:CGSize = UIScreen.mainScreen().bounds.size
+        self.infoView = InfoView(frame: CGRect(x: deviceSize.width - 220.0, y: 70.0, width: 200.0, height: 160.0))
+        let color = UIColor.blackColor()
+        let alphaColor = color.colorWithAlphaComponent(0.6)
+        self.infoView!.backgroundColor = alphaColor
+        self.infoView!.hidden = true
+        let pan = UIPanGestureRecognizer(target: self, action: "dragEvent:")
+        self.infoView!.addGestureRecognizer(pan)
+        rootView?.addSubview(self.infoView!)
+        rootView?.bringSubviewToFront(self.infoView!)
     }
 
     private func deleteAllMonitorViews(){
