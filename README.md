@@ -34,7 +34,7 @@ it, simply add the following line in your Podfile:
 pod "ViewMonitor"
 ```
 This library use swift.
-so, you have to add `use_frameworks!` in Podfile.
+So, you have to add `use_frameworks!` in Podfile.
 
 after that, please run 
 ```ruby
@@ -70,7 +70,7 @@ func application(application: UIApplication, didFinishLaunchingWithOptions launc
 ```
 After that, execution button appear.
 
-Please,refer to Example/ViewMonitorExample
+Please, refer to Example/ViewMonitorExample
 
 ## Author
 ### developer
