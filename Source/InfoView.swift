@@ -12,6 +12,7 @@ class InfoView: UIView {
     let width:UILabel
     let height:UILabel
     let bkColor:UILabel
+    let font:UILabel
     let fontSize:UILabel
     let fontColor:UILabel
     let margin:CGFloat = 22.0
@@ -32,6 +33,7 @@ class InfoView: UIView {
                 width.font = UIFont.systemFontOfSize(11)
                 height.font = UIFont.systemFontOfSize(11)
                 bkColor.font = UIFont.systemFontOfSize(11)
+                font.font = UIFont.systemFontOfSize(11)
                 fontSize.font = UIFont.systemFontOfSize(11)
                 fontColor.font = UIFont.systemFontOfSize(11)
 
@@ -53,9 +55,13 @@ class InfoView: UIView {
                 if let target: AnyObject = targetView{
                     if target is UILabel{
                         fontSize.text = "fontSize:\((target as! UILabel).font.pointSize)"
-                        if let color = (target as! UILabel).textColor{
-                            if let hex = toHexString(color){
-                                fontColor.text = "fontColor:#\(hex)"
+                        
+                        if let label = target as? UILabel{
+                            if let color = label.textColor,f = label.font{
+                                if let hex = toHexString(color){
+                                    fontColor.text = "fontColor:#\(hex)"
+                                }
+                                font.text = "font:\(f.familyName)"
                             }
                         }
                     }
@@ -85,10 +91,13 @@ class InfoView: UIView {
         bkColor = UILabel(frame: CGRect(x: margin, y: 90.0, width: frame.size.width - 20.0, height: 20.0))
         bkColor.text = "background:None"
         bkColor.textColor = UIColor.whiteColor()
-        fontSize = UILabel(frame: CGRect(x: margin, y: 110.0, width: frame.size.width - 20.0, height: 20.0))
+        font = UILabel(frame: CGRect(x: margin, y: 110.0, width: frame.size.width - 20.0, height: 20.0))
+        font.text = "font:None"
+        font.textColor = UIColor.whiteColor()
+        fontSize = UILabel(frame: CGRect(x: margin, y: 130.0, width: frame.size.width - 20.0, height: 20.0))
         fontSize.text = "fontSize:None"
         fontSize.textColor = UIColor.whiteColor()
-        fontColor = UILabel(frame: CGRect(x: margin, y: 130.0, width: frame.size.width - 20.0, height: 20.0))
+        fontColor = UILabel(frame: CGRect(x: margin, y: 150.0, width: frame.size.width - 20.0, height: 20.0))
         fontColor.text = "fontColor:None"
         fontColor.textColor = UIColor.whiteColor()
         super.init(frame: frame)
@@ -97,6 +106,7 @@ class InfoView: UIView {
         self.addSubview(width)
         self.addSubview(height)
         self.addSubview(bkColor)
+        self.addSubview(font)
         self.addSubview(fontSize)
         self.addSubview(fontColor)
         self.layer.cornerRadius = 10.0

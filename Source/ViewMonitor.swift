@@ -50,7 +50,7 @@ final public class ViewMonitor:NSObject{
     }
     
     private func execute(){
-        makeMonitorView()
+        addInfoView()
         analyzeAllViews()
     }
     
@@ -58,10 +58,6 @@ final public class ViewMonitor:NSObject{
         deleteAllMonitorViews()
         deleteInfoView()
         resetAllInteractionEnabled()
-    }
-
-    private func makeMonitorView(){
-        addInfoView()
     }
     
     private func deleteExecuteButton(){
@@ -138,8 +134,10 @@ final public class ViewMonitor:NSObject{
 
             let pan = UIPanGestureRecognizer(target: self, action: "dragEvent:")
             self.executeButton?.addGestureRecognizer(pan)
-            rootView?.addSubview(self.executeButton!)
-            rootView?.bringSubviewToFront(self.executeButton!)
+            if let executeButton = self.executeButton{
+                rootView?.addSubview(executeButton)
+                rootView?.bringSubviewToFront(executeButton)
+            }
             return
         }
         rootView?.addSubview(executeButton)
@@ -167,7 +165,7 @@ final public class ViewMonitor:NSObject{
     // have to set tag to reject.
     private func addInfoView(){
         let deviceSize:CGSize = UIScreen.mainScreen().bounds.size
-        self.infoView = InfoView(frame: CGRect(x: deviceSize.width - 220.0, y: 70.0, width: 200.0, height: 160.0))
+        self.infoView = InfoView(frame: CGRect(x: deviceSize.width - 220.0, y: 70.0, width: 200.0, height: 180.0))
         let color = UIColor.blackColor()
         let alphaColor = color.colorWithAlphaComponent(0.6)
         self.infoView!.backgroundColor = alphaColor
@@ -184,10 +182,14 @@ final public class ViewMonitor:NSObject{
     }
 
     private func analyzeAllViews(){
-        analyzeView(rootView!)
+        analyzeView(rootView)
     }
 
-    private func analyzeView(view:UIView){
+    private func analyzeView(view:UIView?){
+        guard let view = view else{
+            return
+        }
+        
         if checkRejectView(view){
             return
         }
