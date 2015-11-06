@@ -1,0 +1,14 @@
+PODS:
+  - ViewMonitor (1.0.8)
+
+DEPENDENCIES:
+  - ViewMonitor (from `../..`)
+
+EXTERNAL SOURCES:
+  ViewMonitor:
+    :path: ../..
+
+SPEC CHECKSUMS:
+  ViewMonitor: 310435f8ebcc5275994e37310f881a77f3ef23c9
+
+COCOAPODS: 0.39.0
