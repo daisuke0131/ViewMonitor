@@ -6,7 +6,7 @@
 import UIKit
 import Foundation
 
-final public class ViewMonitor{
+final public class ViewMonitor:NSObject{
     
     static var sharedInstance = ViewMonitor()
     
