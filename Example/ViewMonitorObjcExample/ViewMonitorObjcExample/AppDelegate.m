@@ -7,7 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import "ViewMonitorObjcExample-Swift.h"
 @import ViewMonitor;
 
 @interface AppDelegate ()
