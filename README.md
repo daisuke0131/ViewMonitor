@@ -84,7 +84,7 @@ Import ViewMonitor,
 Execute ```[ViewMonitor start]``` after application started. 
 Like this
 ```
-#import "YourProjectName-Swift.h"
+# import "YourProjectName-Swift.h"
 @import ViewMonitor;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
