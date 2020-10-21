@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "ViewMonitor"
-  s.version          = "1.0.9"
+  s.version          = "1.1.0"
   s.summary          = "view detail monitor"
   s.description      = <<-DESC
                        You can measure view detail.
@@ -12,6 +12,9 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://twitter.com/daisuke0131'
   s.source_files = 'Source/**/*.swift'
   s.resources    = 'Source/**/*.png'
+
+  s.swift_version = '5.1'
+
   s.platform     = :ios
   s.ios.deployment_target = "8.0"
   s.requires_arc = true
