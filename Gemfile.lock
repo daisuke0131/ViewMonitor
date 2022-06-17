@@ -44,12 +44,11 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.2.3)
-      i18n (~> 0.7)
-      json (~> 1.7, >= 1.7.7)
-      minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
-      tzinfo (~> 1.1)
+    activesupport (7.0.3)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
     cocoapods-downloader (0.9.1)
     cocoapods-plugins (0.4.2)
       nap
@@ -60,17 +59,17 @@ GEM
       netrc (= 0.7.8)
     cocoapods-try (0.4.5)
     colored (1.2)
+    concurrent-ruby (1.1.10)
     escape (0.0.4)
     fuzzy_match (2.0.4)
-    i18n (0.7.0)
-    json (1.8.3)
-    minitest (5.7.0)
+    i18n (1.10.0)
+      concurrent-ruby (~> 1.0)
+    minitest (5.16.0)
     molinillo (0.3.1)
     nap (0.8.0)
     netrc (0.7.8)
-    thread_safe (0.3.5)
-    tzinfo (1.2.2)
-      thread_safe (~> 0.1)
+    tzinfo (2.0.4)
+      concurrent-ruby (~> 1.0)
 
 PLATFORMS
   ruby
