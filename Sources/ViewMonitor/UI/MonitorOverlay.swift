@@ -88,8 +88,13 @@ final class MonitorOverlay: NSObject {
         }
         if sender.isSelected {
             infoView.isHidden = false
-            if let target = sender.targetView as? UIView {
-                infoView.update(with: ViewInspector.inspect(target, in: WindowProvider.keyWindow))
+            if let target = sender.targetView {
+                // 座標変換は show(on:) で受け取った rootView を基準にする。
+                // WindowProvider.keyWindow を都度引き直すと、iPad の
+                // マルチシーン環境でオーバーレイの取り付け先と foreground の
+                // シーンがずれたときに誤ったウィンドウで変換してしまう。
+                let window = rootView?.window ?? (rootView as? UIWindow)
+                infoView.update(with: ViewInspector.inspect(target, in: window))
             }
             sender.layer.borderWidth = 2.0
             sender.layer.borderColor = UIColor.red.cgColor
