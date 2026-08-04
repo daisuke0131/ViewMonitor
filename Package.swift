@@ -13,12 +13,12 @@ let package = Package(
         .target(
             name: "ViewMonitor",
             resources: [.process("Resources")],
-            swiftSettings: [.swiftLanguageMode(.v5)]
+            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .testTarget(
             name: "ViewMonitorTests",
             dependencies: ["ViewMonitor"],
-            swiftSettings: [.swiftLanguageMode(.v5)]
+            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
     ]
 )

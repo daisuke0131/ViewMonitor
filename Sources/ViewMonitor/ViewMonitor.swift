@@ -6,9 +6,10 @@
 import UIKit
 import Foundation
 
-final public class ViewMonitor:NSObject{
-    
-    static var sharedInstance = ViewMonitor()
+@MainActor
+public final class ViewMonitor: NSObject {
+
+    static let shared = ViewMonitor()
     
     /** target rootView */
     private var rootView:UIView?
@@ -33,20 +34,18 @@ final public class ViewMonitor:NSObject{
     /** monitor these views */
     private let targetClassNames:[String] = [""]
     
-    public class func start(){
-        if !sharedInstance.started{
-            sharedInstance.fookViewEvent()
-            sharedInstance.setNotification()
-            sharedInstance.started = true
-        }
+    public static func start() {
+        guard !shared.started else { return }
+        shared.fookViewEvent()
+        shared.setNotification()
+        shared.started = true
     }
-    
-    public class func stop(){
-        if sharedInstance.started{
-            sharedInstance.terminate()
-            sharedInstance.removeNotification()
-            sharedInstance.started = false
-        }
+
+    public static func stop() {
+        guard shared.started else { return }
+        shared.terminate()
+        shared.removeNotification()
+        shared.started = false
     }
     
     private func execute(){
@@ -82,7 +81,6 @@ final public class ViewMonitor:NSObject{
         NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
     }
     
-    @MainActor
     @objc private func orientationChanged(notification: NSNotification){
         if started{
             deleteInfoView()
@@ -99,18 +97,16 @@ final public class ViewMonitor:NSObject{
         UIViewController.monitor_methodSwizzling_didAppearWillDisappear()
     }
     
-    //viewDidAppear event handling
-    @MainActor
-    public class func detectedViewDidAppear(vc:AnyObject){
-        if sharedInstance.started{
-            sharedInstance.deleteInfoView()
-            sharedInstance.deleteExecuteButton()
-            sharedInstance.deleteAllMonitorViews()
-            sharedInstance.resetAllInteractionEnabled()
-            sharedInstance.rootView = WindowProvider.keyWindow
-            sharedInstance.addExecuteButton()
-            sharedInstance.addInfoView()
-        }
+    /// `viewDidAppear` の swizzling から呼ばれる。
+    static func detectedViewDidAppear() {
+        guard shared.started else { return }
+        shared.deleteInfoView()
+        shared.deleteExecuteButton()
+        shared.deleteAllMonitorViews()
+        shared.resetAllInteractionEnabled()
+        shared.rootView = WindowProvider.keyWindow
+        shared.addExecuteButton()
+        shared.addInfoView()
     }
     
     private func addExecuteButton(){
@@ -294,6 +290,6 @@ extension UIViewController{
     
     @objc func monitor_methodSwizzling_viewDidAppear(animated: Bool) {
         monitor_methodSwizzling_viewDidAppear(animated: animated)
-        ViewMonitor.detectedViewDidAppear(vc: self)
+        ViewMonitor.detectedViewDidAppear()
     }
 }
