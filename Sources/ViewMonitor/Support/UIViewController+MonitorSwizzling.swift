@@ -16,7 +16,10 @@ extension UIViewController {
     static var monitorSwizzlingInstallCount: Int { swizzlingInstallCount }
 
     /// `viewDidAppear` が現在 ViewMonitor のラッパーに向いているか。
-    /// 誰かが入れ替えを戻すと false になる。
+    /// 誰か（他ライブラリの追加的な swizzling を含む）がこの後
+    /// `viewDidAppear` の実装を差し替えると false になる。ラッパーが
+    /// 元の実装をチェーンして呼んでいても、この値自体は false になりうる
+    /// ため、汎用的な診断 API としては使わないこと。
     static var isMonitorSwizzlingActive: Bool {
         guard
             let installedImplementation,
