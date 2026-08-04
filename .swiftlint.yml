@@ -1,0 +1,24 @@
+included:
+  - Sources
+  - Tests
+  - Example/ViewMonitorExample/ViewMonitorExample
+
+excluded:
+  - .build
+  - Sources/ViewMonitor/Resources
+
+opt_in_rules:
+  - closure_spacing
+  - explicit_init
+  - first_where
+  - redundant_nil_coalescing
+  - sorted_first_last
+  - empty_count
+
+line_length:
+  warning: 140
+  error: 200
+
+# x / y といった座標を表す短い名前を許容する。
+identifier_name:
+  min_length: 1
