@@ -44,10 +44,23 @@ public final class ViewMonitor: NSObject {
     public static func stop() {
         guard shared.started else { return }
         shared.terminate()
+        shared.deleteExecuteButton()
         shared.removeNotification()
         shared.started = false
     }
-    
+
+    // MARK: - Testing seam
+
+    /// テスト用: `rootView` に任意の `UIView` を注入し、実行ボタンを追加した状態を再現する。
+    /// ユニットテストのバンドルには接続済みの window scene が無く `WindowProvider.keyWindow`
+    /// が常に nil になるため、`detectedViewDidAppear()` 経由では実ビュー階層上での
+    /// 追加・削除を検証できない。この関数はその代わりに使う最小限のフックで、
+    /// 公開 API には含まれない。
+    static func simulateExecuteButtonAttachedForTesting(to view: UIView) {
+        shared.rootView = view
+        shared.addExecuteButton()
+    }
+
     private func execute(){
         addInfoView()
         analyzeAllViews()
