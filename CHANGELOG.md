@@ -33,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `stop()` を呼んだあとも実行ボタンが画面に残り、タップすると計測オーバーレイが復活してしまう問題
 - `InfoView` でラベルを選んだあとにフォントを持たないビューを選ぶと、前のフォント名が残り続けていた問題
 - 背景色が `UIColor.black` / `UIColor.white` のビューで `background:None` と表示されていた問題。グレースケール色空間を扱えていなかった
+- iPad のマルチシーン環境で、計測オーバーレイが付与されたウィンドウ以外がアクティブだと、`MonitorOverlay.select(sender:)` が誤ったウィンドウを基準に座標変換してしまい、InfoView に表示される計測値がすべて間違っていた問題。`WindowProvider.keyWindow` を都度引き直していたため
+- ホストアプリが KVO で監視しているシステムビュー（`UITabBar` / `UINavigationBar` など）でも計測用オーバーレイが表示されていた問題。`ViewHierarchyScanner.className(of:)` が `type(of:)` で実行時クラスを取得していたため、KVO による動的なサブクラス化で `NSKVONotifying_UITabBar` のような合成クラスが返され、`rejectedClassNames` に一致しなかった
 
 ### Removed
 
