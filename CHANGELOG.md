@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0]
+## [2.0.0] - 2026-08-05
 
 5年ぶりの更新。Xcode 26 / Swift 6 / iOS 15+ に対応し、ビルド基盤を刷新した。
 
@@ -42,6 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## リリース手順
 
 CocoaPods trunk への公開はリポジトリ所有者が手元で実行する。
+
+タグを打つ前に、CocoaPods 経由でリソースが正しく読み込まれることを手元で確認する。`pod lib lint` は `Bundle.viewMonitor`（`Sources/ViewMonitor/Support/Bundle+ViewMonitor.swift`）の CocoaPods 用分岐を型チェックするだけで実行はしないため、実行時にしか顕在化しない不具合──今回最初に直した「実行ボタンの画像が読み込まれず単色の矩形になる」不具合とまったく同じ経路──を検出できない。使い捨てのアプリを用意し、ローカルの `ViewMonitor.podspec` を `use_frameworks!` あり／なし両方で `pod install` して実行し、実行ボタンが単色の矩形ではなく本来のアートワークで表示されることを確認する。
 
 ```bash
 git tag 2.0.0
