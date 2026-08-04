@@ -36,7 +36,7 @@ public final class ViewMonitor: NSObject {
     
     public static func start() {
         guard !shared.started else { return }
-        shared.fookViewEvent()
+        UIViewController.installMonitorSwizzlingIfNeeded()
         shared.setNotification()
         shared.started = true
     }
@@ -92,11 +92,6 @@ public final class ViewMonitor: NSObject {
         }
     }
 
-    // swizzling viewDidAppear and viewWillDisappear
-    private func fookViewEvent(){
-        UIViewController.monitor_methodSwizzling_didAppearWillDisappear()
-    }
-    
     /// `viewDidAppear` の swizzling から呼ばれる。
     static func detectedViewDidAppear() {
         guard shared.started else { return }
@@ -274,22 +269,5 @@ public final class ViewMonitor: NSObject {
         let g = CGFloat((value & 0x00FF00) >> 8) / 255.0
         let b = CGFloat(value & 0x0000FF) / 255.0
         return UIColor(red: r, green: g, blue: b, alpha: alpha)
-    }
-}
-
-extension UIViewController{
-    class func monitor_methodSwizzling_didAppearWillDisappear() {
-        monitor_methodSwizzling_exchange(fromSelector: #selector(self.viewDidAppear(_:)), toSelector: #selector(self.monitor_methodSwizzling_viewDidAppear(animated:)))
-    }
-    
-    private class func monitor_methodSwizzling_exchange(fromSelector: Selector, toSelector: Selector) {
-        let fromMethod = class_getInstanceMethod(UIViewController.self, fromSelector)!
-        let toMethod = class_getInstanceMethod(UIViewController.self, toSelector)!
-        method_exchangeImplementations(fromMethod, toMethod)
-    }
-    
-    @objc func monitor_methodSwizzling_viewDidAppear(animated: Bool) {
-        monitor_methodSwizzling_viewDidAppear(animated: animated)
-        ViewMonitor.detectedViewDidAppear()
     }
 }
