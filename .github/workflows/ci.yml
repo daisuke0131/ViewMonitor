@@ -5,9 +5,12 @@ on:
     branches: [master]
   pull_request:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   test:
@@ -33,7 +36,6 @@ jobs:
 
       - name: Test
         run: |
-          set -o pipefail
           xcodebuild test \
             -scheme ViewMonitor \
             -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }}"
@@ -55,7 +57,6 @@ jobs:
 
       - name: Build
         run: |
-          set -o pipefail
           xcodebuild build \
             -project Example/ViewMonitorExample/ViewMonitorExample.xcodeproj \
             -scheme ViewMonitorExample \
@@ -72,4 +73,4 @@ jobs:
           bundler-cache: true
 
       - name: Lint podspec
-        run: bundle exec pod lib lint --allow-warnings
+        run: bundle exec pod lib lint
