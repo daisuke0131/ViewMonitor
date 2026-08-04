@@ -44,7 +44,7 @@ extension UIViewController {
             ),
             let replacement = class_getInstanceMethod(
                 UIViewController.self,
-                #selector(monitor_viewDidAppear(animated:))
+                #selector(viewMonitor_viewDidAppear(animated:))
             )
         else {
             return
@@ -55,9 +55,9 @@ extension UIViewController {
     }
 
     @objc
-    func monitor_viewDidAppear(animated: Bool) {
+    func viewMonitor_viewDidAppear(animated: Bool) {
         // 入れ替え後はこの呼び出しが元の viewDidAppear を指す。
-        monitor_viewDidAppear(animated: animated)
+        viewMonitor_viewDidAppear(animated: animated)
         ViewMonitor.detectedViewDidAppear()
     }
 }
