@@ -24,4 +24,18 @@ struct SwizzlingTests {
 
         #expect(UIViewController.monitorSwizzlingInstallCount == 1)
     }
+
+    @Test("stop で入れ替えを戻さないため、繰り返しても viewDidAppear は常にラッパーを指す")
+    func viewDidAppearStaysSwizzledAcrossStartStopCycles() {
+        // monitorSwizzlingInstallCount は「適用試行が成功した回数」を数えるだけで、
+        // stop() が万が一 un-swizzle を再導入しても2回目以降の installMonitorSwizzlingIfNeeded()
+        // は早期リターンして 1 のまま動かない。実際に viewDidAppear が今どちらを
+        // 指しているかを見る isMonitorSwizzlingActive でこの回帰を検知する。
+        ViewMonitor.start()
+        ViewMonitor.stop()
+        ViewMonitor.start()
+        ViewMonitor.stop()
+
+        #expect(UIViewController.isMonitorSwizzlingActive)
+    }
 }

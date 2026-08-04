@@ -9,10 +9,23 @@ import UIKit
 extension UIViewController {
 
     private static var swizzlingInstallCount = 0
+    private static var installedImplementation: IMP?
 
     /// swizzling が適用された回数。奇数回でなければ検知が働かないため、
     /// 常に 1 であることをテストで保証する。
     static var monitorSwizzlingInstallCount: Int { swizzlingInstallCount }
+
+    /// `viewDidAppear` が現在 ViewMonitor のラッパーに向いているか。
+    /// 誰かが入れ替えを戻すと false になる。
+    static var isMonitorSwizzlingActive: Bool {
+        guard
+            let installedImplementation,
+            let method = class_getInstanceMethod(UIViewController.self, #selector(viewDidAppear(_:)))
+        else {
+            return false
+        }
+        return method_getImplementation(method) == installedImplementation
+    }
 
     /// `viewDidAppear` の入れ替えをプロセス内で一度だけ行う。
     ///
@@ -34,6 +47,7 @@ extension UIViewController {
             return
         }
         method_exchangeImplementations(original, replacement)
+        installedImplementation = method_getImplementation(original)
         swizzlingInstallCount += 1
     }
 
