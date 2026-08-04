@@ -23,9 +23,23 @@ FileUtils.rm_rf(PROJECT_PATH)
 project = Xcodeproj::Project.new(PROJECT_PATH)
 project.build_configurations.each do |config|
   config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = DEPLOYMENT_TARGET
+  config.build_settings['SWIFT_VERSION'] = '6.0'
 end
 
 target = project.new_target(:application, TARGET_NAME, :ios, DEPLOYMENT_TARGET)
+
+# `new_target` は Foundation.framework をデフォルトでリンクするが、
+# そのファイル参照はインストール済み SDK のバージョンを直接パスに埋め込む
+# (例: iPhoneOS26.0.sdk、sourceTree = DEVELOPER_DIR)。リンクには不要
+# （Swift/UIKit アプリは Foundation を自動リンクする）な上、生成のたびに
+# 実行環境の SDK バージョンが pbxproj に焼き込まれ、他の環境で再生成すると
+# 差分が生まれてしまう。ビルドフェーズから外すだけでなく、ファイル参照と
+# その親グループ（Frameworks/iOS）も project から完全に取り除く。
+target.frameworks_build_phase.clear
+if (ios_frameworks_group = project.frameworks_group['iOS'])
+  ios_frameworks_group.children.each(&:remove_from_project)
+  ios_frameworks_group.remove_from_project
+end
 
 group = project.new_group(TARGET_NAME, 'ViewMonitorExample')
 
@@ -64,6 +78,11 @@ target.build_configurations.each do |config|
   settings['TARGETED_DEVICE_FAMILY'] = '1,2'
   settings['CODE_SIGNING_ALLOWED'] = 'NO'
   settings['ASSETCATALOG_COMPILER_APPICON_NAME'] = 'AppIcon'
+  # Images.xcassets に AccentColor.colorset が無いため、gem のデフォルト値の
+  # ままだと「Accent color 'AccentColor' is not present in any asset
+  # catalogs」という警告がビルドのたびに出る。アクセントカラーを定義する
+  # つもりが無いので設定自体を消す。
+  settings.delete('ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME')
 end
 
 project.save

@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D18462237F9769C7CDDAD060"
+               BlueprintIdentifier = "B648316CC775A62ED03DE02D"
                BuildableName = "ViewMonitorExample.app"
                BlueprintName = "ViewMonitorExample"
                ReferencedContainer = "container:ViewMonitorExample.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D18462237F9769C7CDDAD060"
+            BlueprintIdentifier = "B648316CC775A62ED03DE02D"
             BuildableName = "ViewMonitorExample.app"
             BlueprintName = "ViewMonitorExample"
             ReferencedContainer = "container:ViewMonitorExample.xcodeproj">
@@ -53,7 +53,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D18462237F9769C7CDDAD060"
+            BlueprintIdentifier = "B648316CC775A62ED03DE02D"
             BuildableName = "ViewMonitorExample.app"
             BlueprintName = "ViewMonitorExample"
             ReferencedContainer = "container:ViewMonitorExample.xcodeproj">
@@ -70,7 +70,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D18462237F9769C7CDDAD060"
+            BlueprintIdentifier = "B648316CC775A62ED03DE02D"
             BuildableName = "ViewMonitorExample.app"
             BlueprintName = "ViewMonitorExample"
             ReferencedContainer = "container:ViewMonitorExample.xcodeproj">
