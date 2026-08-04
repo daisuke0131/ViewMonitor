@@ -59,6 +59,7 @@ public final class ViewMonitor: NSObject {
     }
 
     private func addLauncherButton() {
+        removeLauncherButton()
         guard let rootView else {
             return
         }
