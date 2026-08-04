@@ -1,6 +1,6 @@
 //
 //  InfoView.swift
-//  monitorViews
+//  ViewMonitor
 //
 
 import UIKit
