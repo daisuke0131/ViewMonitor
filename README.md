@@ -1,7 +1,6 @@
 ![ViewMonitor](assets/viewmonitor.png)
 [![Version](https://img.shields.io/cocoapods/v/ViewMonitor.svg?style=flat)](http://cocoapods.org/pods/ViewMonitor)
 [![License](https://img.shields.io/cocoapods/l/ViewMonitor.svg?style=flat)](http://cocoapods.org/pods/ViewMonitor)
-![Carthage](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)
 
 ## What's ViewMonitor
 
@@ -20,10 +19,27 @@ To run the example project, clone the repo.
 
 ## Requirements
 
-- iOS 8.0+
-- Xcode 7.0+
+- iOS 15.0+
+- Xcode 26.0+
+- Swift 6.0+
 
 ## Installation
+
+### Swift Package Manager
+
+Xcode の File > Add Package Dependencies から次のURLを追加する。
+
+```
+https://github.com/daisuke0131/ViewMonitor.git
+```
+
+`Package.swift` を使う場合は次のように記述する。
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/daisuke0131/ViewMonitor.git", from: "2.0.0")
+]
+```
 
 ### cocoaPods
 
@@ -42,43 +58,26 @@ after that, please run
 pod install
 ```
 
-### Carthage
-
-To install, you can also use [Carthage](https://github.com/Carthage/Carthage).
-You can install Carthage with [Homebrew](http://brew.sh/).
-
-```
-$ brew update
-$ brew install carthage
-```
-
-To integrate ViewMonitor into your Xcode project using Carthage, write the following line in your Cartfile.
-
-```
-github "daisuke0131/ViewMonitor"
-```
-
-### Manually
-
-If you don't use CocoaPods and Carthage, you should add `Source/*` files in your project.
-
 ## How to use
 
-#### For Swift Project
+`ViewMonitor.start()` をアプリ起動後に呼ぶ。
 
-First, `import ViewMonitor`
-Execute `ViewMonitor.start()` after application started.
-Like this
-
-```
+```swift
 import ViewMonitor
-func applicationDidFinishLaunching(_ application: UIApplication) {
-  ViewMonitor.start()
+
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
+        ViewMonitor.start()
+    }
 }
 ```
 
-After that, execution button appear.
-Please, refer to Example/ViewMonitorExample
+実行後、画面右上に表示されるボタンから計測を開始できる。
+`Example/ViewMonitorExample` に動作するサンプルがある。
 
 ## Author
 
