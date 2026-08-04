@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    name: Test (iOS Simulator)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: Resolve simulator
+        id: sim
+        run: |
+          NAME=$(xcrun simctl list devices available | grep -oE 'iPhone [0-9]+[^(]*' | head -1 | sed 's/ *$//')
+          if [ -z "$NAME" ]; then
+            echo "No iPhone simulator available"; exit 1
+          fi
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "Using simulator: $NAME"
+
+      - name: Test
+        run: |
+          xcodebuild test \
+            -scheme ViewMonitor \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }}"
+
+  example:
+    name: Build example app
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Resolve simulator
+        id: sim
+        run: |
+          NAME=$(xcrun simctl list devices available | grep -oE 'iPhone [0-9]+[^(]*' | head -1 | sed 's/ *$//')
+          if [ -z "$NAME" ]; then
+            echo "No iPhone simulator available"; exit 1
+          fi
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        run: |
+          xcodebuild build \
+            -project Example/ViewMonitorExample/ViewMonitorExample.xcodeproj \
+            -scheme ViewMonitorExample \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }}"
+
+  pod-lint:
+    name: pod lib lint
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Lint podspec
+        run: bundle exec pod lib lint

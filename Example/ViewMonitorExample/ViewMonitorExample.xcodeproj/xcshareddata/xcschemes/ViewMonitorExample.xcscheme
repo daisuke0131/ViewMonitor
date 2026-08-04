@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "1600"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7E1B40A01BBA419A0042E4D8"
-               BuildableName = "ViewMonitor.framework"
-               BlueprintName = "ViewMonitor"
-               ReferencedContainer = "container:ViewMonitor.xcodeproj">
+               BlueprintIdentifier = "B648316CC775A62ED03DE02D"
+               BuildableName = "ViewMonitorExample.app"
+               BlueprintName = "ViewMonitorExample"
+               ReferencedContainer = "container:ViewMonitorExample.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -27,29 +27,17 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7E1B40AA1BBA419A0042E4D8"
-               BuildableName = "ViewMonitorTests.xctest"
-               BlueprintName = "ViewMonitorTests"
-               ReferencedContainer = "container:ViewMonitor.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7E1B40A01BBA419A0042E4D8"
-            BuildableName = "ViewMonitor.framework"
-            BlueprintName = "ViewMonitor"
-            ReferencedContainer = "container:ViewMonitor.xcodeproj">
+            BlueprintIdentifier = "B648316CC775A62ED03DE02D"
+            BuildableName = "ViewMonitorExample.app"
+            BlueprintName = "ViewMonitorExample"
+            ReferencedContainer = "container:ViewMonitorExample.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
+      <Testables>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -61,17 +49,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7E1B40A01BBA419A0042E4D8"
-            BuildableName = "ViewMonitor.framework"
-            BlueprintName = "ViewMonitor"
-            ReferencedContainer = "container:ViewMonitor.xcodeproj">
+            BlueprintIdentifier = "B648316CC775A62ED03DE02D"
+            BuildableName = "ViewMonitorExample.app"
+            BlueprintName = "ViewMonitorExample"
+            ReferencedContainer = "container:ViewMonitorExample.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -79,15 +66,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7E1B40A01BBA419A0042E4D8"
-            BuildableName = "ViewMonitor.framework"
-            BlueprintName = "ViewMonitor"
-            ReferencedContainer = "container:ViewMonitor.xcodeproj">
+            BlueprintIdentifier = "B648316CC775A62ED03DE02D"
+            BuildableName = "ViewMonitorExample.app"
+            BlueprintName = "ViewMonitorExample"
+            ReferencedContainer = "container:ViewMonitorExample.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

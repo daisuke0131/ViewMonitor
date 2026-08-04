@@ -6,9 +6,10 @@
 import UIKit
 import Foundation
 
-final public class ViewMonitor:NSObject{
-    
-    static var sharedInstance = ViewMonitor()
+@MainActor
+public final class ViewMonitor: NSObject {
+
+    static let shared = ViewMonitor()
     
     /** target rootView */
     private var rootView:UIView?
@@ -33,22 +34,33 @@ final public class ViewMonitor:NSObject{
     /** monitor these views */
     private let targetClassNames:[String] = [""]
     
-    public class func start(){
-        if !sharedInstance.started{
-            sharedInstance.fookViewEvent()
-            sharedInstance.setNotification()
-            sharedInstance.started = true
-        }
+    public static func start() {
+        guard !shared.started else { return }
+        UIViewController.installMonitorSwizzlingIfNeeded()
+        shared.setNotification()
+        shared.started = true
     }
-    
-    public class func stop(){
-        if sharedInstance.started{
-            sharedInstance.terminate()
-            sharedInstance.removeNotification()
-            sharedInstance.started = false
-        }
+
+    public static func stop() {
+        guard shared.started else { return }
+        shared.terminate()
+        shared.deleteExecuteButton()
+        shared.removeNotification()
+        shared.started = false
     }
-    
+
+    // MARK: - Testing seam
+
+    /// テスト用: `rootView` に任意の `UIView` を注入し、実行ボタンを追加した状態を再現する。
+    /// ユニットテストのバンドルには接続済みの window scene が無く `WindowProvider.keyWindow`
+    /// が常に nil になるため、`detectedViewDidAppear()` 経由では実ビュー階層上での
+    /// 追加・削除を検証できない。この関数はその代わりに使う最小限のフックで、
+    /// 公開 API には含まれない。
+    static func simulateExecuteButtonAttachedForTesting(to view: UIView) {
+        shared.rootView = view
+        shared.addExecuteButton()
+    }
+
     private func execute(){
         addInfoView()
         analyzeAllViews()
@@ -88,48 +100,35 @@ final public class ViewMonitor:NSObject{
             deleteExecuteButton()
             deleteAllMonitorViews()
             resetAllInteractionEnabled()
-            rootView = UIApplication.shared.keyWindow
+            rootView = WindowProvider.keyWindow
             addExecuteButton()
         }
     }
-    
-    // swizzling viewDidAppear and viewWillDisappear
-    private func fookViewEvent(){
-        UIViewController.monitor_methodSwizzling_didAppearWillDisappear()
-    }
-    
-    //viewDidAppear event handling
-    public class func detectedViewDidAppear(vc:AnyObject){
-        if sharedInstance.started{
-            sharedInstance.deleteInfoView()
-            sharedInstance.deleteExecuteButton()
-            sharedInstance.deleteAllMonitorViews()
-            sharedInstance.resetAllInteractionEnabled()
-            sharedInstance.rootView = UIApplication.shared.keyWindow
-            sharedInstance.addExecuteButton()
-            sharedInstance.addInfoView()
-        }
+
+    /// `viewDidAppear` の swizzling から呼ばれる。
+    static func detectedViewDidAppear() {
+        guard shared.started else { return }
+        shared.deleteInfoView()
+        shared.deleteExecuteButton()
+        shared.deleteAllMonitorViews()
+        shared.resetAllInteractionEnabled()
+        shared.rootView = WindowProvider.keyWindow
+        shared.addExecuteButton()
+        shared.addInfoView()
     }
     
     private func addExecuteButton(){
         guard let executeButton = executeButton else{
-            let deviceSize:CGSize = UIScreen.main.bounds.size
+            let deviceSize: CGSize = rootView?.bounds.size ?? .zero
             self.executeButton = MonitorButton(frame: CGRect(x: deviceSize.width - 100.0, y: 20.0, width: 72.0, height: 49.0))
-            let frameworkBundle = Bundle(for: ViewMonitor.self)
-            if let buttonPath = frameworkBundle.path(forResource: "button", ofType: "png"),let buttonImage = UIImage(named: buttonPath){
-                self.executeButton?.setBackgroundImage(buttonImage, for: UIControl.State.normal)
-            }else if let buttonImage = UIImage(named: "button"){
-                self.executeButton?.setBackgroundImage(buttonImage, for: UIControl.State.normal)
-            }else{
-                self.executeButton?.setBackgroundImage(createImageFromUIColor(color: UIColor.black), for: UIControl.State.normal)
-            }
-            if let selectedButtonPath = frameworkBundle.path(forResource: "button_selected", ofType: "png"),let buttonSelectedImage = UIImage(named: selectedButtonPath){
-                self.executeButton?.setBackgroundImage(buttonSelectedImage, for: UIControl.State.selected)
-            }else if let buttonSelectedImage = UIImage(named: "button_selected"){
-                self.executeButton?.setBackgroundImage(buttonSelectedImage, for: UIControl.State.selected)
-            }else{
-                self.executeButton?.setBackgroundImage(createImageFromUIColor(color: UIColor.red), for: UIControl.State.selected)
-            }
+            self.executeButton?.setBackgroundImage(
+                ViewMonitorAsset.button ?? .monitorSolidColor(.black),
+                for: .normal
+            )
+            self.executeButton?.setBackgroundImage(
+                ViewMonitorAsset.buttonSelected ?? .monitorSolidColor(.red),
+                for: .selected
+            )
             self.executeButton?.addTarget(self, action: #selector(self.manualExecute(sender:)), for: UIControl.Event.touchUpInside)
 
             let pan = UIPanGestureRecognizer(target: self, action: #selector(self.dragEvent(sender:)))
@@ -164,7 +163,7 @@ final public class ViewMonitor:NSObject{
     //make 100 * 100 information view
     // have to set tag to reject.
     private func addInfoView(){
-        let deviceSize:CGSize = UIScreen.main.bounds.size
+        let deviceSize: CGSize = rootView?.bounds.size ?? .zero
         self.infoView = InfoView(frame: CGRect(x: deviceSize.width - 220.0, y: 70.0, width: 200.0, height: 180.0))
         let color = UIColor.black
         let alphaColor = color.withAlphaComponent(0.6)
@@ -206,7 +205,10 @@ final public class ViewMonitor:NSObject{
     private func drawViewOn(view:UIView){
         if checkTargetView(view: view){
             let button = MonitorButton(frame: CGRect(x: 0.0, y: 0.0, width: view.frame.size.width, height: view.frame.size.height))
-            button.setBackgroundImage(createImageFromUIColor(color: hexStr(hexNStr: "#7ED321", alpha: 0.7)), for: UIControl.State.normal)
+            button.setBackgroundImage(
+                .monitorSolidColor(color(fromHex: "#7ED321", alpha: 0.7)),
+                for: .normal
+            )
             button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
             button.addTarget(self, action: #selector(self.openEditor(sender:)), for: UIControl.Event.touchUpInside)
             button.targetView = view
@@ -266,45 +268,19 @@ final public class ViewMonitor:NSObject{
         }
     }
     
-    private func hexStr(hexNStr : NSString, alpha : CGFloat) -> UIColor {
-        let hexString = hexNStr.replacingOccurrences(of: "#", with: "")
-        let scanner = Scanner(string: hexString as String)
-        var color: UInt32 = 0
-        if scanner.scanHexInt32(&color) {
-            let r = CGFloat((color & 0xFF0000) >> 16) / 255.0
-            let g = CGFloat((color & 0x00FF00) >> 8) / 255.0
-            let b = CGFloat(color & 0x0000FF) / 255.0
-            return UIColor(red:r,green:g,blue:b,alpha:alpha)
-        } else {
-            return UIColor.white;
+    /// `#RRGGBB` または `RRGGBB` 形式の文字列を UIColor に変換する。
+    /// 解釈できない場合は白を返す。
+    private func color(fromHex hex: String, alpha: CGFloat) -> UIColor {
+        var string = hex
+        if string.hasPrefix("#") {
+            string.removeFirst()
         }
-    }
-    
-    private func createImageFromUIColor(color:UIColor) -> UIImage {
-        let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
-        UIGraphicsBeginImageContext(rect.size)
-        let contextRef = UIGraphicsGetCurrentContext()
-        contextRef!.setFillColor(color.cgColor)
-        contextRef!.fill(rect)
-        let img = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return img!
-    }
-}
-
-extension UIViewController{
-    class func monitor_methodSwizzling_didAppearWillDisappear() {
-        monitor_methodSwizzling_exchange(fromSelector: #selector(self.viewDidAppear(_:)), toSelector: #selector(self.monitor_methodSwizzling_viewDidAppear(animated:)))
-    }
-    
-    private class func monitor_methodSwizzling_exchange(fromSelector: Selector, toSelector: Selector) {
-        let fromMethod = class_getInstanceMethod(UIViewController.self, fromSelector)!
-        let toMethod = class_getInstanceMethod(UIViewController.self, toSelector)!
-        method_exchangeImplementations(fromMethod, toMethod)
-    }
-    
-    @objc func monitor_methodSwizzling_viewDidAppear(animated: Bool) {
-        monitor_methodSwizzling_viewDidAppear(animated: animated)
-        ViewMonitor.detectedViewDidAppear(vc: self)
+        guard string.count == 6, let value = UInt32(string, radix: 16) else {
+            return .white
+        }
+        let r = CGFloat((value & 0xFF0000) >> 16) / 255.0
+        let g = CGFloat((value & 0x00FF00) >> 8) / 255.0
+        let b = CGFloat(value & 0x0000FF) / 255.0
+        return UIColor(red: r, green: g, blue: b, alpha: alpha)
     }
 }
