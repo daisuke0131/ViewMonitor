@@ -6,20 +6,20 @@
 import UIKit
 
 class InfoView: UIView {
-    
-    let x:UILabel
-    let y:UILabel
-    let width:UILabel
-    let height:UILabel
-    let bkColor:UILabel
-    let font:UILabel
-    let fontSize:UILabel
-    let fontColor:UILabel
-    let margin:CGFloat = 22.0
-    
-    var targetView:AnyObject?{
-        didSet{
-            if let target = targetView as? UIView{
+
+    let x: UILabel
+    let y: UILabel
+    let width: UILabel
+    let height: UILabel
+    let bkColor: UILabel
+    let font: UILabel
+    let fontSize: UILabel
+    let fontColor: UILabel
+    let margin: CGFloat = 22.0
+
+    var targetView: AnyObject? {
+        didSet {
+            if let target = targetView as? UIView {
                 x.text = "x:None"
                 y.text = "y:None"
                 width.text = "width:None"
@@ -27,7 +27,7 @@ class InfoView: UIView {
                 bkColor.text = "background:None"
                 fontSize.text = "fontSize:None"
                 fontColor.text = "fontColor:None"
-                
+
                 x.font = UIFont.systemFont(ofSize: 11)
                 y.font = UIFont.systemFont(ofSize: 11)
                 width.font = UIFont.systemFont(ofSize: 11)
@@ -38,27 +38,31 @@ class InfoView: UIView {
                 fontColor.font = UIFont.systemFont(ofSize: 11)
 
                 let window = WindowProvider.keyWindow
-                //coordinate　conversion
+                // coordinate　conversion
                 let rect = window?.convert(targetView!.bounds, from: target)
-                if let rect = rect{
+                if let rect = rect {
                     x.text = "x:\(rect.origin.x)"
                     y.text = "y:\(rect.origin.y)"
                     width.text = "width:\(target.frame.size.width)"
                     height.text = "height:\(target.frame.size.height)"
-                    if let background = target.backgroundColor{
-                        if let hex = toHexString(color: background){
+                    if let background = target.backgroundColor {
+                        if let hex = toHexString(color: background) {
                             bkColor.text = "background:#\(hex)"
                         }
                     }
                 }
-                
-                if let target: AnyObject = targetView{
-                    if target is UILabel{
+
+                if let target: AnyObject = targetView {
+                    if target is UILabel {
+                        // Force cast is safe here: guarded by `target is UILabel` above.
+                        // Restructuring this to avoid the cast belongs to the InfoView
+                        // display-only refactor (later task), not this formatting pass.
+                        // swiftlint:disable:next force_cast
                         fontSize.text = "fontSize:\((target as! UILabel).font.pointSize)"
-                        
-                        if let label = target as? UILabel{
-                            if let color = label.textColor,let f = label.font{
-                                if let hex = toHexString(color: color){
+
+                        if let label = target as? UILabel {
+                            if let color = label.textColor, let f = label.font {
+                                if let hex = toHexString(color: color) {
                                     fontColor.text = "fontColor:#\(hex)"
                                 }
                                 font.text = "font:\(f.familyName)"
@@ -66,15 +70,12 @@ class InfoView: UIView {
                         }
                     }
                 }
-                
-                
+
             }
-            
-            
-            
+
         }
     }
-    
+
     override init(frame: CGRect) {
         x = UILabel(frame: CGRect(x: margin, y: 10.0, width: frame.size.width - 20.0, height: 20.0))
         x.text = "x:None"
@@ -115,21 +116,24 @@ class InfoView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    private func toHexString(color:UIColor) -> String?{
+
+    private func toHexString(color: UIColor) -> String? {
         return rgbHexString(cg: color.cgColor)
     }
-    
-    private func rgbHexString(cg:CGColor) -> String?{
-        if let rgb = rgb(cg: cg){
+
+    private func rgbHexString(cg: CGColor) -> String? {
+        if let rgb = rgb(cg: cg) {
             let hex = rgb.r * 0x10000 + rgb.g * 0x100 + rgb.b
-            return String(format:"%06x", hex)
-        }else{
+            return String(format: "%06x", hex)
+        } else {
             return nil
         }
     }
-    
-    func rgb(cg:CGColor) -> (r:Int,g:Int,b:Int)?{
+
+    // Tuple return type belongs to the UIColor+Hex extraction (later task);
+    // introducing a named type here is out of scope for this formatting pass.
+    // swiftlint:disable:next large_tuple
+    func rgb(cg: CGColor) -> (r: Int, g: Int, b: Int)? {
         let cs = cg.colorSpace
         guard let csModel = cs?.model else { return nil }
         if csModel.rawValue == CGColorSpaceModel.rgb.rawValue {

@@ -6,5 +6,5 @@
 import UIKit
 
 class MonitorButton: UIButton {
-    var targetView:AnyObject?
+    var targetView: AnyObject?
 }
