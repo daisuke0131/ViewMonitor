@@ -216,7 +216,9 @@ public final class ViewMonitor: NSObject {
         if let infoView = infoView {
             if sender.isSelected {
                 infoView.isHidden = false
-                infoView.targetView = sender.targetView
+                if let target = sender.targetView as? UIView {
+                    infoView.update(with: ViewInspector.inspect(target, in: WindowProvider.keyWindow))
+                }
                 sender.layer.borderWidth = 2.0
                 sender.layer.borderColor = UIColor.red.cgColor
             }

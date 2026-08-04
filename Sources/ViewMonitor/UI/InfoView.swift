@@ -5,116 +5,81 @@
 
 import UIKit
 
-class InfoView: UIView {
+/// 計測結果を表示するだけのビュー。計測ロジックは持たない。
+final class InfoView: UIView {
 
-    let x: UILabel
-    let y: UILabel
-    let width: UILabel
-    let height: UILabel
-    let bkColor: UILabel
-    let font: UILabel
-    let fontSize: UILabel
-    let fontColor: UILabel
-    let margin: CGFloat = 22.0
+    let xLabel: UILabel
+    let yLabel: UILabel
+    let widthLabel: UILabel
+    let heightLabel: UILabel
+    let backgroundLabel: UILabel
+    let fontLabel: UILabel
+    let fontSizeLabel: UILabel
+    let fontColorLabel: UILabel
 
-    var targetView: AnyObject? {
-        didSet {
-            if let target = targetView as? UIView {
-                x.text = "x:None"
-                y.text = "y:None"
-                width.text = "width:None"
-                height.text = "height:None"
-                bkColor.text = "background:None"
-                fontSize.text = "fontSize:None"
-                fontColor.text = "fontColor:None"
-
-                x.font = UIFont.systemFont(ofSize: 11)
-                y.font = UIFont.systemFont(ofSize: 11)
-                width.font = UIFont.systemFont(ofSize: 11)
-                height.font = UIFont.systemFont(ofSize: 11)
-                bkColor.font = UIFont.systemFont(ofSize: 11)
-                font.font = UIFont.systemFont(ofSize: 11)
-                fontSize.font = UIFont.systemFont(ofSize: 11)
-                fontColor.font = UIFont.systemFont(ofSize: 11)
-
-                let window = WindowProvider.keyWindow
-                // coordinate　conversion
-                let rect = window?.convert(targetView!.bounds, from: target)
-                if let rect = rect {
-                    x.text = "x:\(rect.origin.x)"
-                    y.text = "y:\(rect.origin.y)"
-                    width.text = "width:\(target.frame.size.width)"
-                    height.text = "height:\(target.frame.size.height)"
-                    if let background = target.backgroundColor {
-                        if let hex = background.monitorHexString {
-                            bkColor.text = "background:#\(hex)"
-                        }
-                    }
-                }
-
-                if let target: AnyObject = targetView {
-                    if target is UILabel {
-                        // Force cast is safe here: guarded by `target is UILabel` above.
-                        // Restructuring this to avoid the cast belongs to the InfoView
-                        // display-only refactor (later task), not this formatting pass.
-                        // swiftlint:disable:next force_cast
-                        fontSize.text = "fontSize:\((target as! UILabel).font.pointSize)"
-
-                        if let label = target as? UILabel {
-                            if let color = label.textColor, let f = label.font {
-                                if let hex = color.monitorHexString {
-                                    fontColor.text = "fontColor:#\(hex)"
-                                }
-                                font.text = "font:\(f.familyName)"
-                            }
-                        }
-                    }
-                }
-
-            }
-
-        }
-    }
+    private static let horizontalMargin: CGFloat = 22.0
+    private static let rowHeight: CGFloat = 20.0
+    private static let firstRowTop: CGFloat = 10.0
 
     override init(frame: CGRect) {
-        x = UILabel(frame: CGRect(x: margin, y: 10.0, width: frame.size.width - 20.0, height: 20.0))
-        x.text = "x:None"
-        x.textColor = UIColor.white
-        y = UILabel(frame: CGRect(x: margin, y: 30.0, width: frame.size.width - 20.0, height: 20.0))
-        y.text = "y:None"
-        y.textColor = UIColor.white
-        width = UILabel(frame: CGRect(x: margin, y: 50.0, width: frame.size.width - 20.0, height: 20.0))
-        width.text = "width:None"
-        width.textColor = UIColor.white
-        height = UILabel(frame: CGRect(x: margin, y: 70.0, width: frame.size.width - 20.0, height: 20.0))
-        height.text = "height:None"
-        height.textColor = UIColor.white
-        bkColor = UILabel(frame: CGRect(x: margin, y: 90.0, width: frame.size.width - 20.0, height: 20.0))
-        bkColor.text = "background:None"
-        bkColor.textColor = UIColor.white
-        font = UILabel(frame: CGRect(x: margin, y: 110.0, width: frame.size.width - 20.0, height: 20.0))
-        font.text = "font:None"
-        font.textColor = UIColor.white
-        fontSize = UILabel(frame: CGRect(x: margin, y: 130.0, width: frame.size.width - 20.0, height: 20.0))
-        fontSize.text = "fontSize:None"
-        fontSize.textColor = UIColor.white
-        fontColor = UILabel(frame: CGRect(x: margin, y: 150.0, width: frame.size.width - 20.0, height: 20.0))
-        fontColor.text = "fontColor:None"
-        fontColor.textColor = UIColor.white
+        let width = frame.size.width - 20.0
+        func makeLabel(row: Int) -> UILabel {
+            let label = UILabel(
+                frame: CGRect(
+                    x: InfoView.horizontalMargin,
+                    y: InfoView.firstRowTop + CGFloat(row) * InfoView.rowHeight,
+                    width: width,
+                    height: InfoView.rowHeight
+                )
+            )
+            label.textColor = .white
+            label.font = .systemFont(ofSize: 11)
+            return label
+        }
+
+        xLabel = makeLabel(row: 0)
+        yLabel = makeLabel(row: 1)
+        widthLabel = makeLabel(row: 2)
+        heightLabel = makeLabel(row: 3)
+        backgroundLabel = makeLabel(row: 4)
+        fontLabel = makeLabel(row: 5)
+        fontSizeLabel = makeLabel(row: 6)
+        fontColorLabel = makeLabel(row: 7)
+
         super.init(frame: frame)
-        self.addSubview(x)
-        self.addSubview(y)
-        self.addSubview(width)
-        self.addSubview(height)
-        self.addSubview(bkColor)
-        self.addSubview(font)
-        self.addSubview(fontSize)
-        self.addSubview(fontColor)
-        self.layer.cornerRadius = 10.0
+
+        for label in allLabels {
+            addSubview(label)
+        }
+        layer.cornerRadius = 10.0
+        update(with: nil)
     }
 
-    required init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    private var allLabels: [UILabel] {
+        [xLabel, yLabel, widthLabel, heightLabel, backgroundLabel, fontLabel, fontSizeLabel, fontColorLabel]
+    }
+
+    /// 計測結果を表示する。`nil` を渡すと全ての項目が `None` になる。
+    ///
+    /// 8つのラベルを毎回まとめて更新するため、
+    /// 一部の項目だけ前の値が残ることが起こらない。
+    func update(with inspection: ViewInspection?) {
+        xLabel.text = "x:" + text(inspection.map { "\($0.frameInWindow.origin.x)" })
+        yLabel.text = "y:" + text(inspection.map { "\($0.frameInWindow.origin.y)" })
+        widthLabel.text = "width:" + text(inspection.map { "\($0.size.width)" })
+        heightLabel.text = "height:" + text(inspection.map { "\($0.size.height)" })
+        backgroundLabel.text = "background:" + text(inspection?.backgroundColorHex.map { "#\($0)" })
+        fontLabel.text = "font:" + text(inspection?.font?.familyName)
+        fontSizeLabel.text = "fontSize:" + text(inspection?.font.map { "\($0.pointSize)" })
+        fontColorLabel.text = "fontColor:" + text(inspection?.font?.colorHex.map { "#\($0)" })
+    }
+
+    private func text(_ value: String?) -> String {
+        value ?? "None"
+    }
 }
