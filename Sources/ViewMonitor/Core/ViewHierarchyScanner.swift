@@ -45,7 +45,12 @@ struct ViewHierarchyScanner {
     }
 
     /// モジュール名を除いたクラス名を返す。
+    /// KVO がオブジェクトを動的にサブクラス化すると `type(of:)` は
+    /// `NSKVONotifying_UITabBar` のような合成クラスを返してしまい、
+    /// `rejectedClassNames` と一致しなくなる。`classForCoder` はその
+    /// 実装詳細を隠し、本来のクラスに正規化して返す。
     static func className(of object: AnyObject) -> String {
-        NSStringFromClass(type(of: object)).components(separatedBy: ".").last ?? ""
+        let objectClass: AnyClass = (object as? NSObject)?.classForCoder ?? type(of: object)
+        return NSStringFromClass(objectClass).components(separatedBy: ".").last ?? ""
     }
 }
