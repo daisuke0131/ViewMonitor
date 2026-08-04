@@ -24,15 +24,10 @@ public final class ViewMonitor: NSObject {
 
     private var started: Bool = false
 
-    /** do not get these views */
-    private let rejectClassNames: [String] = ["MonitorButton", "UITabBar", "UINavigationBar", "InfoView", "_UILayoutGuide"]
-    private let kRejectTag = 5292739
-
     /* userInteractionEnabled */
     private var enabledViews: [UIView] = [UIView]()
 
-    /** monitor these views */
-    private let targetClassNames: [String] = [""]
+    private let scanner = ViewHierarchyScanner()
 
     public static func start() {
         guard !shared.started else { return }
@@ -186,77 +181,33 @@ public final class ViewMonitor: NSObject {
     }
 
     private func analyzeAllViews() {
-        analyzeView(view: rootView)
-    }
-
-    private func analyzeView(view: UIView?) {
-        guard let view = view else {
-            return
+        guard let rootView else { return }
+        for view in scanner.targets(in: rootView) {
+            drawViewOn(view: view)
         }
-
-        if checkRejectView(view: view) {
-            return
-        }
-        drawViewOn(view: view)
-
-        // to get child views
-        let childViews = view.subviews
-        if childViews.isEmpty {
-            return
-        }
-        _ = childViews.map { analyzeView(view: $0) }
     }
 
     private func drawViewOn(view: UIView) {
-        if checkTargetView(view: view) {
-            let button = MonitorButton(frame: CGRect(x: 0.0, y: 0.0, width: view.frame.size.width, height: view.frame.size.height))
-            button.setBackgroundImage(
-                .monitorSolidColor(UIColor(monitorHex: "#7ED321", alpha: 0.7) ?? .green),
-                for: .normal
-            )
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
-            button.addTarget(self, action: #selector(self.openEditor(sender:)), for: UIControl.Event.touchUpInside)
-            button.targetView = view
-            button.alpha = 0.2
-            buttons.append(button)
-            if !view.isUserInteractionEnabled {
-                enabledViews.append(view)
-                view.isUserInteractionEnabled = true
-            }
-            view.addSubview(button)
+        let button = MonitorButton(frame: CGRect(x: 0.0, y: 0.0, width: view.frame.size.width, height: view.frame.size.height))
+        button.setBackgroundImage(
+            .monitorSolidColor(UIColor(monitorHex: "#7ED321", alpha: 0.7) ?? .green),
+            for: .normal
+        )
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
+        button.addTarget(self, action: #selector(self.openEditor(sender:)), for: UIControl.Event.touchUpInside)
+        button.targetView = view
+        button.alpha = 0.2
+        buttons.append(button)
+        if !view.isUserInteractionEnabled {
+            enabledViews.append(view)
+            view.isUserInteractionEnabled = true
         }
+        view.addSubview(button)
     }
 
     private func resetAllInteractionEnabled() {
         _ = enabledViews.map { $0.isUserInteractionEnabled = false }
         enabledViews.removeAll(keepingCapacity: false)
-    }
-
-    // true: targetList include view
-    private func checkTargetView(view: UIView) -> Bool {
-        if view is UILabel ||  view is UIImageView || view is UIButton {
-            return true
-        }
-
-        for className in targetClassNames {
-            if let viewClass = NSStringFromClass(view.classForCoder).components(separatedBy: ".").last, viewClass == className {
-                return true
-            }
-        }
-        return false
-    }
-
-    // true: notTargetList include view
-    private func checkRejectView(view: UIView) -> Bool {
-        for className in rejectClassNames {
-            if let viewClass = NSStringFromClass(view.classForCoder).components(separatedBy: ".").last, viewClass == className {
-                return true
-            }
-        }
-        if view.tag == kRejectTag {
-            return true
-        }
-        return false
     }
 
     // editor to monitor view
