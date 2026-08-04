@@ -20,8 +20,5 @@ line_length:
   error: 200
 
 # x / y といった座標を表す短い名前を許容する。
-# swizzling のメソッド名は ObjC 側の慣習に合わせるため除外する。
 identifier_name:
   min_length: 1
-  excluded:
-    - monitor_viewDidAppear
