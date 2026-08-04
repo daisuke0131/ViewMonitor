@@ -13,10 +13,6 @@ behave like this.
 - UITableViewController
   ![demo](assets/table_demo.gif)
 
-## Usage
-
-To run the example project, clone the repo.
-
 ## Requirements
 
 - iOS 15.0+
@@ -27,13 +23,13 @@ To run the example project, clone the repo.
 
 ### Swift Package Manager
 
-Xcode の File > Add Package Dependencies から次のURLを追加する。
+In Xcode, go to File > Add Package Dependencies and add the following URL.
 
 ```
 https://github.com/daisuke0131/ViewMonitor.git
 ```
 
-`Package.swift` を使う場合は次のように記述する。
+If you're using `Package.swift` directly, add it as follows:
 
 ```swift
 dependencies: [
@@ -60,7 +56,7 @@ pod install
 
 ## How to use
 
-`ViewMonitor.start()` をアプリ起動後に呼ぶ。
+Call `ViewMonitor.start()` after your app has launched.
 
 ```swift
 import ViewMonitor
@@ -76,8 +72,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 ```
 
-実行後、画面右上に表示されるボタンから計測を開始できる。
-`Example/ViewMonitorExample` に動作するサンプルがある。
+Once running, tap the button that appears in the top-right corner of the screen to start measuring.
+A working sample project is available at `Example/ViewMonitorExample`.
 
 ## Author
 
