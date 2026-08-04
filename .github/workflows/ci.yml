@@ -74,3 +74,15 @@ jobs:
 
       - name: Lint podspec
         run: bundle exec pod lib lint
+
+  lint:
+    name: SwiftLint
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Lint
+        run: swiftlint --strict
