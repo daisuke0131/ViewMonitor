@@ -37,7 +37,7 @@ class InfoView: UIView {
                 fontSize.font = UIFont.systemFont(ofSize: 11)
                 fontColor.font = UIFont.systemFont(ofSize: 11)
 
-                let window = UIApplication.shared.keyWindow
+                let window = WindowProvider.keyWindow
                 //coordinate　conversion
                 let rect = window?.convert(targetView!.bounds, from: target)
                 if let rect = rect{

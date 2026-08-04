@@ -82,30 +82,32 @@ final public class ViewMonitor:NSObject{
         NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
     }
     
+    @MainActor
     @objc private func orientationChanged(notification: NSNotification){
         if started{
             deleteInfoView()
             deleteExecuteButton()
             deleteAllMonitorViews()
             resetAllInteractionEnabled()
-            rootView = UIApplication.shared.keyWindow
+            rootView = WindowProvider.keyWindow
             addExecuteButton()
         }
     }
-    
+
     // swizzling viewDidAppear and viewWillDisappear
     private func fookViewEvent(){
         UIViewController.monitor_methodSwizzling_didAppearWillDisappear()
     }
     
     //viewDidAppear event handling
+    @MainActor
     public class func detectedViewDidAppear(vc:AnyObject){
         if sharedInstance.started{
             sharedInstance.deleteInfoView()
             sharedInstance.deleteExecuteButton()
             sharedInstance.deleteAllMonitorViews()
             sharedInstance.resetAllInteractionEnabled()
-            sharedInstance.rootView = UIApplication.shared.keyWindow
+            sharedInstance.rootView = WindowProvider.keyWindow
             sharedInstance.addExecuteButton()
             sharedInstance.addInfoView()
         }
@@ -113,14 +115,14 @@ final public class ViewMonitor:NSObject{
     
     private func addExecuteButton(){
         guard let executeButton = executeButton else{
-            let deviceSize:CGSize = UIScreen.main.bounds.size
+            let deviceSize: CGSize = rootView?.bounds.size ?? .zero
             self.executeButton = MonitorButton(frame: CGRect(x: deviceSize.width - 100.0, y: 20.0, width: 72.0, height: 49.0))
             self.executeButton?.setBackgroundImage(
-                ViewMonitorAsset.button ?? createImageFromUIColor(color: .black),
+                ViewMonitorAsset.button ?? .monitorSolidColor(.black),
                 for: .normal
             )
             self.executeButton?.setBackgroundImage(
-                ViewMonitorAsset.buttonSelected ?? createImageFromUIColor(color: .red),
+                ViewMonitorAsset.buttonSelected ?? .monitorSolidColor(.red),
                 for: .selected
             )
             self.executeButton?.addTarget(self, action: #selector(self.manualExecute(sender:)), for: UIControl.Event.touchUpInside)
@@ -157,7 +159,7 @@ final public class ViewMonitor:NSObject{
     //make 100 * 100 information view
     // have to set tag to reject.
     private func addInfoView(){
-        let deviceSize:CGSize = UIScreen.main.bounds.size
+        let deviceSize: CGSize = rootView?.bounds.size ?? .zero
         self.infoView = InfoView(frame: CGRect(x: deviceSize.width - 220.0, y: 70.0, width: 200.0, height: 180.0))
         let color = UIColor.black
         let alphaColor = color.withAlphaComponent(0.6)
@@ -199,7 +201,10 @@ final public class ViewMonitor:NSObject{
     private func drawViewOn(view:UIView){
         if checkTargetView(view: view){
             let button = MonitorButton(frame: CGRect(x: 0.0, y: 0.0, width: view.frame.size.width, height: view.frame.size.height))
-            button.setBackgroundImage(createImageFromUIColor(color: hexStr(hexNStr: "#7ED321", alpha: 0.7)), for: UIControl.State.normal)
+            button.setBackgroundImage(
+                .monitorSolidColor(color(fromHex: "#7ED321", alpha: 0.7)),
+                for: .normal
+            )
             button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
             button.addTarget(self, action: #selector(self.openEditor(sender:)), for: UIControl.Event.touchUpInside)
             button.targetView = view
@@ -259,29 +264,20 @@ final public class ViewMonitor:NSObject{
         }
     }
     
-    private func hexStr(hexNStr : NSString, alpha : CGFloat) -> UIColor {
-        let hexString = hexNStr.replacingOccurrences(of: "#", with: "")
-        let scanner = Scanner(string: hexString as String)
-        var color: UInt32 = 0
-        if scanner.scanHexInt32(&color) {
-            let r = CGFloat((color & 0xFF0000) >> 16) / 255.0
-            let g = CGFloat((color & 0x00FF00) >> 8) / 255.0
-            let b = CGFloat(color & 0x0000FF) / 255.0
-            return UIColor(red:r,green:g,blue:b,alpha:alpha)
-        } else {
-            return UIColor.white;
+    /// `#RRGGBB` または `RRGGBB` 形式の文字列を UIColor に変換する。
+    /// 解釈できない場合は白を返す。
+    private func color(fromHex hex: String, alpha: CGFloat) -> UIColor {
+        var string = hex
+        if string.hasPrefix("#") {
+            string.removeFirst()
         }
-    }
-    
-    private func createImageFromUIColor(color:UIColor) -> UIImage {
-        let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
-        UIGraphicsBeginImageContext(rect.size)
-        let contextRef = UIGraphicsGetCurrentContext()
-        contextRef!.setFillColor(color.cgColor)
-        contextRef!.fill(rect)
-        let img = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return img!
+        guard string.count == 6, let value = UInt32(string, radix: 16) else {
+            return .white
+        }
+        let r = CGFloat((value & 0xFF0000) >> 16) / 255.0
+        let g = CGFloat((value & 0x00FF00) >> 8) / 255.0
+        let b = CGFloat(value & 0x0000FF) / 255.0
+        return UIColor(red: r, green: g, blue: b, alpha: alpha)
     }
 }
 
