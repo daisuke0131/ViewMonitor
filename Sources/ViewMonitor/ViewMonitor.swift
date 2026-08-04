@@ -211,7 +211,7 @@ public final class ViewMonitor: NSObject {
         if checkTargetView(view: view) {
             let button = MonitorButton(frame: CGRect(x: 0.0, y: 0.0, width: view.frame.size.width, height: view.frame.size.height))
             button.setBackgroundImage(
-                .monitorSolidColor(color(fromHex: "#7ED321", alpha: 0.7)),
+                .monitorSolidColor(UIColor(monitorHex: "#7ED321", alpha: 0.7) ?? .green),
                 for: .normal
             )
             button.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
@@ -271,21 +271,5 @@ public final class ViewMonitor: NSObject {
             }
             _ = buttons.filter { $0 !== sender }.map { $0.layer.borderWidth = 0.0; $0.isSelected = false }
         }
-    }
-
-    /// `#RRGGBB` または `RRGGBB` 形式の文字列を UIColor に変換する。
-    /// 解釈できない場合は白を返す。
-    private func color(fromHex hex: String, alpha: CGFloat) -> UIColor {
-        var string = hex
-        if string.hasPrefix("#") {
-            string.removeFirst()
-        }
-        guard string.count == 6, let value = UInt32(string, radix: 16) else {
-            return .white
-        }
-        let r = CGFloat((value & 0xFF0000) >> 16) / 255.0
-        let g = CGFloat((value & 0x00FF00) >> 8) / 255.0
-        let b = CGFloat(value & 0x0000FF) / 255.0
-        return UIColor(red: r, green: g, blue: b, alpha: alpha)
     }
 }

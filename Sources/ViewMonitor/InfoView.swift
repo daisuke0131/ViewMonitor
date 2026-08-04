@@ -46,7 +46,7 @@ class InfoView: UIView {
                     width.text = "width:\(target.frame.size.width)"
                     height.text = "height:\(target.frame.size.height)"
                     if let background = target.backgroundColor {
-                        if let hex = toHexString(color: background) {
+                        if let hex = background.monitorHexString {
                             bkColor.text = "background:#\(hex)"
                         }
                     }
@@ -62,7 +62,7 @@ class InfoView: UIView {
 
                         if let label = target as? UILabel {
                             if let color = label.textColor, let f = label.font {
-                                if let hex = toHexString(color: color) {
+                                if let hex = color.monitorHexString {
                                     fontColor.text = "fontColor:#\(hex)"
                                 }
                                 font.text = "font:\(f.familyName)"
@@ -115,36 +115,6 @@ class InfoView: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    private func toHexString(color: UIColor) -> String? {
-        return rgbHexString(cg: color.cgColor)
-    }
-
-    private func rgbHexString(cg: CGColor) -> String? {
-        if let rgb = rgb(cg: cg) {
-            let hex = rgb.r * 0x10000 + rgb.g * 0x100 + rgb.b
-            return String(format: "%06x", hex)
-        } else {
-            return nil
-        }
-    }
-
-    // Tuple return type belongs to the UIColor+Hex extraction (later task);
-    // introducing a named type here is out of scope for this formatting pass.
-    // swiftlint:disable:next large_tuple
-    func rgb(cg: CGColor) -> (r: Int, g: Int, b: Int)? {
-        let cs = cg.colorSpace
-        guard let csModel = cs?.model else { return nil }
-        if csModel.rawValue == CGColorSpaceModel.rgb.rawValue {
-            guard let components = cg.components else { return nil }
-            let r: Int = Int(components[0] * 255.0)
-            let g: Int = Int(components[1] * 255.0)
-            let b: Int = Int(components[2] * 255.0)
-            return (r, g, b)
-        } else {
-            return nil
-        }
     }
 
 }
