@@ -115,21 +115,14 @@ final public class ViewMonitor:NSObject{
         guard let executeButton = executeButton else{
             let deviceSize:CGSize = UIScreen.main.bounds.size
             self.executeButton = MonitorButton(frame: CGRect(x: deviceSize.width - 100.0, y: 20.0, width: 72.0, height: 49.0))
-            let frameworkBundle = Bundle(for: ViewMonitor.self)
-            if let buttonPath = frameworkBundle.path(forResource: "button", ofType: "png"),let buttonImage = UIImage(named: buttonPath){
-                self.executeButton?.setBackgroundImage(buttonImage, for: UIControl.State.normal)
-            }else if let buttonImage = UIImage(named: "button"){
-                self.executeButton?.setBackgroundImage(buttonImage, for: UIControl.State.normal)
-            }else{
-                self.executeButton?.setBackgroundImage(createImageFromUIColor(color: UIColor.black), for: UIControl.State.normal)
-            }
-            if let selectedButtonPath = frameworkBundle.path(forResource: "button_selected", ofType: "png"),let buttonSelectedImage = UIImage(named: selectedButtonPath){
-                self.executeButton?.setBackgroundImage(buttonSelectedImage, for: UIControl.State.selected)
-            }else if let buttonSelectedImage = UIImage(named: "button_selected"){
-                self.executeButton?.setBackgroundImage(buttonSelectedImage, for: UIControl.State.selected)
-            }else{
-                self.executeButton?.setBackgroundImage(createImageFromUIColor(color: UIColor.red), for: UIControl.State.selected)
-            }
+            self.executeButton?.setBackgroundImage(
+                ViewMonitorAsset.button ?? createImageFromUIColor(color: .black),
+                for: .normal
+            )
+            self.executeButton?.setBackgroundImage(
+                ViewMonitorAsset.buttonSelected ?? createImageFromUIColor(color: .red),
+                for: .selected
+            )
             self.executeButton?.addTarget(self, action: #selector(self.manualExecute(sender:)), for: UIControl.Event.touchUpInside)
 
             let pan = UIPanGestureRecognizer(target: self, action: #selector(self.dragEvent(sender:)))
