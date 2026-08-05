@@ -51,7 +51,7 @@ final class MonitorOverlay: NSObject {
     private func addInfoView(to rootView: UIView) {
         let size = rootView.bounds.size
         let infoView = InfoView(
-            frame: CGRect(origin: CGPoint(x: size.width - 220.0, y: 70.0), size: .zero)
+            frame: CGRect(origin: CGPoint(x: size.width - InfoView.width - 20.0, y: 70.0), size: .zero)
         )
         infoView.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         infoView.isHidden = true

@@ -78,7 +78,8 @@ struct InfoRowBuilderTests {
         (CGFloat(16.0), "16"),
         (CGFloat(20.5), "20.5"),
         (CGFloat(16.6667), "16.7"),
-        (CGFloat(0), "0")
+        (CGFloat(0), "0"),
+        (CGFloat.infinity, "inf")
     ])
     func formatsNumbers(pair: (CGFloat, String)) {
         let rows = InfoRowBuilder.rows(from: makeInspection(x: pair.0))

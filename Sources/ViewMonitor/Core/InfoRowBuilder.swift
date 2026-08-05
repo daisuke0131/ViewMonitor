@@ -47,6 +47,9 @@ enum InfoRowBuilder {
     /// `16.666666666666668` のような値をそのまま表示しない。
     private static func format(_ value: CGFloat) -> String {
         let rounded = (value * 10).rounded() / 10
+        guard rounded.isFinite else {
+            return "\(value)"
+        }
         if rounded == rounded.rounded() {
             return String(Int(rounded))
         }
