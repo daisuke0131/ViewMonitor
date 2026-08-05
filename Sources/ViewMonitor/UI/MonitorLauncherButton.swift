@@ -11,9 +11,17 @@ import UIKit
 final class MonitorLauncherButton: UIButton {
 
     static let size = CGSize(width: 72.0, height: 49.0)
+    static let margin: CGFloat = 20.0
 
     /// 選択状態が切り替わったときに呼ばれる。
     var onToggle: ((Bool) -> Void)?
+
+    /// safe area の内側にボタンを右上寄せで配置する原点を返す。
+    static func origin(inBounds bounds: CGRect, safeAreaInsets insets: UIEdgeInsets) -> CGPoint {
+        let x = bounds.maxX - insets.right - size.width - margin
+        let y = bounds.minY + insets.top + margin
+        return CGPoint(x: max(bounds.minX + insets.left + margin, x), y: y)
+    }
 
     init(origin: CGPoint) {
         super.init(frame: CGRect(origin: origin, size: Self.size))

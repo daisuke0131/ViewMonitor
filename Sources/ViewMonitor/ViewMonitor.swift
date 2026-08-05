@@ -63,7 +63,10 @@ public final class ViewMonitor: NSObject {
         guard let rootView else {
             return
         }
-        let origin = CGPoint(x: rootView.bounds.size.width - 100.0, y: 20.0)
+        let origin = MonitorLauncherButton.origin(
+            inBounds: rootView.bounds,
+            safeAreaInsets: rootView.safeAreaInsets
+        )
         let button = MonitorLauncherButton(origin: origin)
         button.onToggle = { [weak self] isSelected in
             guard let self, let rootView = self.rootView else {
