@@ -20,7 +20,8 @@ enum RectRelation: Equatable {
     case contained(insets: UIEdgeInsets)
 
     /// `a` と `b` の位置関係を判定する。
-    /// サイズ 0 の矩形は `contains` が偽になり gap 計算に落ちる（許容）。
+    /// サイズ 0 の矩形も内側にあれば `contains` が真になり内包として扱われる。
+    /// 外側にあれば gap 計算に落ちる（いずれも許容）。
     static func between(_ a: CGRect, _ b: CGRect) -> RectRelation {
         if a.contains(b) || b.contains(a) {
             let outer = a.contains(b) ? a : b
