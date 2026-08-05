@@ -7,9 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- InfoView に選択中ビューのクラス名を表示（[#18](https://github.com/daisuke0131/ViewMonitor/issues/18)）
+- InfoView に alpha / cornerRadius を表示（[#9](https://github.com/daisuke0131/ViewMonitor/issues/9)）
+- UIButton のタイトルのフォント情報（font / fontSize / fontColor）を表示
+
+### Changed
+
+- InfoView の行を動的化。フォント行はテキストを持つビューでのみ表示し、高さは行数に応じて可変に
+- 数値表示を小数第1位に丸め、整数になる値は `.0` を省略（例: `16.666666666666668` → `16.7`、`16.0` → `16`）
+- 行の書式を `x:16.0` から `x: 16` に変更（コロン後にスペース）
+
 ### Fixed
 
 - 実行ボタンが固定座標 `y: 20.0` に配置されており、ノッチや Dynamic Island のある端末ではステータスバーや島の下に隠れてタップできなくなっていた問題。`x` 側も `safeAreaInsets.right` を無視していたため、横向きでノッチ側に同様の問題があった。座標計算を `safeAreaInsets` を考慮した `MonitorLauncherButton.origin(inBounds:safeAreaInsets:)` に切り出して解消（[#34](https://github.com/daisuke0131/ViewMonitor/issues/34)）
+- 選択したビューが解放済みのとき、前のビューの計測値を表示し続けていた問題。全項目 `None` を表示する
 
 ## [2.0.0] - 2026-08-05
 
