@@ -5,54 +5,35 @@
 
 import UIKit
 
-/// 計測結果を表示するだけのビュー。計測ロジックは持たない。
+/// 計測結果の行を表示するだけのビュー。計測ロジックも行の組み立ても持たない。
 final class InfoView: UIView {
 
-    let xLabel: UILabel
-    let yLabel: UILabel
-    let widthLabel: UILabel
-    let heightLabel: UILabel
-    let backgroundLabel: UILabel
-    let fontLabel: UILabel
-    let fontSizeLabel: UILabel
-    let fontColorLabel: UILabel
+    /// 表示幅。高さは行数に応じて `update(rows:)` が決める。
+    static let width: CGFloat = 200.0
 
-    private static let horizontalMargin: CGFloat = 22.0
-    private static let rowHeight: CGFloat = 20.0
-    private static let firstRowTop: CGFloat = 10.0
+    private static let contentInsets = UIEdgeInsets(top: 10.0, left: 22.0, bottom: 10.0, right: 10.0)
+
+    private let stackView = UIStackView()
+
+    /// 現在表示中の行ラベル。表示内容の検証用。
+    var rowLabels: [UILabel] {
+        stackView.arrangedSubviews.compactMap { $0 as? UILabel }
+    }
 
     override init(frame: CGRect) {
-        let width = frame.size.width - 20.0
-        func makeLabel(row: Int) -> UILabel {
-            let label = UILabel(
-                frame: CGRect(
-                    x: InfoView.horizontalMargin,
-                    y: InfoView.firstRowTop + CGFloat(row) * InfoView.rowHeight,
-                    width: width,
-                    height: InfoView.rowHeight
-                )
-            )
-            label.textColor = .white
-            label.font = .systemFont(ofSize: 11)
-            return label
-        }
-
-        xLabel = makeLabel(row: 0)
-        yLabel = makeLabel(row: 1)
-        widthLabel = makeLabel(row: 2)
-        heightLabel = makeLabel(row: 3)
-        backgroundLabel = makeLabel(row: 4)
-        fontLabel = makeLabel(row: 5)
-        fontSizeLabel = makeLabel(row: 6)
-        fontColorLabel = makeLabel(row: 7)
-
         super.init(frame: frame)
-
-        for label in allLabels {
-            addSubview(label)
-        }
         layer.cornerRadius = 10.0
-        update(with: nil)
+        stackView.axis = .vertical
+        stackView.spacing = 6.0
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stackView)
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: topAnchor, constant: Self.contentInsets.top),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Self.contentInsets.left),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Self.contentInsets.right),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Self.contentInsets.bottom)
+        ])
+        update(rows: [])
     }
 
     @available(*, unavailable)
@@ -60,26 +41,27 @@ final class InfoView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private var allLabels: [UILabel] {
-        [xLabel, yLabel, widthLabel, heightLabel, backgroundLabel, fontLabel, fontSizeLabel, fontColorLabel]
-    }
-
-    /// 計測結果を表示する。`nil` を渡すと全ての項目が `None` になる。
+    /// 表示行を差し替え、行数に合わせて高さを更新する。
     ///
-    /// 8つのラベルを毎回まとめて更新するため、
-    /// 一部の項目だけ前の値が残ることが起こらない。
-    func update(with inspection: ViewInspection?) {
-        xLabel.text = "x:" + text(inspection.map { "\($0.frameInWindow.origin.x)" })
-        yLabel.text = "y:" + text(inspection.map { "\($0.frameInWindow.origin.y)" })
-        widthLabel.text = "width:" + text(inspection.map { "\($0.size.width)" })
-        heightLabel.text = "height:" + text(inspection.map { "\($0.size.height)" })
-        backgroundLabel.text = "background:" + text(inspection?.backgroundColorHex.map { "#\($0)" })
-        fontLabel.text = "font:" + text(inspection?.font?.familyName)
-        fontSizeLabel.text = "fontSize:" + text(inspection?.font.map { "\($0.pointSize)" })
-        fontColorLabel.text = "fontColor:" + text(inspection?.font?.colorHex.map { "#\($0)" })
-    }
-
-    private func text(_ value: String?) -> String {
-        value ?? "None"
+    /// 毎回すべての行を作り直すため、一部の項目だけ前の値が残ることが起こらない。
+    /// 自身のサイズは frame 管理のまま（superview への制約なし）にして、
+    /// MonitorOverlay のドラッグ移動（center の書き換え）と衝突させない。
+    func update(rows: [InfoRow]) {
+        for view in stackView.arrangedSubviews {
+            view.removeFromSuperview()
+        }
+        for row in rows {
+            let label = UILabel()
+            label.textColor = .white
+            label.font = .systemFont(ofSize: 11)
+            label.text = "\(row.title): \(row.value)"
+            stackView.addArrangedSubview(label)
+        }
+        let height = systemLayoutSizeFitting(
+            CGSize(width: Self.width, height: UIView.layoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        ).height
+        frame.size = CGSize(width: Self.width, height: height)
     }
 }

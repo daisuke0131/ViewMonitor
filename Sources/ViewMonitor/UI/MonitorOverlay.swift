@@ -51,7 +51,7 @@ final class MonitorOverlay: NSObject {
     private func addInfoView(to rootView: UIView) {
         let size = rootView.bounds.size
         let infoView = InfoView(
-            frame: CGRect(x: size.width - 220.0, y: 70.0, width: 200.0, height: 180.0)
+            frame: CGRect(origin: CGPoint(x: size.width - 220.0, y: 70.0), size: .zero)
         )
         infoView.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         infoView.isHidden = true
@@ -88,14 +88,13 @@ final class MonitorOverlay: NSObject {
         }
         if sender.isSelected {
             infoView.isHidden = false
-            if let target = sender.targetView {
-                // 座標変換は show(on:) で受け取った rootView を基準にする。
-                // WindowProvider.keyWindow を都度引き直すと、iPad の
-                // マルチシーン環境でオーバーレイの取り付け先と foreground の
-                // シーンがずれたときに誤ったウィンドウで変換してしまう。
-                let window = rootView?.window ?? (rootView as? UIWindow)
-                infoView.update(with: ViewInspector.inspect(target, in: window))
-            }
+            // 座標変換は show(on:) で受け取った rootView を基準にする。
+            // WindowProvider.keyWindow を都度引き直すと、iPad の
+            // マルチシーン環境でオーバーレイの取り付け先と foreground の
+            // シーンがずれたときに誤ったウィンドウで変換してしまう。
+            let window = rootView?.window ?? (rootView as? UIWindow)
+            let inspection = sender.targetView.map { ViewInspector.inspect($0, in: window) }
+            infoView.update(rows: InfoRowBuilder.rows(from: inspection))
             sender.layer.borderWidth = 2.0
             sender.layer.borderColor = UIColor.red.cgColor
         }
