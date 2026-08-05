@@ -75,6 +75,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 Once running, tap the button that appears in the top-right corner of the screen to start measuring.
 A working sample project is available at `Example/ViewMonitorExample`.
 
+### Running the sample on a device
+
+The sample runs on the simulator as-is. To run it on a physical device, code
+signing needs your own team, so create a `Local.xcconfig` (git-ignored) with
+your Team ID before hitting Run:
+
+```sh
+echo 'DEVELOPMENT_TEAM = XXXXXXXXXX' > Example/ViewMonitorExample/Local.xcconfig
+```
+
 ## Author
 
 ### developer

@@ -21,6 +21,10 @@ DerivedData
 *.xcworkspace
 !default.xcworkspace
 
+# Per-developer file holding the DEVELOPMENT_TEAM used for device builds.
+# See Example/ViewMonitorExample/Signing.xcconfig for details.
+Local.xcconfig
+
 # Bundler
 .bundle
 vendor/bundle/*
