@@ -7,73 +7,80 @@ import UIKit
 struct InfoViewTests {
 
     private func makeInfoView() -> InfoView {
-        InfoView(frame: CGRect(x: 0, y: 0, width: 200, height: 180))
+        InfoView(frame: CGRect(origin: .zero, size: .zero))
     }
 
-    @Test("nil を渡すと全ての項目が None になる")
-    func showsNoneForNilInspection() {
-        let infoView = makeInfoView()
-
-        infoView.update(with: nil)
-
-        #expect(infoView.xLabel.text == "x:None")
-        #expect(infoView.yLabel.text == "y:None")
-        #expect(infoView.widthLabel.text == "width:None")
-        #expect(infoView.heightLabel.text == "height:None")
-        #expect(infoView.backgroundLabel.text == "background:None")
-        #expect(infoView.fontLabel.text == "font:None")
-        #expect(infoView.fontSizeLabel.text == "fontSize:None")
-        #expect(infoView.fontColorLabel.text == "fontColor:None")
+    private var commonRows: [InfoRow] {
+        [
+            InfoRow(title: "class", value: "UIView"),
+            InfoRow(title: "x", value: "16"),
+            InfoRow(title: "y", value: "120"),
+            InfoRow(title: "width", value: "343"),
+            InfoRow(title: "height", value: "20"),
+            InfoRow(title: "background", value: "None"),
+            InfoRow(title: "alpha", value: "1"),
+            InfoRow(title: "cornerRadius", value: "0")
+        ]
     }
 
-    @Test("背景色を # 付きで表示する")
-    func showsBackgroundColorWithHash() {
-        let infoView = makeInfoView()
-        let view = UIView()
-        view.backgroundColor = UIColor(monitorHex: "7ED321")
-
-        infoView.update(with: ViewInspector.inspect(view, in: nil))
-
-        #expect(infoView.backgroundLabel.text == "background:#7ed321")
+    private var fontRows: [InfoRow] {
+        [
+            InfoRow(title: "font", value: "Helvetica"),
+            InfoRow(title: "fontSize", value: "17"),
+            InfoRow(title: "fontColor", value: "#333333")
+        ]
     }
 
-    @Test("UILabel のフォント名を表示する")
-    func showsFontFamilyName() {
+    @Test("行を順序通りに title: value 形式で描画する")
+    func rendersRowsInOrder() {
         let infoView = makeInfoView()
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 17)
 
-        infoView.update(with: ViewInspector.inspect(label, in: nil))
+        infoView.update(rows: commonRows)
 
-        #expect(infoView.fontLabel.text == "font:\(UIFont.systemFont(ofSize: 17).familyName)")
+        #expect(infoView.rowLabels.map(\.text) == [
+            "class: UIView",
+            "x: 16",
+            "y: 120",
+            "width: 343",
+            "height: 20",
+            "background: None",
+            "alpha: 1",
+            "cornerRadius: 0"
+        ])
     }
 
-    @Test("UILabel の次にフォントを持たないビューを表示しても前の値が残らない")
-    func doesNotKeepStaleFontValue() {
-        // 旧実装では didSet のリセットから font だけ漏れており、
-        // 前に選んだラベルのフォント名が残り続けていた。
+    @Test("行数が増えると高さが伸び、幅は 200 のまま")
+    func growsWithRowCount() {
         let infoView = makeInfoView()
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 17)
-        label.textColor = .red
-        infoView.update(with: ViewInspector.inspect(label, in: nil))
 
-        infoView.update(with: ViewInspector.inspect(UIImageView(), in: nil))
+        infoView.update(rows: commonRows)
+        let commonHeight = infoView.frame.height
+        infoView.update(rows: commonRows + fontRows)
 
-        #expect(infoView.fontLabel.text == "font:None")
-        #expect(infoView.fontSizeLabel.text == "fontSize:None")
-        #expect(infoView.fontColorLabel.text == "fontColor:None")
+        #expect(infoView.frame.height > commonHeight)
+        #expect(infoView.frame.width == 200)
     }
 
-    @Test("背景色を持つビューの次に持たないビューを表示しても前の値が残らない")
-    func doesNotKeepStaleBackgroundValue() {
+    @Test("行が減る再更新で前の行が残らない")
+    func doesNotKeepStaleRows() {
+        // 2.0.0 で修正したフォント名残留バグ（didSet のリセット漏れ）の回帰ピン。
+        // 全行を作り直す方式なら構造的に起こらないことを固定する。
         let infoView = makeInfoView()
-        let colored = UIView()
-        colored.backgroundColor = .red
-        infoView.update(with: ViewInspector.inspect(colored, in: nil))
+        infoView.update(rows: commonRows + fontRows)
 
-        infoView.update(with: ViewInspector.inspect(UIView(), in: nil))
+        infoView.update(rows: commonRows)
 
-        #expect(infoView.backgroundLabel.text == "background:None")
+        #expect(infoView.rowLabels.count == 8)
+        #expect(infoView.rowLabels.compactMap(\.text).allSatisfy { !$0.contains("Helvetica") })
+    }
+
+    @Test("ドラッグ相当の origin 変更後も update で origin が動かない")
+    func keepsOriginAcrossUpdates() {
+        let infoView = makeInfoView()
+        infoView.frame.origin = CGPoint(x: 40, y: 300)
+
+        infoView.update(rows: commonRows)
+
+        #expect(infoView.frame.origin == CGPoint(x: 40, y: 300))
     }
 }

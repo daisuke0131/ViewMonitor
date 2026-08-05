@@ -13,16 +13,19 @@ enum ViewInspector {
     @MainActor
     static func inspect(_ view: UIView, in window: UIWindow?) -> ViewInspection {
         ViewInspection(
+            className: ViewHierarchyScanner.className(of: view),
             frameInWindow: window?.convert(view.bounds, from: view) ?? view.bounds,
             size: view.frame.size,
             backgroundColorHex: view.backgroundColor?.monitorHexString,
+            alpha: view.alpha,
+            cornerRadius: view.layer.cornerRadius,
             font: fontInfo(of: view)
         )
     }
 
     @MainActor
     private static func fontInfo(of view: UIView) -> ViewInspection.FontInfo? {
-        guard let label = view as? UILabel, let font = label.font else {
+        guard let label = textLabel(of: view), let font = label.font else {
             return nil
         }
         return ViewInspection.FontInfo(
@@ -30,5 +33,19 @@ enum ViewInspector {
             pointSize: font.pointSize,
             colorHex: label.textColor?.monitorHexString
         )
+    }
+
+    /// フォント情報の供給元となるラベル。
+    /// UIButton はタイトル未設定などで `titleLabel` が nil のことがあり、その場合はフォント行を出さない。
+    @MainActor
+    private static func textLabel(of view: UIView) -> UILabel? {
+        switch view {
+        case let label as UILabel:
+            return label
+        case let button as UIButton:
+            return button.titleLabel
+        default:
+            return nil
+        }
     }
 }

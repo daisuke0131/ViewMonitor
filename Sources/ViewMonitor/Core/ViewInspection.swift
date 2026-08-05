@@ -9,6 +9,9 @@ import UIKit
 /// 表示側はこの値を受け取って描画するだけにし、計測ロジックを持たせない。
 struct ViewInspection: Equatable {
 
+    /// モジュール名を除いたクラス名。KVO 合成クラスは本来のクラスに正規化済み。
+    let className: String
+
     /// ウィンドウ座標系での位置とサイズ。
     let frameInWindow: CGRect
 
@@ -18,7 +21,13 @@ struct ViewInspection: Equatable {
     /// 背景色（`RRGGBB`）。取得できない場合は nil。
     let backgroundColorHex: String?
 
-    /// フォント情報。UILabel 以外は nil。
+    /// 不透明度。
+    let alpha: CGFloat
+
+    /// 角丸の半径。
+    let cornerRadius: CGFloat
+
+    /// フォント情報。テキストを持つビュー（UILabel / UIButton）以外は nil。
     let font: FontInfo?
 
     struct FontInfo: Equatable {
