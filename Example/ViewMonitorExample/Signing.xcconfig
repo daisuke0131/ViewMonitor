@@ -1,0 +1,14 @@
+// Code signing settings for ViewMonitorExample.
+//
+// Building for a device needs a DEVELOPMENT_TEAM, but the value differs per
+// developer and this is a public repository, so it lives neither in the
+// pbxproj nor in this file. Create a Local.xcconfig as below and Cmd+R in
+// Xcode will deploy to a device (you can find your Team ID under Signing &
+// Capabilities in Xcode, or on your Apple Developer membership page):
+//
+//   echo 'DEVELOPMENT_TEAM = XXXXXXXXXX' > Example/ViewMonitorExample/Local.xcconfig
+//
+// Local.xcconfig is git-ignored. The include below is optional (#include?) so
+// builds don't break where the file is absent, such as on CI. Simulator builds
+// don't need signing at all, so they need no setting here.
+#include? "Local.xcconfig"

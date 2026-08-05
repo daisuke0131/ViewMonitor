@@ -1,12 +1,13 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# ViewMonitorExample.xcodeproj を生成する。
-# Xcode の GUI を使わずにプロジェクトを再生成できるようにするためのスクリプト。
+# Generates ViewMonitorExample.xcodeproj so the project can be recreated
+# without going through the Xcode GUI.
 #
 #   bundle exec ruby Example/ViewMonitorExample/generate_project.rb
 #
-# 生成物はコミットする。プロジェクト設定を変えたいときはこのスクリプトを編集して再実行する。
+# The generated project is committed. To change a project setting, edit this
+# script and re-run it rather than editing the project in Xcode.
 
 require 'xcodeproj'
 require 'fileutils'
@@ -18,6 +19,7 @@ PROJECT_PATH = File.join(EXAMPLE_DIR, 'ViewMonitorExample.xcodeproj')
 TARGET_NAME = 'ViewMonitorExample'
 BUNDLE_ID   = 'daisuke.ViewMonitorExample'
 DEPLOYMENT_TARGET = '15.0'
+XCCONFIG_NAME = 'Signing.xcconfig'
 
 FileUtils.rm_rf(PROJECT_PATH)
 project = Xcodeproj::Project.new(PROJECT_PATH)
@@ -28,13 +30,13 @@ end
 
 target = project.new_target(:application, TARGET_NAME, :ios, DEPLOYMENT_TARGET)
 
-# `new_target` は Foundation.framework をデフォルトでリンクするが、
-# そのファイル参照はインストール済み SDK のバージョンを直接パスに埋め込む
-# (例: iPhoneOS26.0.sdk、sourceTree = DEVELOPER_DIR)。リンクには不要
-# （Swift/UIKit アプリは Foundation を自動リンクする）な上、生成のたびに
-# 実行環境の SDK バージョンが pbxproj に焼き込まれ、他の環境で再生成すると
-# 差分が生まれてしまう。ビルドフェーズから外すだけでなく、ファイル参照と
-# その親グループ（Frameworks/iOS）も project から完全に取り除く。
+# `new_target` links Foundation.framework by default, but its file reference
+# hardcodes the version of the installed SDK into the path (e.g.
+# iPhoneOS26.0.sdk, sourceTree = DEVELOPER_DIR). The link is unnecessary
+# (Swift/UIKit apps link Foundation automatically) and it bakes the generating
+# machine's SDK version into the pbxproj, so regenerating elsewhere produces a
+# spurious diff. Drop it from the build phase and also remove the file
+# reference and its parent group (Frameworks/iOS) from the project entirely.
 target.frameworks_build_phase.clear
 if (ios_frameworks_group = project.frameworks_group['iOS'])
   ios_frameworks_group.children.each(&:remove_from_project)
@@ -59,7 +61,7 @@ resources.each do |name|
   target.add_resources([file])
 end
 
-# ルートの Package.swift をローカル参照として追加し、ViewMonitor をリンクする。
+# Reference the root Package.swift locally and link ViewMonitor from it.
 package_ref = project.new(Xcodeproj::Project::Object::XCLocalSwiftPackageReference)
 package_ref.relative_path = '../..'
 project.root_object.package_references << package_ref
@@ -68,7 +70,13 @@ product_ref = project.new(Xcodeproj::Project::Object::XCSwiftPackageProductDepen
 product_ref.product_name = 'ViewMonitor'
 target.package_product_dependencies << product_ref
 
+# DEVELOPMENT_TEAM differs per developer, so it is not baked into the pbxproj.
+# It comes from a git-ignored Local.xcconfig instead; see Signing.xcconfig.
+xcconfig_ref = project.main_group.new_reference(File.join(EXAMPLE_DIR, XCCONFIG_NAME))
+
 target.build_configurations.each do |config|
+  config.base_configuration_reference = xcconfig_ref
+
   settings = config.build_settings
   settings['PRODUCT_BUNDLE_IDENTIFIER'] = BUNDLE_ID
   settings['IPHONEOS_DEPLOYMENT_TARGET'] = DEPLOYMENT_TARGET
@@ -76,18 +84,23 @@ target.build_configurations.each do |config|
   settings['INFOPLIST_FILE'] = 'ViewMonitorExample/Info.plist'
   settings['GENERATE_INFOPLIST_FILE'] = 'NO'
   settings['TARGETED_DEVICE_FAMILY'] = '1,2'
-  settings['CODE_SIGNING_ALLOWED'] = 'NO'
+  # Don't require signing for the simulator: CI has neither a signing
+  # certificate nor a DEVELOPMENT_TEAM, so the example build job fails without
+  # this. Devices (iphoneos) can't install an unsigned build, so the setting is
+  # conditioned on the SDK and device builds sign as usual.
+  settings['CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]'] = 'NO'
+  settings['CODE_SIGN_STYLE'] = 'Automatic'
   settings['ASSETCATALOG_COMPILER_APPICON_NAME'] = 'AppIcon'
-  # Images.xcassets に AccentColor.colorset が無いため、gem のデフォルト値の
-  # ままだと「Accent color 'AccentColor' is not present in any asset
-  # catalogs」という警告がビルドのたびに出る。アクセントカラーを定義する
-  # つもりが無いので設定自体を消す。
+  # Images.xcassets has no AccentColor.colorset, so the gem's default value
+  # makes every build warn "Accent color 'AccentColor' is not present in any
+  # asset catalogs". We don't intend to define an accent color, so drop the
+  # setting altogether.
   settings.delete('ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME')
 end
 
 project.save
 
-# CI から -scheme ViewMonitorExample で参照できるよう共有スキームを作る。
+# Create a shared scheme so CI can refer to it with -scheme ViewMonitorExample.
 scheme = Xcodeproj::XCScheme.new
 scheme.add_build_target(target)
 scheme.set_launch_target(target)
