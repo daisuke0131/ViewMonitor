@@ -49,6 +49,7 @@ final class MonitorOverlay: NSObject {
         infoView = nil
         forcedInteractionViews.forEach { $0.isUserInteractionEnabled = false }
         forcedInteractionViews.removeAll()
+        lastSelectedButton = nil
         rootView = nil
     }
 
@@ -102,7 +103,8 @@ final class MonitorOverlay: NSObject {
             let inspection = sender.targetView.map { ViewInspector.inspect($0, in: window) }
             let reference: ViewInspection? = {
                 guard let last = lastSelectedButton, last !== sender,
-                      let referenceView = last.targetView, referenceView.window != nil else {
+                      let referenceView = last.targetView,
+                      let referenceWindow = referenceView.window, referenceWindow === window else {
                     return nil
                 }
                 return ViewInspector.inspect(referenceView, in: window)
