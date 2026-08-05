@@ -85,4 +85,45 @@ struct ViewInspectorTests {
 
         #expect(inspection.frameInWindow == CGRect(x: 0, y: 0, width: 60, height: 20))
     }
+
+    @Test("クラス名を取り出す")
+    func readsClassName() {
+        let inspection = ViewInspector.inspect(UILabel(), in: nil)
+
+        #expect(inspection.className == "UILabel")
+    }
+
+    @Test("alpha を取り出す")
+    func readsAlpha() {
+        let view = UIView()
+        view.alpha = 0.5
+
+        let inspection = ViewInspector.inspect(view, in: nil)
+
+        #expect(inspection.alpha == 0.5)
+    }
+
+    @Test("cornerRadius を取り出す")
+    func readsCornerRadius() {
+        let view = UIView()
+        view.layer.cornerRadius = 8
+
+        let inspection = ViewInspector.inspect(view, in: nil)
+
+        #expect(inspection.cornerRadius == 8)
+    }
+
+    @Test("UIButton のタイトルからフォント情報を取り出す")
+    func readsFontInfoFromButton() throws {
+        let button = UIButton(type: .system)
+        button.setTitle("Tap", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        button.setTitleColor(UIColor(monitorHex: "FF0000"), for: .normal)
+
+        let inspection = ViewInspector.inspect(button, in: nil)
+        let font = try #require(inspection.font)
+
+        #expect(font.pointSize == 15)
+        #expect(font.familyName == UIFont.systemFont(ofSize: 15).familyName)
+    }
 }
