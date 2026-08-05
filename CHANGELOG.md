@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- 実行ボタンが固定座標 `y: 20.0` に配置されており、ノッチや Dynamic Island のある端末ではステータスバーや島の下に隠れてタップできなくなっていた問題。`x` 側も `safeAreaInsets.right` を無視していたため、横向きでノッチ側に同様の問題があった。座標計算を `safeAreaInsets` を考慮した `MonitorLauncherButton.origin(inBounds:safeAreaInsets:)` に切り出して解消（[#34](https://github.com/daisuke0131/ViewMonitor/issues/34)）
+
 ## [2.0.0] - 2026-08-05
 
 5年ぶりの更新。Xcode 26 / Swift 6 / iOS 15+ に対応し、ビルド基盤を刷新した。

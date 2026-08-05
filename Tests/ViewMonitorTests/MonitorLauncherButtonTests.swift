@@ -1,8 +1,3 @@
-//
-//  MonitorLauncherButtonTests.swift
-//  ViewMonitor
-//
-
 import Testing
 import UIKit
 @testable import ViewMonitor
@@ -18,8 +13,10 @@ struct MonitorLauncherButtonTests {
         let origin = MonitorLauncherButton.origin(inBounds: bounds, safeAreaInsets: .zero)
 
         #expect(origin.y == 20)
-        let expectedX = bounds.maxX - MonitorLauncherButton.size.width - MonitorLauncherButton.margin
-        #expect(origin.x == expectedX)
+        // x = bounds.maxX(390) - insets.right(0) - size.width(72) - margin(20) = 298。
+        // 修正前の固定値 `width - 100.0` は 390 - 100 = 290 だったので、
+        // 承認済みの挙動変更どおりボタンが 8pt 右に寄る（298 - 290 == 8）。
+        #expect(origin.x == 298)
     }
 
     @Test("Dynamic Island 相当の top: 59 では y == 79 になる（issue #34 の退行検出）")
@@ -51,7 +48,10 @@ struct MonitorLauncherButtonTests {
 
         let origin = MonitorLauncherButton.origin(inBounds: bounds, safeAreaInsets: .zero)
 
-        #expect(origin.x == bounds.minX + MonitorLauncherButton.margin)
+        // クランプ前の x = bounds.maxX(50) - insets.right(0) - size.width(72) - margin(20) = -42。
+        // クランプ後は max(bounds.minX(0) + insets.left(0) + margin(20), -42) == 20 になり、
+        // 負値（画面外の左はみ出し）にならない。
+        #expect(origin.x == 20)
         #expect(origin.x >= bounds.minX)
     }
 }
