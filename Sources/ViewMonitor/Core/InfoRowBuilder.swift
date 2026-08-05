@@ -20,21 +20,17 @@ enum InfoRowBuilder {
     /// nil のときは共通8行をすべて `None` で返す。呼び出し側が計測対象を
     /// 取得できなかった場合の防御的な契約で、前の計測値を出し続けない。
     static func rows(from inspection: ViewInspection?) -> [InfoRow] {
-        guard let inspection else {
-            return ["class", "x", "y", "width", "height", "background", "alpha", "cornerRadius"]
-                .map { InfoRow(title: $0, value: "None") }
-        }
         var rows = [
-            InfoRow(title: "class", value: inspection.className),
-            InfoRow(title: "x", value: format(inspection.frameInWindow.origin.x)),
-            InfoRow(title: "y", value: format(inspection.frameInWindow.origin.y)),
-            InfoRow(title: "width", value: format(inspection.size.width)),
-            InfoRow(title: "height", value: format(inspection.size.height)),
-            InfoRow(title: "background", value: hex(inspection.backgroundColorHex)),
-            InfoRow(title: "alpha", value: format(inspection.alpha)),
-            InfoRow(title: "cornerRadius", value: format(inspection.cornerRadius))
+            InfoRow(title: "class", value: inspection?.className ?? "None"),
+            InfoRow(title: "x", value: inspection.map { format($0.frameInWindow.origin.x) } ?? "None"),
+            InfoRow(title: "y", value: inspection.map { format($0.frameInWindow.origin.y) } ?? "None"),
+            InfoRow(title: "width", value: inspection.map { format($0.size.width) } ?? "None"),
+            InfoRow(title: "height", value: inspection.map { format($0.size.height) } ?? "None"),
+            InfoRow(title: "background", value: inspection.map { hex($0.backgroundColorHex) } ?? "None"),
+            InfoRow(title: "alpha", value: inspection.map { format($0.alpha) } ?? "None"),
+            InfoRow(title: "cornerRadius", value: inspection.map { format($0.cornerRadius) } ?? "None")
         ]
-        if let font = inspection.font {
+        if let font = inspection?.font {
             rows.append(InfoRow(title: "font", value: font.familyName))
             rows.append(InfoRow(title: "fontSize", value: format(font.pointSize)))
             rows.append(InfoRow(title: "fontColor", value: hex(font.colorHex)))
