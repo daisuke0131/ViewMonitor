@@ -59,7 +59,7 @@ struct InfoRowBuilderTests {
 
     @Test("nil は共通8行を全て None で返す")
     func returnsNoneRowsForNil() {
-        // 選択ボタンの targetView（弱参照）が解放済みのときに通る経路。
+        // 計測対象を取得できなかったときの防御的経路。
         // 前のビューの計測値を出し続けない。
         let rows = InfoRowBuilder.rows(from: nil)
 

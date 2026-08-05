@@ -17,8 +17,8 @@ struct InfoRow: Equatable {
 enum InfoRowBuilder {
 
     /// 表示行を組み立てる。
-    /// nil は選択対象のビューが解放済みであることを意味し、
-    /// 共通8行をすべて `None` で返す（前の計測値を出し続けない）。
+    /// nil のときは共通8行をすべて `None` で返す。呼び出し側が計測対象を
+    /// 取得できなかった場合の防御的な契約で、前の計測値を出し続けない。
     static func rows(from inspection: ViewInspection?) -> [InfoRow] {
         guard let inspection else {
             return ["class", "x", "y", "width", "height", "background", "alpha", "cornerRadius"]
