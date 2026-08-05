@@ -93,6 +93,8 @@ final class MonitorOverlay: NSObject {
         guard let infoView else {
             return
         }
+        // 距離セクションを表示しているときだけ非 nil。青枠の維持対象。
+        var referenceButton: MonitorButton?
         if sender.isSelected {
             infoView.isHidden = false
             // 座標変換は show(on:) で受け取った rootView を基準にする。
@@ -112,9 +114,15 @@ final class MonitorOverlay: NSObject {
             infoView.update(rows: InfoRowBuilder.rows(from: inspection, comparedTo: reference))
             sender.layer.borderWidth = 2.0
             sender.layer.borderColor = UIColor.red.cgColor
+            if reference != nil {
+                referenceButton = lastSelectedButton
+                referenceButton?.isSelected = false
+                referenceButton?.layer.borderWidth = 2.0
+                referenceButton?.layer.borderColor = UIColor.systemBlue.cgColor
+            }
             lastSelectedButton = sender
         }
-        for other in buttons where other !== sender {
+        for other in buttons where other !== sender && other !== referenceButton {
             other.layer.borderWidth = 0.0
             other.isSelected = false
         }

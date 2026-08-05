@@ -109,4 +109,69 @@ struct MonitorOverlayTests {
         #expect(texts.count == 8)
         #expect(texts.allSatisfy { $0.hasSuffix(": None") })
     }
+
+    @Test("2つ目の選択で参照ビューに青枠が残る")
+    func secondSelectionMarksReferenceWithBlueBorder() throws {
+        let window = makeWindow()
+        let overlay = MonitorOverlay()
+        let label = UILabel(frame: CGRect(x: 16, y: 100, width: 100, height: 20))
+        let image = UIImageView(frame: CGRect(x: 16, y: 144, width: 100, height: 40))
+        window.addSubview(label)
+        window.addSubview(image)
+        overlay.show(on: window)
+        let labelButton = try #require(monitorButton(on: label))
+        let imageButton = try #require(monitorButton(on: image))
+
+        overlay.select(sender: labelButton)
+        overlay.select(sender: imageButton)
+
+        #expect(imageButton.layer.borderWidth == 2.0)
+        #expect(imageButton.layer.borderColor == UIColor.red.cgColor)
+        #expect(labelButton.layer.borderWidth == 2.0)
+        #expect(labelButton.layer.borderColor == UIColor.systemBlue.cgColor)
+        #expect(labelButton.isSelected == false)
+    }
+
+    @Test("3つ目の選択で青枠は直前の選択に移る")
+    func thirdSelectionMovesBlueBorder() throws {
+        let window = makeWindow()
+        let overlay = MonitorOverlay()
+        let first = UILabel(frame: CGRect(x: 16, y: 100, width: 100, height: 20))
+        let second = UIImageView(frame: CGRect(x: 16, y: 144, width: 100, height: 40))
+        let third = UILabel(frame: CGRect(x: 16, y: 208, width: 100, height: 20))
+        window.addSubview(first)
+        window.addSubview(second)
+        window.addSubview(third)
+        overlay.show(on: window)
+        let firstButton = try #require(monitorButton(on: first))
+        let secondButton = try #require(monitorButton(on: second))
+        let thirdButton = try #require(monitorButton(on: third))
+
+        overlay.select(sender: firstButton)
+        overlay.select(sender: secondButton)
+        overlay.select(sender: thirdButton)
+
+        #expect(thirdButton.layer.borderColor == UIColor.red.cgColor)
+        #expect(secondButton.layer.borderColor == UIColor.systemBlue.cgColor)
+        #expect(firstButton.layer.borderWidth == 0.0)
+    }
+
+    @Test("参照が無効なら青枠を出さない")
+    func invalidReferenceGetsNoBlueBorder() throws {
+        let window = makeWindow()
+        let overlay = MonitorOverlay()
+        let label = UILabel(frame: CGRect(x: 16, y: 100, width: 100, height: 20))
+        let image = UIImageView(frame: CGRect(x: 16, y: 144, width: 100, height: 40))
+        window.addSubview(label)
+        window.addSubview(image)
+        overlay.show(on: window)
+        let labelButton = try #require(monitorButton(on: label))
+        let imageButton = try #require(monitorButton(on: image))
+
+        overlay.select(sender: labelButton)
+        label.removeFromSuperview()
+        overlay.select(sender: imageButton)
+
+        #expect(labelButton.layer.borderWidth == 0.0)
+    }
 }

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- 2つのビュー間の距離計測。ビューを選択したあと別のビューを選択すると、直前の選択との関係が InfoView に表示される。離れていればエッジ間ギャップ（`gapX` / `gapY`）、重なっていれば重なり幅（`overlapX` / `overlapY`）、一方が他方を内包していれば内側ビューのインセット（`top` / `left` / `bottom` / `right`）
+- 2つのビュー間の距離計測。ビューを選択したあと別のビューを選択すると、直前の選択との関係が InfoView に表示される。離れていればエッジ間ギャップ（`gapX` / `gapY`）、重なっていれば重なり幅（`overlapX` / `overlapY`）、一方が他方を内包していれば内側ビューのインセット（`top` / `left` / `bottom` / `right`）。比較相手には青枠が付き、どのビューとの距離かが画面上で分かる
 
 ## [2.1.0] - 2026-08-05
 
