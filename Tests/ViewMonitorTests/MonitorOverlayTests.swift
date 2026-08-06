@@ -21,7 +21,7 @@ struct MonitorOverlayTests {
     }
 
     private func rowTexts(in root: UIView) -> [String] {
-        infoView(in: root)?.rowLabels.compactMap(\.text) ?? []
+        infoView(in: root)?.displayedRows.map { "\($0.title): \($0.value)" } ?? []
     }
 
     /// 疑似ホスティングビューと、その上のアクセシビリティ要素を1つ作る。

@@ -3,36 +3,28 @@
 //  ViewMonitor
 //
 
+import SwiftUI
 import UIKit
 
 /// 計測結果の行を表示するだけのビュー。計測ロジックも行の組み立ても持たない。
+/// 描画は SwiftUI(InfoRowsView)に委譲し、UIKit 側は取り付けとサイズ管理だけを担う。
 final class InfoView: UIView {
 
     /// 表示幅。高さは行数に応じて `update(rows:)` が決める。
     static let width: CGFloat = 200.0
 
-    private static let contentInsets = UIEdgeInsets(top: 10.0, left: 22.0, bottom: 10.0, right: 10.0)
+    private let hostingController = UIHostingController(rootView: InfoRowsView(rows: []))
 
-    private let stackView = UIStackView()
-
-    /// 現在表示中の行ラベル。表示内容の検証用。
-    var rowLabels: [UILabel] {
-        stackView.arrangedSubviews.compactMap { $0 as? UILabel }
-    }
+    /// 現在表示中の行。表示内容の検証用。
+    var displayedRows: [InfoRow] { hostingController.rootView.rows }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         layer.cornerRadius = 10.0
-        stackView.axis = .vertical
-        stackView.spacing = 6.0
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(stackView)
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor, constant: Self.contentInsets.top),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Self.contentInsets.left),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Self.contentInsets.right),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Self.contentInsets.bottom)
-        ])
+        hostingController.view.backgroundColor = .clear
+        hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        hostingController.view.frame = bounds
+        addSubview(hostingController.view)
         update(rows: [])
     }
 
@@ -47,21 +39,11 @@ final class InfoView: UIView {
     /// 自身のサイズは frame 管理のまま（superview への制約なし）にして、
     /// MonitorOverlay のドラッグ移動（center の書き換え）と衝突させない。
     func update(rows: [InfoRow]) {
-        for view in stackView.arrangedSubviews {
-            view.removeFromSuperview()
-        }
-        for row in rows {
-            let label = UILabel()
-            label.textColor = .white
-            label.font = .systemFont(ofSize: 11)
-            label.text = "\(row.title): \(row.value)"
-            stackView.addArrangedSubview(label)
-        }
-        let height = systemLayoutSizeFitting(
-            CGSize(width: Self.width, height: UIView.layoutFittingCompressedSize.height),
-            withHorizontalFittingPriority: .required,
-            verticalFittingPriority: .fittingSizeLevel
+        hostingController.rootView = InfoRowsView(rows: rows)
+        let height = hostingController.sizeThatFits(
+            in: CGSize(width: Self.width, height: .greatestFiniteMagnitude)
         ).height
         frame.size = CGSize(width: Self.width, height: height)
+        hostingController.view.frame = bounds
     }
 }
