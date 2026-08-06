@@ -47,6 +47,12 @@ final class MonitorOverlay: NSObject {
         for target in scanner.measurementTargets(in: rootView) {
             addMonitorButton(for: target, rootView: rootView)
         }
+        // SwiftUI 要素のボタンは rootView に直接addSubviewするため、
+        // infoView より後に追加されると重なり順で上に乗ってしまう。
+        // ドラッグ用ジェスチャの奪い合いを防ぐため、追加後に最前面へ戻す。
+        if let infoView {
+            rootView.bringSubviewToFront(infoView)
+        }
     }
 
     /// オーバーレイを取り除き、変更したビューの状態を元に戻す。

@@ -271,4 +271,23 @@ struct MonitorOverlayTests {
         #expect(texts.contains("vs: UILabel"))
         #expect(texts.contains("gapY: 24"))
     }
+
+    @Test("infoView と重なる SwiftUI 要素のボタンを追加しても infoView が最前面に留まる")
+    func infoViewStaysInFrontOfOverlappingAccessibilityButton() throws {
+        // infoView は (width - 220, 70) 付近に表示される。SwiftUI 要素のボタンは
+        // rootView に直接addSubviewされるため、対策前は後から追加された分だけ
+        // infoView より前面に来てドラッグ操作やタップを奪ってしまっていた。
+        let window = makeWindow()
+        let (host, _) = makeAccessibilityProbe(frame: CGRect(x: 150, y: 80, width: 100, height: 40))
+        window.addSubview(host)
+        let overlay = makeOverlay(hostingProbe: host)
+
+        overlay.show(on: window)
+
+        let button = try #require(monitorButton(on: window))
+        let info = try #require(infoView(in: window))
+        let buttonIndex = try #require(window.subviews.firstIndex { $0 === button })
+        let infoIndex = try #require(window.subviews.firstIndex { $0 === info })
+        #expect(infoIndex > buttonIndex)
+    }
 }
