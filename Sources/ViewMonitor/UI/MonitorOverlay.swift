@@ -20,6 +20,10 @@ final class MonitorOverlay: NSObject {
     /// 計測のために userInteractionEnabled を一時的に有効化したビュー。
     /// hide() で元に戻す。
     private var forcedInteractionViews: [UIView] = []
+    /// 直前に選択したボタン。距離計測の参照元。
+    /// weak なので hide() / 画面遷移の reload でボタンが破棄されれば
+    /// 自動的に nil に戻り、古い画面のビューとペアになることがない。
+    private weak var lastSelectedButton: MonitorButton?
 
     init(configuration: MonitorConfiguration = .default) {
         self.configuration = configuration
@@ -45,6 +49,7 @@ final class MonitorOverlay: NSObject {
         infoView = nil
         forcedInteractionViews.forEach { $0.isUserInteractionEnabled = false }
         forcedInteractionViews.removeAll()
+        lastSelectedButton = nil
         rootView = nil
     }
 
@@ -80,12 +85,16 @@ final class MonitorOverlay: NSObject {
         view.addSubview(button)
     }
 
+    /// 選択状態の切り替え。実行時はボタンの target-action からのみ呼ばれる。
+    /// MonitorOverlayTests から呼べるよう internal にしている。
     @objc
-    private func select(sender: MonitorButton) {
+    func select(sender: MonitorButton) {
         sender.isSelected.toggle()
         guard let infoView else {
             return
         }
+        // 距離セクションを表示しているときだけ非 nil。青枠の維持対象。
+        var referenceButton: MonitorButton?
         if sender.isSelected {
             infoView.isHidden = false
             // 座標変換は show(on:) で受け取った rootView を基準にする。
@@ -94,11 +103,26 @@ final class MonitorOverlay: NSObject {
             // シーンがずれたときに誤ったウィンドウで変換してしまう。
             let window = rootView?.window ?? (rootView as? UIWindow)
             let inspection = sender.targetView.map { ViewInspector.inspect($0, in: window) }
-            infoView.update(rows: InfoRowBuilder.rows(from: inspection))
+            let reference: ViewInspection? = {
+                guard let last = lastSelectedButton, last !== sender,
+                      let referenceView = last.targetView,
+                      let referenceWindow = referenceView.window, referenceWindow === window else {
+                    return nil
+                }
+                return ViewInspector.inspect(referenceView, in: window)
+            }()
+            infoView.update(rows: InfoRowBuilder.rows(from: inspection, comparedTo: reference))
             sender.layer.borderWidth = 2.0
             sender.layer.borderColor = UIColor.red.cgColor
+            if reference != nil {
+                referenceButton = lastSelectedButton
+                referenceButton?.isSelected = false
+                referenceButton?.layer.borderWidth = 2.0
+                referenceButton?.layer.borderColor = UIColor.systemBlue.cgColor
+            }
+            lastSelectedButton = sender
         }
-        for other in buttons where other !== sender {
+        for other in buttons where other !== sender && other !== referenceButton {
             other.layer.borderWidth = 0.0
             other.isSelected = false
         }

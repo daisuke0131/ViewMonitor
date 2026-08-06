@@ -86,4 +86,66 @@ struct InfoRowBuilderTests {
 
         #expect(rows[1] == InfoRow(title: "x", value: pair.1))
     }
+
+    @Test("分離した参照を渡すと vs 行と gap 行が末尾に並ぶ")
+    func appendsDistanceRowsForSeparatedReference() {
+        // 現在: y120 h20 → minY 120 / 参照: y76 h20 → maxY 96 → gapY 24。X は同一投影で nil
+        let reference = makeInspection(className: "UILabel", y: 76, height: 20)
+
+        let rows = InfoRowBuilder.rows(from: makeInspection(), comparedTo: reference)
+
+        #expect(Array(rows.suffix(2)) == [
+            InfoRow(title: "vs", value: "UILabel"),
+            InfoRow(title: "gapY", value: "24")
+        ])
+    }
+
+    @Test("重なっている参照は overlap 行になる")
+    func appendsOverlapRows() {
+        // 現在 x16..359 y120..140 / 参照 x200..543 y130..150 → overlapX 159, overlapY 10
+        let reference = makeInspection(className: "UIView", x: 200, y: 130)
+
+        let rows = InfoRowBuilder.rows(from: makeInspection(), comparedTo: reference)
+
+        #expect(Array(rows.suffix(3)) == [
+            InfoRow(title: "vs", value: "UIView"),
+            InfoRow(title: "overlapX", value: "159"),
+            InfoRow(title: "overlapY", value: "10")
+        ])
+    }
+
+    @Test("内包する参照はインセット4行になる")
+    func appendsInsetRows() {
+        // 現在 x16..359 y120..140 は参照 x0..375 y100..160 に内包
+        let reference = makeInspection(className: "UIStackView", x: 0, y: 100, width: 375, height: 60)
+
+        let rows = InfoRowBuilder.rows(from: makeInspection(), comparedTo: reference)
+
+        #expect(Array(rows.suffix(5)) == [
+            InfoRow(title: "vs", value: "UIStackView"),
+            InfoRow(title: "top", value: "20"),
+            InfoRow(title: "left", value: "16"),
+            InfoRow(title: "bottom", value: "20"),
+            InfoRow(title: "right", value: "16")
+        ])
+    }
+
+    @Test("inspection が nil なら参照があっても距離セクションを出さない")
+    func omitsDistanceSectionForNilInspection() {
+        let rows = InfoRowBuilder.rows(from: nil, comparedTo: makeInspection())
+
+        #expect(rows.map(\.title) == ["class", "x", "y", "width", "height", "background", "alpha", "cornerRadius"])
+    }
+
+    @Test("フォント行の後に距離セクションが来る")
+    func distanceSectionFollowsFontRows() {
+        let font = ViewInspection.FontInfo(familyName: "Helvetica", pointSize: 17, colorHex: nil)
+        let reference = makeInspection(className: "UILabel", y: 76, height: 20)
+
+        let rows = InfoRowBuilder.rows(from: makeInspection(font: font), comparedTo: reference)
+
+        #expect(rows.count == 13)
+        #expect(rows[10].title == "fontColor")
+        #expect(rows[11] == InfoRow(title: "vs", value: "UILabel"))
+    }
 }
