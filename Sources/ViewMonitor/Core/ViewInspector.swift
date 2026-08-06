@@ -19,6 +19,7 @@ enum ViewInspector {
             backgroundColorHex: view.backgroundColor?.monitorHexString,
             alpha: view.alpha,
             cornerRadius: view.layer.cornerRadius,
+            text: nil,
             font: fontInfo(of: view)
         )
     }
