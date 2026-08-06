@@ -24,6 +24,27 @@ enum ViewInspector {
         )
     }
 
+    /// SwiftUI のアクセシビリティ要素を `window` の座標系で計測する。
+    /// `accessibilityFrame` はスクリーン座標のため window 座標へ変換する。
+    /// `window` が nil の場合は accessibilityFrame をそのまま使う。
+    @MainActor
+    static func inspect(element: NSObject, kind: String, in window: UIWindow?) -> ViewInspection {
+        let screenFrame = element.accessibilityFrame
+        let frame = window.map {
+            $0.coordinateSpace.convert(screenFrame, from: $0.screen.coordinateSpace)
+        } ?? screenFrame
+        return ViewInspection(
+            className: kind,
+            frameInWindow: frame,
+            size: frame.size,
+            backgroundColorHex: nil,
+            alpha: nil,
+            cornerRadius: nil,
+            text: element.accessibilityLabel,
+            font: nil
+        )
+    }
+
     @MainActor
     private static func fontInfo(of view: UIView) -> ViewInspection.FontInfo? {
         guard let label = textLabel(of: view), let font = label.font else {
