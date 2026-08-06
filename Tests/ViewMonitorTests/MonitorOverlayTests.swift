@@ -112,8 +112,8 @@ struct MonitorOverlayTests {
         #expect(!rowTexts(in: window).contains { $0.hasPrefix("vs:") })
     }
 
-    @Test("targetView が nil のボタンを選択すると全項目 None になる")
-    func nilTargetShowsNoneRows() throws {
+    @Test("measurementTarget が nil のボタンを選択すると全項目 None になる")
+    func nilMeasurementTargetShowsNoneRows() throws {
         // フェーズAで未検証だった防御的経路の回収。
         let window = makeWindow()
         let overlay = MonitorOverlay()
