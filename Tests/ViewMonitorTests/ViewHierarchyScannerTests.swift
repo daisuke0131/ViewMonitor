@@ -1,5 +1,6 @@
 import Testing
 import UIKit
+import SwiftUI
 @testable import ViewMonitor
 
 /// 追加対象クラスの指定を検証するためのテスト専用ビュー。
@@ -124,5 +125,57 @@ struct ViewHierarchyScannerTests {
     func stripsModuleNameFromClassName() {
         #expect(ViewHierarchyScanner.className(of: ScannerProbeView()) == "ScannerProbeView")
         #expect(ViewHierarchyScanner.className(of: UILabel()) == "UILabel")
+    }
+
+    @Test("ホスティングビュー配下のアクセシビリティ要素を統合して集める")
+    func collectsAccessibilityTargetsFromHostingView() {
+        let root = UIView()
+        let label = UILabel()
+        let hostingProbe = UIView()
+        let element = UIAccessibilityElement(accessibilityContainer: hostingProbe)
+        element.isAccessibilityElement = true
+        element.accessibilityTraits = .staticText
+        hostingProbe.accessibilityElements = [element]
+        root.addSubview(label)
+        root.addSubview(hostingProbe)
+        let scanner = ViewHierarchyScanner(isHostingView: { $0 === hostingProbe })
+
+        let targets = scanner.measurementTargets(in: root)
+
+        let views = targets.compactMap { target -> UIView? in
+            if case .uiKitView(let view) = target { return view }
+            return nil
+        }
+        let elements = targets.compactMap { target -> AccessibilityElementInfo? in
+            if case .accessibilityElement(let info) = target { return info }
+            return nil
+        }
+        #expect(views == [label])
+        #expect(elements.count == 1)
+        #expect(elements[0].element === element)
+        #expect(elements[0].hostingView === hostingProbe)
+    }
+
+    @Test("除外対象のホスティングビューは走査しない")
+    func skipsRejectedHostingView() {
+        let root = UIView()
+        let hostingProbe = UIView()
+        hostingProbe.tag = MonitorConfiguration.default.rejectedTag
+        let element = UIAccessibilityElement(accessibilityContainer: hostingProbe)
+        element.isAccessibilityElement = true
+        element.accessibilityTraits = .staticText
+        hostingProbe.accessibilityElements = [element]
+        root.addSubview(hostingProbe)
+        let scanner = ViewHierarchyScanner(isHostingView: { $0 === hostingProbe })
+
+        #expect(scanner.measurementTargets(in: root).isEmpty)
+    }
+
+    @Test("既定のホスティングビュー判定は _UIHostingView を検出する")
+    func detectsRealHostingView() {
+        let hostingView = UIHostingController(rootView: Text("A")).view ?? UIView()
+
+        #expect(ViewHierarchyScanner.isDefaultHostingView(hostingView))
+        #expect(!ViewHierarchyScanner.isDefaultHostingView(UIView()))
     }
 }

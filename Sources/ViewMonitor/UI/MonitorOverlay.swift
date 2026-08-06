@@ -25,9 +25,17 @@ final class MonitorOverlay: NSObject {
     /// 自動的に nil に戻り、古い画面のビューとペアになることがない。
     private weak var lastSelectedButton: MonitorButton?
 
-    init(configuration: MonitorConfiguration = .default) {
+    /// 座標変換の基準ウィンドウ。show(on:) で受け取った rootView を基準にする。
+    /// WindowProvider.keyWindow を都度引き直すと、iPad のマルチシーン環境で
+    /// オーバーレイの取り付け先と foreground のシーンがずれたときに
+    /// 誤ったウィンドウで変換してしまう。
+    private var currentWindow: UIWindow? {
+        rootView?.window ?? (rootView as? UIWindow)
+    }
+
+    init(configuration: MonitorConfiguration = .default, scanner: ViewHierarchyScanner? = nil) {
         self.configuration = configuration
-        self.scanner = ViewHierarchyScanner(configuration: configuration)
+        self.scanner = scanner ?? ViewHierarchyScanner(configuration: configuration)
         super.init()
     }
 
@@ -36,8 +44,14 @@ final class MonitorOverlay: NSObject {
         hide()
         self.rootView = rootView
         addInfoView(to: rootView)
-        for view in scanner.targets(in: rootView) {
-            addMonitorButton(on: view)
+        for target in scanner.measurementTargets(in: rootView) {
+            addMonitorButton(for: target, rootView: rootView)
+        }
+        // SwiftUI 要素のボタンは rootView に直接addSubviewするため、
+        // infoView より後に追加されると重なり順で上に乗ってしまう。
+        // ドラッグ用ジェスチャの奪い合いを防ぐため、追加後に最前面へ戻す。
+        if let infoView {
+            rootView.bringSubviewToFront(infoView)
         }
     }
 
@@ -68,21 +82,37 @@ final class MonitorOverlay: NSObject {
         self.infoView = infoView
     }
 
-    private func addMonitorButton(on view: UIView) {
-        let button = MonitorButton(frame: CGRect(origin: .zero, size: view.frame.size))
+    private func addMonitorButton(for target: MeasurementTarget, rootView: UIView) {
+        switch target {
+        case .uiKitView(let view):
+            let button = makeMonitorButton(for: target, frame: CGRect(origin: .zero, size: view.frame.size))
+            if !view.isUserInteractionEnabled {
+                forcedInteractionViews.append(view)
+                view.isUserInteractionEnabled = true
+            }
+            view.addSubview(button)
+        case .accessibilityElement(let info):
+            guard let element = info.element else {
+                return
+            }
+            // ViewMonitor は keyWindow を rootView として渡すため window 座標 = rootView 座標。
+            // 対象の UIView が存在しないので rootView 直下に固定配置する(スクロール非追従)。
+            let frame = ViewInspector.inspect(element: element, kind: info.kind, in: currentWindow).frameInWindow
+            let button = makeMonitorButton(for: target, frame: frame)
+            rootView.addSubview(button)
+        }
+    }
+
+    private func makeMonitorButton(for target: MeasurementTarget, frame: CGRect) -> MonitorButton {
+        let button = MonitorButton(frame: frame)
         let color = UIColor(monitorHex: configuration.overlayColorHex, alpha: configuration.overlayAlpha) ?? .green
         button.setBackgroundImage(.monitorSolidColor(color), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 15.0)
         button.addTarget(self, action: #selector(select(sender:)), for: .touchUpInside)
-        button.targetView = view
+        button.measurementTarget = target
         button.alpha = 0.2
         buttons.append(button)
-
-        if !view.isUserInteractionEnabled {
-            forcedInteractionViews.append(view)
-            view.isUserInteractionEnabled = true
-        }
-        view.addSubview(button)
+        return button
     }
 
     /// 選択状態の切り替え。実行時はボタンの target-action からのみ呼ばれる。
@@ -97,19 +127,13 @@ final class MonitorOverlay: NSObject {
         var referenceButton: MonitorButton?
         if sender.isSelected {
             infoView.isHidden = false
-            // 座標変換は show(on:) で受け取った rootView を基準にする。
-            // WindowProvider.keyWindow を都度引き直すと、iPad の
-            // マルチシーン環境でオーバーレイの取り付け先と foreground の
-            // シーンがずれたときに誤ったウィンドウで変換してしまう。
-            let window = rootView?.window ?? (rootView as? UIWindow)
-            let inspection = sender.targetView.map { ViewInspector.inspect($0, in: window) }
+            let window = currentWindow
+            let inspection = currentInspection(of: sender, in: window)
             let reference: ViewInspection? = {
-                guard let last = lastSelectedButton, last !== sender,
-                      let referenceView = last.targetView,
-                      let referenceWindow = referenceView.window, referenceWindow === window else {
+                guard let last = lastSelectedButton, last !== sender else {
                     return nil
                 }
-                return ViewInspector.inspect(referenceView, in: window)
+                return referenceInspection(of: last, in: window)
             }()
             infoView.update(rows: InfoRowBuilder.rows(from: inspection, comparedTo: reference))
             sender.layer.borderWidth = 2.0
@@ -136,5 +160,41 @@ final class MonitorOverlay: NSObject {
         let translation = sender.translation(in: container)
         view.center = CGPoint(x: view.center.x + translation.x, y: view.center.y + translation.y)
         sender.setTranslation(.zero, in: container)
+    }
+
+    /// ターゲットの現在値を計測する。要素が破棄されていれば nil。
+    /// `select` 内のローカル変数 `inspection` と衝突しないよう current を冠する。
+    private func currentInspection(of button: MonitorButton, in window: UIWindow?) -> ViewInspection? {
+        switch button.measurementTarget {
+        case .uiKitView(let view):
+            return ViewInspector.inspect(view, in: window)
+        case .accessibilityElement(let info):
+            guard let element = info.element else {
+                return nil
+            }
+            return ViewInspector.inspect(element: element, kind: info.kind, in: window)
+        case nil:
+            return nil
+        }
+    }
+
+    /// 参照(距離計測の相手)の計測。取り付け先の window が現在の window と
+    /// 一致するときだけ有効。画面遷移後の古いターゲットとペアにしない。
+    private func referenceInspection(of button: MonitorButton, in window: UIWindow?) -> ViewInspection? {
+        switch button.measurementTarget {
+        case .uiKitView(let view):
+            guard let referenceWindow = view.window, referenceWindow === window else {
+                return nil
+            }
+            return ViewInspector.inspect(view, in: window)
+        case .accessibilityElement(let info):
+            guard let hostingWindow = info.hostingView?.window, hostingWindow === window,
+                  let element = info.element else {
+                return nil
+            }
+            return ViewInspector.inspect(element: element, kind: info.kind, in: window)
+        case nil:
+            return nil
+        }
     }
 }

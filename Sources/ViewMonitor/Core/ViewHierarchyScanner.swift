@@ -1,29 +1,62 @@
 import UIKit
 
-/// ビュー階層を走査して計測対象のビューを集める。
+/// ビュー階層を走査して計測対象を集める。
+/// UIKit ビューに加え、ホスティングビュー配下は SwiftUI のアクセシビリティ要素を集める。
 struct ViewHierarchyScanner {
 
     let configuration: MonitorConfiguration
 
-    init(configuration: MonitorConfiguration = .default) {
+    private let accessibilityScanner = AccessibilityElementScanner()
+
+    /// ホスティングビュー判定。実体はクラス名照合のみだが、テストで差し替えられるよう注入可能にする。
+    private let isHostingView: @MainActor (UIView) -> Bool
+
+    init(
+        configuration: MonitorConfiguration = .default,
+        isHostingView: @escaping @MainActor (UIView) -> Bool = { ViewHierarchyScanner.isDefaultHostingView($0) }
+    ) {
         self.configuration = configuration
+        self.isHostingView = isHostingView
     }
 
-    /// `root` を含む階層から計測対象のビューを深さ優先で集める。
+    /// SwiftUI のホスティングビューかどうか。
+    /// `_UIHostingView<Content>` はジェネリッククラスで `NSStringFromClass` がマングル名を
+    /// 返すため、`String(describing:)` のプレフィックスで判定する。プライベート API は呼ばない。
+    static func isDefaultHostingView(_ view: UIView) -> Bool {
+        String(describing: type(of: view)).hasPrefix("_UIHostingView")
+    }
+
+    /// `root` を含む階層から計測対象を深さ優先で集める。
     /// 除外対象のビューに達した時点で、その子孫は走査しない。
     @MainActor
-    func targets(in root: UIView) -> [UIView] {
+    func measurementTargets(in root: UIView) -> [MeasurementTarget] {
         guard !isRejected(root) else {
             return []
         }
-        var result: [UIView] = []
+        var result: [MeasurementTarget] = []
         if isTarget(root) {
-            result.append(root)
+            result.append(.uiKitView(root))
+        }
+        if isHostingView(root) {
+            result.append(
+                contentsOf: accessibilityScanner.targets(in: root).map { .accessibilityElement($0) }
+            )
         }
         for subview in root.subviews {
-            result.append(contentsOf: targets(in: subview))
+            result.append(contentsOf: measurementTargets(in: subview))
         }
         return result
+    }
+
+    /// `root` を含む階層から計測対象の UIKit ビューだけを集める。
+    @MainActor
+    func targets(in root: UIView) -> [UIView] {
+        measurementTargets(in: root).compactMap { target in
+            if case .uiKitView(let view) = target {
+                return view
+            }
+            return nil
+        }
     }
 
     /// 計測対象かどうか。

@@ -68,12 +68,21 @@ public final class ViewMonitor: NSObject {
             safeAreaInsets: rootView.safeAreaInsets
         )
         let button = MonitorLauncherButton(origin: origin)
-        button.onToggle = { [weak self] isSelected in
+        // button を強参照キャプチャすると button.onToggle → button の自己参照サイクルになり、
+        // removeLauncherButton() は onToggle をクリアしないため reload() のたびに
+        // 直前の実行ボタンがリークする。button も weak で受ける。
+        button.onToggle = { [weak self, weak button] isSelected in
             guard let self, let rootView = self.rootView else {
                 return
             }
             if isSelected {
                 self.overlay.show(on: rootView)
+                // SwiftUI 要素のボタンは rootView に直接addSubviewされるため、
+                // show(on:) の後だと実行ボタンより前面に乗ってしまう。
+                // 実行ボタン(停止操作)がタップやドラッグを奪われないよう最前面に戻す。
+                if let button {
+                    rootView.bringSubviewToFront(button)
+                }
             } else {
                 self.overlay.hide()
             }
@@ -84,6 +93,9 @@ public final class ViewMonitor: NSObject {
     }
 
     // MARK: - Testing seam
+
+    /// テスト用: 起動済みかどうか。公開 API には含まれない。
+    static var isStartedForTesting: Bool { shared.started }
 
     /// テスト用: `rootView` に任意の `UIView` を注入し、実行ボタンを追加した状態を再現する。
     /// ユニットテストのバンドルには接続済みの window scene が無く

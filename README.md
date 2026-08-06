@@ -75,6 +75,51 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 Once running, tap the button that appears in the top-right corner of the screen to start measuring.
 A working sample project is available at `Example/ViewMonitorExample`.
 
+### SwiftUI
+
+For apps using the SwiftUI lifecycle (`@main App`), attach `.viewMonitor()`
+to the root view:
+
+```swift
+import SwiftUI
+import ViewMonitor
+
+@main
+struct MyApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                .viewMonitor()
+        }
+    }
+}
+```
+
+Calling `ViewMonitor.start()` from `App.init()` also works.
+
+SwiftUI's `Text`, `Image`, and `Button` are detected through the
+accessibility elements SwiftUI publishes, so measurement works without any
+changes to your views. A SwiftUI sample project is available at
+`Example/ViewMonitorSwiftUIExample`.
+
+Known limitations for SwiftUI elements:
+
+- SwiftUI elements are detected through the accessibility tree, which iOS
+  builds only while an accessibility client is active (VoiceOver, UI tests,
+  or Xcode's Accessibility Inspector). If no monitor buttons appear over
+  SwiftUI views, attach Accessibility Inspector (Xcode > Open Developer
+  Tool > Accessibility Inspector) or enable VoiceOver, then reopen the
+  screen. On the simulator you can also run
+  `xcrun simctl spawn booted defaults write com.apple.Accessibility AutomationEnabled 1`
+  before launching the app.
+- Measured values are limited to position, size, and text content
+  (font / background / cornerRadius show `None`).
+- Monitor buttons do not follow scrolling; they refresh on screen
+  transitions.
+- Views combined with `.accessibilityElement(children: .combine)` are
+  measured as a single element, and `.accessibilityHidden(true)` views are
+  not detected.
+
 ### Running the sample on a device
 
 The sample runs on the simulator as-is. To run it on a physical device, code
