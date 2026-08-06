@@ -80,4 +80,44 @@ struct ViewMonitorLifecycleTests {
         // 後始末: overlay を閉じる。実行ボタン自体は window ごと ARC で解放される。
         launcher.onToggle?(false)
     }
+
+    @Test("画面遷移で実行ボタンが差し替わると直前のボタンが解放される")
+    func replacedLauncherButtonIsDeallocated() throws {
+        // onToggle クロージャが自身の button を強参照キャプチャすると
+        // button → onToggle → button の自己参照サイクルになる。
+        // removeLauncherButton() は onToggle をクリアしないため、reload()
+        // (viewDidAppear や画面回転のたびに呼ばれる)を経由するたびに
+        // 直前の実行ボタンがリークしてしまう。
+        ViewMonitor.stop()
+        weak var leaked: MonitorLauncherButton?
+
+        // ローカル変数(window / launcher)を内側の関数に閉じ込め、
+        // 弱参照だけを外側に残す。UIKit のオブジェクトは autoreleasepool 越しに
+        // 解放されることがあるため、確認前に明示的にプールを回す。
+        func attachAndToggleOnce() throws {
+            let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+            ViewMonitor.simulateLauncherButtonAttachedForTesting(to: window)
+            let launcher = try #require(window.subviews.compactMap { $0 as? MonitorLauncherButton }.first)
+            leaked = launcher
+            // onToggle が実際にタップされてクロージャ内のキャプチャが働いた状態を再現する。
+            launcher.onToggle?(true)
+            launcher.onToggle?(false)
+        }
+        try autoreleasepool {
+            try attachAndToggleOnce()
+        }
+
+        // 画面遷移相当: addLauncherButton() が removeLauncherButton() 経由で
+        // 直前のボタンを新しいボタンに差し替える。removeFromSuperview() 自体が
+        // 内部で autorelease するオブジェクトを生む可能性があるため、
+        // この呼び出しも autoreleasepool で包んでから弱参照を確認する。
+        autoreleasepool {
+            let nextWindow = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+            ViewMonitor.simulateLauncherButtonAttachedForTesting(to: nextWindow)
+        }
+
+        #expect(leaked == nil)
+
+        ViewMonitor.stop()
+    }
 }
