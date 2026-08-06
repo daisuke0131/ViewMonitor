@@ -85,6 +85,9 @@ public final class ViewMonitor: NSObject {
 
     // MARK: - Testing seam
 
+    /// テスト用: 起動済みかどうか。公開 API には含まれない。
+    static var isStartedForTesting: Bool { shared.started }
+
     /// テスト用: `rootView` に任意の `UIView` を注入し、実行ボタンを追加した状態を再現する。
     /// ユニットテストのバンドルには接続済みの window scene が無く
     /// `WindowProvider.keyWindow` が常に nil になるため、`detectedViewDidAppear()`
