@@ -6,20 +6,24 @@ import UIKit
 @MainActor
 struct MonitorButtonTests {
 
-    @Test("targetView に設定したビューをそのまま保持する")
-    func retainsTargetView() {
+    @Test("measurementTarget に設定したビューをそのまま保持する")
+    func retainsMeasurementTarget() throws {
         let button = MonitorButton()
         let target = UIView()
 
-        button.targetView = target
+        button.measurementTarget = .uiKitView(target)
 
-        #expect(button.targetView === target)
+        guard case .uiKitView(let held) = try #require(button.measurementTarget) else {
+            Issue.record("uiKitView ではない")
+            return
+        }
+        #expect(held === target)
     }
 
-    @Test("targetView の初期値は nil である")
-    func targetViewIsNilByDefault() {
+    @Test("measurementTarget の初期値は nil である")
+    func measurementTargetIsNilByDefault() {
         let button = MonitorButton()
 
-        #expect(button.targetView == nil)
+        #expect(button.measurementTarget == nil)
     }
 }
