@@ -9,20 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- SwiftUI support: `Text` / `Image` / `Button` in SwiftUI hierarchies are
-  now detected through the accessibility elements SwiftUI publishes, with
-  position, size, text content, and cross-framework distance measurement.
-  Detection requires an active accessibility client (e.g. VoiceOver or
-  Accessibility Inspector); see README for details.
-- `View.viewMonitor()` modifier to start ViewMonitor from apps using the
-  SwiftUI lifecycle.
-- A SwiftUI example app at `Example/ViewMonitorSwiftUIExample`.
+- SwiftUI 対応。SwiftUI 画面の `Text` / `Image` / `Button` を、SwiftUI が VoiceOver 向けに公開するアクセシビリティ要素経由で検出し、位置・サイズ・テキスト内容の計測と UIKit ビューとの距離計測に対応。検出にはアクセシビリティクライアント（VoiceOver / Accessibility Inspector など）が有効である必要がある。詳細は README を参照
+- SwiftUI ライフサイクルのアプリから起動するための `View.viewMonitor()` モディファイア
+- SwiftUI サンプルアプリ（`Example/ViewMonitorSwiftUIExample`）
 
 ### Changed
 
-- Screens embedding `UIHostingController` now show monitor buttons for
-  SwiftUI elements as well.
-- `InfoView` renders its rows with SwiftUI internally (no behavior change).
+- `UIHostingController` を埋め込んだ画面でも SwiftUI 要素に計測ボタンが表示されるように
+- `InfoView` の内部描画を SwiftUI 化（挙動変更なし）
 
 ## [2.2.0] - 2026-08-06
 
