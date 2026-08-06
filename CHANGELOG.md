@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- SwiftUI support: `Text` / `Image` / `Button` in SwiftUI hierarchies are
+  now detected through the accessibility elements SwiftUI publishes, with
+  position, size, text content, and cross-framework distance measurement.
+  Detection requires an active accessibility client (e.g. VoiceOver or
+  Accessibility Inspector); see README for details.
+- `View.viewMonitor()` modifier to start ViewMonitor from apps using the
+  SwiftUI lifecycle.
+- A SwiftUI example app at `Example/ViewMonitorSwiftUIExample`.
+
+### Changed
+
+- Screens embedding `UIHostingController` now show monitor buttons for
+  SwiftUI elements as well.
+- `InfoView` renders its rows with SwiftUI internally (no behavior change).
+
 ## [2.2.0] - 2026-08-06
 
 ### Added
