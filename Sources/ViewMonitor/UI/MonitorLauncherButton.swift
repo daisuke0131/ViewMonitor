@@ -25,6 +25,8 @@ final class MonitorLauncherButton: UIButton {
 
     init(origin: CGPoint) {
         super.init(frame: CGRect(origin: origin, size: Self.size))
+        // UI テスト(XCUITest)から実行ボタンを特定するための識別子。
+        accessibilityIdentifier = "ViewMonitor.launcher"
         setBackgroundImage(ViewMonitorAsset.button ?? .monitorSolidColor(.black), for: .normal)
         setBackgroundImage(ViewMonitorAsset.buttonSelected ?? .monitorSolidColor(.red), for: .selected)
         addTarget(self, action: #selector(toggle), for: .touchUpInside)
