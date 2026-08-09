@@ -10,6 +10,12 @@ import XCTest
 /// ので、SwiftUI 要素の検出もテスト中は常に有効になる。
 final class ViewMonitorUITests: XCTestCase {
 
+    #if VIEWMONITOR_CAPTURE_DEMO
+    private let isReadmeDemoCaptureEnabled = true
+    #else
+    private let isReadmeDemoCaptureEnabled = false
+    #endif
+
     override func setUpWithError() throws {
         continueAfterFailure = false
         // 回転テスト後もシミュレータの向きは残るため、各テストを縦から始める。
@@ -30,6 +36,11 @@ final class ViewMonitorUITests: XCTestCase {
     /// hittable 扱いにならないことがあるため、`tap()` ではなく座標で叩く。
     private func tapCenter(of element: XCUIElement) {
         element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+    }
+
+    /// README 用の収録時だけ、各状態を視認できる長さで保持する。
+    private func pauseForDemo(_ seconds: TimeInterval) {
+        Thread.sleep(forTimeInterval: seconds)
     }
 
     func testMeasuresUIKitNavigationTitleLabel() {
@@ -59,6 +70,52 @@ final class ViewMonitorUITests: XCTestCase {
             "SwiftUI Text の計測結果が InfoView に出ない"
         )
         XCTAssertTrue(app.staticTexts["text: Hello, ViewMonitor!"].exists)
+    }
+
+    /// 実際の SwiftUI 画面で起動・単体計測・2 View 間の距離計測を収録する。
+    /// 通常の CI ではスキップし、README の GIF を再生成するときだけ実行する。
+    func testReadmeDemoCapture() throws {
+        try XCTSkipUnless(
+            isReadmeDemoCaptureEnabled,
+            "Build with OTHER_SWIFT_FLAGS=-DVIEWMONITOR_CAPTURE_DEMO to record the README demo."
+        )
+
+        let app = XCUIApplication()
+        app.launch()
+
+        // 計測を ON にすると元の要素が計測ボタンに覆われるため、先に座標を保存する。
+        let hello = app.staticTexts["Hello, ViewMonitor!"]
+        let button = app.buttons["Tap me"]
+        XCTAssertTrue(hello.waitForExistence(timeout: 10))
+        XCTAssertTrue(button.exists)
+        let helloFrame = hello.frame
+        let buttonFrame = button.frame
+        pauseForDemo(1.0)
+
+        let launcher = app.buttons["ViewMonitor.launcher"]
+        XCTAssertTrue(launcher.waitForExistence(timeout: 10))
+        launcher.tap()
+        XCTAssertTrue(
+            app.buttons.matching(identifier: "ViewMonitor.monitorButton")
+                .firstMatch.waitForExistence(timeout: 5)
+        )
+        pauseForDemo(1.5)
+
+        app.coordinate(withNormalizedOffset: .zero)
+            .withOffset(CGVector(dx: helloFrame.midX, dy: helloFrame.midY))
+            .tap()
+        XCTAssertTrue(app.staticTexts["class: Text"].waitForExistence(timeout: 5))
+        pauseForDemo(2.0)
+
+        app.coordinate(withNormalizedOffset: .zero)
+            .withOffset(CGVector(dx: buttonFrame.midX, dy: buttonFrame.midY))
+            .tap()
+
+        let gapRow = app.staticTexts.matching(
+            NSPredicate(format: "label BEGINSWITH %@", "gapY:")
+        ).firstMatch
+        XCTAssertTrue(gapRow.waitForExistence(timeout: 5))
+        pauseForDemo(3.0)
     }
 
     func testListRowsGetMonitorButtons() {
