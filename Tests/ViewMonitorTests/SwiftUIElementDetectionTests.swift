@@ -52,4 +52,40 @@ struct SwiftUIElementDetectionTests {
         #expect(kinds.isSuperset(of: ["Text", "Image", "Button"]))
         window.isHidden = true
     }
+
+    @Test("実物の List の行も検出される")
+    func detectsRowsInsideRealList() async throws {
+        // List はホスティングビューの下に UICollectionView を挟み、行の AX 要素は
+        // 各セル内の CellHostingView が公開する。ホスティングビュー直属の配列
+        // だけを読む実装だと行が1つも検出されない(実機で報告された症状)。
+        try #require(ViewMonitor.enableSwiftUIElementDetection())
+
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        let host = UIHostingController(rootView: List(0..<5, id: \.self) { index in
+            Text("Row \(index)")
+        })
+        window.rootViewController = host
+        window.makeKeyAndVisible()
+        window.layoutIfNeeded()
+
+        // セルの生成もツリーの構築も非同期のため、時間切れまでポーリングする。
+        let scanner = ViewHierarchyScanner()
+        var rowTexts: [String] = []
+        for _ in 0..<100 where rowTexts.count < 5 {
+            window.layoutIfNeeded()
+            rowTexts = scanner.measurementTargets(in: window).compactMap { target in
+                guard case .accessibilityElement(let info) = target, info.kind == "Text" else {
+                    return nil
+                }
+                return (info.element?.accessibilityLabel).flatMap { $0.hasPrefix("Row ") ? $0 : nil }
+            }
+            if rowTexts.count >= 5 {
+                break
+            }
+            try await Task.sleep(nanoseconds: 100_000_000)
+        }
+
+        #expect(rowTexts.count >= 5, "detected rows: \(rowTexts)")
+        window.isHidden = true
+    }
 }

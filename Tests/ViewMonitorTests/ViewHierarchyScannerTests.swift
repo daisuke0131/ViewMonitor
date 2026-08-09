@@ -156,6 +156,70 @@ struct ViewHierarchyScannerTests {
         #expect(elements[0].hostingView === hostingProbe)
     }
 
+    @Test("ホスティングビュー配下の非ホスティングビューが持つ AX 要素も集める")
+    func collectsAccessibilityTargetsFromHostingSubtree() {
+        // SwiftUI の List は
+        //   _UIHostingView → UICollectionView → セル → CellHostingView(AX 要素を保持)
+        // という構造になり、行の AX 要素はホスティングビュー自身ではなく
+        // 配下の別ビューが公開する。ホスティングビュー直属の配列だけを読むと
+        // 行が1つも検出されない。
+        let root = UIView()
+        let hostingProbe = UIView()
+        let collectionLike = UIView()
+        let cellContent = UIView()
+        let element = UIAccessibilityElement(accessibilityContainer: cellContent)
+        element.isAccessibilityElement = true
+        element.accessibilityTraits = .staticText
+        cellContent.accessibilityElements = [element]
+        collectionLike.addSubview(cellContent)
+        hostingProbe.addSubview(collectionLike)
+        root.addSubview(hostingProbe)
+        let scanner = ViewHierarchyScanner(isHostingView: { $0 === hostingProbe })
+
+        let elements = scanner.measurementTargets(in: root).compactMap { target -> AccessibilityElementInfo? in
+            if case .accessibilityElement(let info) = target { return info }
+            return nil
+        }
+        #expect(elements.count == 1)
+        #expect(elements.first?.element === element)
+    }
+
+    @Test("ホスティングビュー配下に無いビューの AX 要素は集めない")
+    func ignoresAccessibilityElementsOutsideHostingSubtree() {
+        // 純 UIKit 画面で accessibilityElements を公開しているビューまで
+        // 計測対象に変わらないよう、AX 走査はホスティングビュー配下に限る。
+        let root = UIView()
+        let plain = UIView()
+        let element = UIAccessibilityElement(accessibilityContainer: plain)
+        element.isAccessibilityElement = true
+        element.accessibilityTraits = .staticText
+        plain.accessibilityElements = [element]
+        root.addSubview(plain)
+
+        #expect(scanner.measurementTargets(in: root).isEmpty)
+    }
+
+    @Test("同じ AX 要素が複数のビューから公開されても1件として集める")
+    func deduplicatesAccessibilityElements() {
+        let root = UIView()
+        let hostingProbe = UIView()
+        let child = UIView()
+        let element = UIAccessibilityElement(accessibilityContainer: hostingProbe)
+        element.isAccessibilityElement = true
+        element.accessibilityTraits = .staticText
+        hostingProbe.accessibilityElements = [element]
+        child.accessibilityElements = [element]
+        hostingProbe.addSubview(child)
+        root.addSubview(hostingProbe)
+        let scanner = ViewHierarchyScanner(isHostingView: { $0 === hostingProbe })
+
+        let elements = scanner.measurementTargets(in: root).filter { target in
+            if case .accessibilityElement = target { return true }
+            return false
+        }
+        #expect(elements.count == 1)
+    }
+
     @Test("除外対象のホスティングビューは走査しない")
     func skipsRejectedHostingView() {
         let root = UIView()

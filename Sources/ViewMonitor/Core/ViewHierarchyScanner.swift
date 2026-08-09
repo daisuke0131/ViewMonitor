@@ -30,6 +30,23 @@ struct ViewHierarchyScanner {
     /// 除外対象のビューに達した時点で、その子孫は走査しない。
     @MainActor
     func measurementTargets(in root: UIView) -> [MeasurementTarget] {
+        var seenElements = Set<ObjectIdentifier>()
+        return collectTargets(in: root, underHostingView: false, seenElements: &seenElements)
+    }
+
+    /// SwiftUI の List はホスティングビューの下に UICollectionView を挟み、
+    /// 行の AX 要素は各セル内の CellHostingView(クラス名が `_UIHostingView`
+    /// 接頭辞に一致しない)が公開する。ホスティングビュー直属の配列だけを
+    /// 読むと行が1つも検出されないため、ホスティングビュー配下に入ったら
+    /// すべてのビューの AX 要素を読む。ホスティングビューを含まない
+    /// 純 UIKit の階層では従来どおり AX 走査を行わない。
+    /// 同じ要素が複数のビューから公開された場合に備え、要素単位で重複を除く。
+    @MainActor
+    private func collectTargets(
+        in root: UIView,
+        underHostingView: Bool,
+        seenElements: inout Set<ObjectIdentifier>
+    ) -> [MeasurementTarget] {
         guard !isRejected(root) else {
             return []
         }
@@ -37,13 +54,21 @@ struct ViewHierarchyScanner {
         if isTarget(root) {
             result.append(.uiKitView(root))
         }
-        if isHostingView(root) {
-            result.append(
-                contentsOf: accessibilityScanner.targets(in: root).map { .accessibilityElement($0) }
-            )
+        let inHostingSubtree = underHostingView || isHostingView(root)
+        if inHostingSubtree {
+            for info in accessibilityScanner.targets(in: root) {
+                guard let element = info.element, seenElements.insert(ObjectIdentifier(element)).inserted else {
+                    continue
+                }
+                result.append(.accessibilityElement(info))
+            }
         }
         for subview in root.subviews {
-            result.append(contentsOf: measurementTargets(in: subview))
+            result.append(
+                contentsOf: collectTargets(
+                    in: subview, underHostingView: inHostingSubtree, seenElements: &seenElements
+                )
+            )
         }
         return result
     }
