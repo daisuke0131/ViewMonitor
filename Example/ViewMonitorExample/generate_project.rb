@@ -18,6 +18,8 @@ APP_DIR     = File.join(EXAMPLE_DIR, 'ViewMonitorExample')
 PROJECT_PATH = File.join(EXAMPLE_DIR, 'ViewMonitorExample.xcodeproj')
 TARGET_NAME = 'ViewMonitorExample'
 BUNDLE_ID   = 'daisuke.ViewMonitorExample'
+UITEST_TARGET_NAME = 'ViewMonitorExampleUITests'
+UITEST_DIR  = File.join(EXAMPLE_DIR, UITEST_TARGET_NAME)
 DEPLOYMENT_TARGET = '15.0'
 XCCONFIG_NAME = 'Signing.xcconfig'
 
@@ -29,6 +31,8 @@ project.build_configurations.each do |config|
 end
 
 target = project.new_target(:application, TARGET_NAME, :ios, DEPLOYMENT_TARGET)
+uitest_target = project.new_target(:ui_test_bundle, UITEST_TARGET_NAME, :ios, DEPLOYMENT_TARGET)
+uitest_target.add_dependency(target)
 
 # `new_target` links Foundation.framework by default, but its file reference
 # hardcodes the version of the installed SDK into the path (e.g.
@@ -38,6 +42,7 @@ target = project.new_target(:application, TARGET_NAME, :ios, DEPLOYMENT_TARGET)
 # spurious diff. Drop it from the build phase and also remove the file
 # reference and its parent group (Frameworks/iOS) from the project entirely.
 target.frameworks_build_phase.clear
+uitest_target.frameworks_build_phase.clear
 if (ios_frameworks_group = project.frameworks_group['iOS'])
   ios_frameworks_group.children.each(&:remove_from_project)
   ios_frameworks_group.remove_from_project
@@ -59,6 +64,13 @@ resources = [
 resources.each do |name|
   file = group.new_reference(File.join(APP_DIR, name))
   target.add_resources([file])
+end
+
+uitest_group = project.new_group(UITEST_TARGET_NAME, UITEST_TARGET_NAME)
+uitest_sources = %w[ViewMonitorExampleUITests.swift]
+uitest_sources.each do |name|
+  file = uitest_group.new_reference(File.join(UITEST_DIR, name))
+  uitest_target.add_file_references([file])
 end
 
 # Reference the root Package.swift locally and link ViewMonitor from it.
@@ -98,12 +110,27 @@ target.build_configurations.each do |config|
   settings.delete('ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME')
 end
 
+uitest_target.build_configurations.each do |config|
+  settings = config.build_settings
+  settings['PRODUCT_BUNDLE_IDENTIFIER'] = "#{BUNDLE_ID}UITests"
+  settings['IPHONEOS_DEPLOYMENT_TARGET'] = DEPLOYMENT_TARGET
+  settings['SWIFT_VERSION'] = '6.0'
+  settings['GENERATE_INFOPLIST_FILE'] = 'YES'
+  settings['TEST_TARGET_NAME'] = TARGET_NAME
+  # The UI test runner only ever runs on the simulator in this repo
+  # (CI has no signing certificate), same reasoning as the app target.
+  settings['CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]'] = 'NO'
+  settings['CODE_SIGN_STYLE'] = 'Automatic'
+end
+
 project.save
 
 # Create a shared scheme so CI can refer to it with -scheme ViewMonitorExample.
+# The test action carries the UI test bundle so `xcodebuild test` runs it.
 scheme = Xcodeproj::XCScheme.new
 scheme.add_build_target(target)
 scheme.set_launch_target(target)
+scheme.add_test_target(uitest_target)
 scheme.save_as(PROJECT_PATH, TARGET_NAME, true)
 
 puts "Generated #{PROJECT_PATH}"

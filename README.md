@@ -80,9 +80,10 @@ accidental taps cannot navigate away, fire actions, or scroll the content
 (a screen transition would discard the measurement overlay). Only
 ViewMonitor's own UI — the measurement buttons, the info panel, and the
 toggle — receives touches. Measurement buttons are pinned at the positions
-captured when the toggle was turned ON, and if the screen still changes
-while measuring (e.g. a programmatic transition), the overlay closes and
-the toggle returns to OFF. To interact with the app (e.g. scroll a list to
+captured when the toggle was turned ON. If the screen still changes while
+measuring (device rotation, or a programmatic transition such as a timer-
+driven push), measuring stays ON and the new screen is re-scanned; the
+current selection resets. To interact with the app (e.g. scroll a list to
 measure items further down), toggle OFF, move the screen, then toggle ON
 again to re-scan.
 

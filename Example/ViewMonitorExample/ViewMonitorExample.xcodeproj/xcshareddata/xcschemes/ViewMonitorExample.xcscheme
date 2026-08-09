@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "59B23151407E1BFFD154790A"
+               BlueprintIdentifier = "B869FD1851D87A93CF44B03E"
                BuildableName = "ViewMonitorExample.app"
                BlueprintName = "ViewMonitorExample"
                ReferencedContainer = "container:ViewMonitorExample.xcodeproj">
@@ -30,13 +30,23 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "59B23151407E1BFFD154790A"
+            BlueprintIdentifier = "B869FD1851D87A93CF44B03E"
             BuildableName = "ViewMonitorExample.app"
             BlueprintName = "ViewMonitorExample"
             ReferencedContainer = "container:ViewMonitorExample.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C852A3795846A1020EAEED26"
+               BuildableName = "ViewMonitorExampleUITests.xctest"
+               BlueprintName = "ViewMonitorExampleUITests"
+               ReferencedContainer = "container:ViewMonitorExample.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -53,7 +63,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "59B23151407E1BFFD154790A"
+            BlueprintIdentifier = "B869FD1851D87A93CF44B03E"
             BuildableName = "ViewMonitorExample.app"
             BlueprintName = "ViewMonitorExample"
             ReferencedContainer = "container:ViewMonitorExample.xcodeproj">
@@ -70,7 +80,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "59B23151407E1BFFD154790A"
+            BlueprintIdentifier = "B869FD1851D87A93CF44B03E"
             BuildableName = "ViewMonitorExample.app"
             BlueprintName = "ViewMonitorExample"
             ReferencedContainer = "container:ViewMonitorExample.xcodeproj">

@@ -12,6 +12,8 @@ final class ViewMonitorUITests: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+        // 回転テスト後もシミュレータの向きは残るため、各テストを縦から始める。
+        XCUIDevice.shared.orientation = .portrait
     }
 
     /// アプリを起動し、実行ボタンをタップして計測を開始する。
@@ -77,6 +79,32 @@ final class ViewMonitorUITests: XCTestCase {
         let buttons = app.buttons.matching(identifier: "ViewMonitor.monitorButton")
         XCTAssertTrue(buttons.firstMatch.waitForExistence(timeout: 5))
         XCTAssertGreaterThanOrEqual(buttons.count, 5, "List の行に計測ボタンが出ていない")
+    }
+
+    func testRotationKeepsMeasuringAndLauncherStaysOnScreen() {
+        let app = XCUIApplication()
+        launchAndStartMeasuring(app)
+
+        // 横 → 縦の順で確認する。orientationDidChange はウィンドウのリサイズ
+        // 完了前に届くため、旧 bounds(横向きの幅)で実行ボタンを配置すると
+        // 縦に戻したとき画面外へ出る、という報告があった。
+        for orientation in [UIDeviceOrientation.landscapeLeft, .portrait] {
+            XCUIDevice.shared.orientation = orientation
+
+            let launcher = app.buttons["ViewMonitor.launcher"]
+            XCTAssertTrue(launcher.waitForExistence(timeout: 5))
+            XCTAssertTrue(launcher.isSelected, "回転で計測が OFF に戻ってしまった (\(orientation.rawValue))")
+
+            let window = app.windows.firstMatch.frame
+            XCTAssertTrue(
+                window.contains(launcher.frame),
+                "実行ボタンが画面外に出た (\(orientation.rawValue)): launcher=\(launcher.frame) window=\(window)"
+            )
+            XCTAssertTrue(
+                app.buttons.matching(identifier: "ViewMonitor.monitorButton").firstMatch.exists,
+                "回転後に再スキャンされていない (\(orientation.rawValue))"
+            )
+        }
     }
 
     func testShieldBlocksAppInteractionWhileMeasuring() {
