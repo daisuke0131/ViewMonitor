@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "ViewMonitor"
-  s.version          = "2.2.0"
+  s.version          = "2.3.0"
   s.summary          = "view detail monitor"
   s.description      = <<-DESC
                        You can measure view detail.
