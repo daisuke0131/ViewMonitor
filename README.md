@@ -79,7 +79,10 @@ While measuring is ON, touches on the app itself are blocked so that
 accidental taps cannot navigate away, fire actions, or scroll the content
 (a screen transition would discard the measurement overlay). Only
 ViewMonitor's own UI — the measurement buttons, the info panel, and the
-toggle — receives touches. To interact with the app (e.g. scroll a list to
+toggle — receives touches. Measurement buttons are pinned at the positions
+captured when the toggle was turned ON, and if the screen still changes
+while measuring (e.g. a programmatic transition), the overlay closes and
+the toggle returns to OFF. To interact with the app (e.g. scroll a list to
 measure items further down), toggle OFF, move the screen, then toggle ON
 again to re-scan.
 
@@ -136,8 +139,6 @@ Known limitations for SwiftUI elements:
 
 - Measured values are limited to position, size, and text content
   (font / background / cornerRadius show `None`).
-- Monitor buttons do not follow scrolling; they refresh on screen
-  transitions.
 - Views combined with `.accessibilityElement(children: .combine)` are
   measured as a single element, and `.accessibilityHidden(true)` views are
   not detected.
