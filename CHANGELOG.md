@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- SwiftUI 対応。SwiftUI 画面の `Text` / `Image` / `Button` を、SwiftUI が VoiceOver 向けに公開するアクセシビリティ要素経由で検出し、位置・サイズ・テキスト内容の計測と UIKit ビューとの距離計測に対応。検出にはアクセシビリティツリーの構築が必要（下記 `enableSwiftUIElementDetection()` か、VoiceOver / Accessibility Inspector などのクライアント接続）。詳細は README を参照
+- `ViewMonitor.enableSwiftUIElementDetection()`。外部のアクセシビリティクライアント無しで SwiftUI 要素の検出を有効化する。DEBUG ビルド限定（内部でプライベート API を使うため、リリースビルドでは実装ごとコンパイルから除外され常に false を返す）
+- SwiftUI ライフサイクルのアプリから起動するための `View.viewMonitor()` モディファイア
+- SwiftUI サンプルアプリ（`Example/ViewMonitorSwiftUIExample`）
+- ホスティングビューがあるのにアクセシビリティ要素を検出できない場合、InfoView に有効化手順の案内を表示（無言で0件のままにしない）
+- `List` の行の検出。List はホスティングビューの下に UICollectionView を挟み、行のアクセシビリティ要素は各セル内のビューが公開するため、ホスティングビュー配下のすべてのビューを走査対象にした（行は List の仕様どおり1行=1要素として計測される）
+- 計測中はアプリ本体へのタッチ（タップ・スクロール・エッジスワイプ）を遮断。誤操作でアクションが発火したり、画面遷移で計測状態が破棄されたりしない。計測ボタン・InfoView・実行ボタンなど ViewMonitor 自身の UI だけが操作できる
+
+### Changed
+
+- `UIHostingController` を埋め込んだ画面でも SwiftUI 要素に計測ボタンが表示されるように
+- `InfoView` の内部描画を SwiftUI 化（挙動変更なし）
+- 計測ボタンは UIKit 対象・SwiftUI 要素とも rootView 直下の固定配置に統一（対象ビューの subview には追加しない）。SwiftUI のホスティングビューのヒットテストが非決定的で、対象ビュー内に置いたボタンへのタッチが実機で届かないことがあるため。あわせて、隠れている対象（大タイトル表示中のインラインナビタイトルなど）にはボタンを付けない
+
 ## [2.2.0] - 2026-08-06
 
 ### Added

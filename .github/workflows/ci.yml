@@ -62,6 +62,13 @@ jobs:
             -scheme ViewMonitorExample \
             -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }}"
 
+      - name: Build SwiftUI example
+        run: |
+          xcodebuild build \
+            -project Example/ViewMonitorSwiftUIExample/ViewMonitorSwiftUIExample.xcodeproj \
+            -scheme ViewMonitorSwiftUIExample \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }}"
+
   pod-lint:
     name: pod lib lint
     runs-on: macos-latest

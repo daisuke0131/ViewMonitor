@@ -32,9 +32,12 @@ enum InfoRowBuilder {
             InfoRow(title: "width", value: inspection.map { format($0.size.width) } ?? "None"),
             InfoRow(title: "height", value: inspection.map { format($0.size.height) } ?? "None"),
             InfoRow(title: "background", value: inspection.map { hex($0.backgroundColorHex) } ?? "None"),
-            InfoRow(title: "alpha", value: inspection.map { format($0.alpha) } ?? "None"),
-            InfoRow(title: "cornerRadius", value: inspection.map { format($0.cornerRadius) } ?? "None")
+            InfoRow(title: "alpha", value: (inspection?.alpha).map(format) ?? "None"),
+            InfoRow(title: "cornerRadius", value: (inspection?.cornerRadius).map(format) ?? "None")
         ]
+        if let text = inspection?.text {
+            rows.append(InfoRow(title: "text", value: text))
+        }
         if let font = inspection?.font {
             rows.append(InfoRow(title: "font", value: font.familyName))
             rows.append(InfoRow(title: "fontSize", value: format(font.pointSize)))
@@ -44,6 +47,21 @@ enum InfoRowBuilder {
             rows.append(contentsOf: distanceRows(from: inspection, to: reference))
         }
         return rows
+    }
+
+    /// SwiftUI 要素が検出できない状態(ホスティングビューはあるのに
+    /// アクセシビリティ要素が1つも取れない)を知らせる案内行。
+    /// iOS はアクセシビリティクライアント接続中しかツリーを構築しないため、
+    /// 無言のままだと利用者には不具合と区別がつかない。
+    static func swiftUIDetectionUnavailableRows() -> [InfoRow] {
+        [
+            InfoRow(title: "SwiftUI", value: "elements not detected"),
+            InfoRow(
+                title: "fix",
+                value: "call ViewMonitor.enableSwiftUIElementDetection() in a debug build, "
+                    + "or attach Accessibility Inspector / VoiceOver, then toggle again"
+            )
+        ]
     }
 
     /// vs 行と、矩形関係に応じた距離行。

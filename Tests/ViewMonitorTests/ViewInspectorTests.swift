@@ -126,4 +126,35 @@ struct ViewInspectorTests {
         #expect(font.pointSize == 15)
         #expect(font.familyName == UIFont.systemFont(ofSize: 15).familyName)
     }
+
+    @Test("アクセシビリティ要素をウィンドウ座標で計測する")
+    func inspectsAccessibilityElement() {
+        // accessibilityFrame はスクリーン座標。原点 (10, 20) の window では
+        // スクリーン (30, 40) が window 座標 (20, 20) になる。
+        let window = UIWindow(frame: CGRect(x: 10, y: 20, width: 320, height: 480))
+        let element = UIAccessibilityElement(accessibilityContainer: window)
+        element.accessibilityLabel = "Hello"
+        element.accessibilityFrame = CGRect(x: 30, y: 40, width: 120, height: 20)
+
+        let inspection = ViewInspector.inspect(element: element, kind: "Text", in: window)
+
+        #expect(inspection.className == "Text")
+        #expect(inspection.frameInWindow == CGRect(x: 20, y: 20, width: 120, height: 20))
+        #expect(inspection.size == CGSize(width: 120, height: 20))
+        #expect(inspection.text == "Hello")
+        #expect(inspection.backgroundColorHex == nil)
+        #expect(inspection.alpha == nil)
+        #expect(inspection.cornerRadius == nil)
+        #expect(inspection.font == nil)
+    }
+
+    @Test("window が nil なら accessibilityFrame をそのまま使う")
+    func fallsBackToAccessibilityFrameWithoutWindow() {
+        let element = UIAccessibilityElement(accessibilityContainer: UIView())
+        element.accessibilityFrame = CGRect(x: 30, y: 40, width: 120, height: 20)
+
+        let inspection = ViewInspector.inspect(element: element, kind: "Button", in: nil)
+
+        #expect(inspection.frameInWindow == CGRect(x: 30, y: 40, width: 120, height: 20))
+    }
 }

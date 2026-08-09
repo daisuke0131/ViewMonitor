@@ -16,29 +16,64 @@ final class MonitorOverlay: NSObject {
 
     private weak var rootView: UIView?
     private var infoView: InfoView?
+    private var shieldView: MonitorShieldView?
     private var buttons: [MonitorButton] = []
-    /// 計測のために userInteractionEnabled を一時的に有効化したビュー。
-    /// hide() で元に戻す。
-    private var forcedInteractionViews: [UIView] = []
     /// 直前に選択したボタン。距離計測の参照元。
     /// weak なので hide() / 画面遷移の reload でボタンが破棄されれば
     /// 自動的に nil に戻り、古い画面のビューとペアになることがない。
     private weak var lastSelectedButton: MonitorButton?
 
-    init(configuration: MonitorConfiguration = .default) {
+    /// 座標変換の基準ウィンドウ。show(on:) で受け取った rootView を基準にする。
+    /// WindowProvider.keyWindow を都度引き直すと、iPad のマルチシーン環境で
+    /// オーバーレイの取り付け先と foreground のシーンがずれたときに
+    /// 誤ったウィンドウで変換してしまう。
+    private var currentWindow: UIWindow? {
+        rootView?.window ?? (rootView as? UIWindow)
+    }
+
+    init(configuration: MonitorConfiguration = .default, scanner: ViewHierarchyScanner? = nil) {
         self.configuration = configuration
-        self.scanner = ViewHierarchyScanner(configuration: configuration)
+        self.scanner = scanner ?? ViewHierarchyScanner(configuration: configuration)
         super.init()
     }
 
     /// オーバーレイを構築して表示する。
+    /// 盾 → InfoView → 計測ボタンの順に追加し、盾が計測 UI の背面・
+    /// アプリ本体の前面に入るようにする。
     func show(on rootView: UIView) {
         hide()
         self.rootView = rootView
+        addShieldView(to: rootView)
         addInfoView(to: rootView)
-        for view in scanner.targets(in: rootView) {
-            addMonitorButton(on: view)
+        let targets = scanner.measurementTargets(in: rootView)
+        for target in targets {
+            addMonitorButton(for: target, rootView: rootView)
         }
+        showAccessibilityNoticeIfNeeded(for: targets, rootView: rootView)
+        // 計測ボタンは rootView に直接addSubviewするため、infoView より後に
+        // 追加されると重なり順で上に乗ってしまう。
+        // ドラッグ用ジェスチャの奪い合いを防ぐため、追加後に最前面へ戻す。
+        if let infoView {
+            rootView.bringSubviewToFront(infoView)
+        }
+    }
+
+    /// ホスティングビューがあるのにアクセシビリティ要素を1つも検出できなかった
+    /// 場合、InfoView に案内を出す。iOS はアクセシビリティクライアント接続中しか
+    /// ツリーを構築しないため、この状態は珍しくない。無言のままだと利用者には
+    /// 不具合と区別がつかない(実際に「トグルが効かない」と報告された)。
+    private func showAccessibilityNoticeIfNeeded(for targets: [MeasurementTarget], rootView: UIView) {
+        let detectedAccessibilityElement = targets.contains { target in
+            if case .accessibilityElement = target {
+                return true
+            }
+            return false
+        }
+        guard !detectedAccessibilityElement, scanner.hasHostingView(in: rootView), let infoView else {
+            return
+        }
+        infoView.update(rows: InfoRowBuilder.swiftUIDetectionUnavailableRows())
+        infoView.isHidden = false
     }
 
     /// オーバーレイを取り除き、変更したビューの状態を元に戻す。
@@ -47,10 +82,19 @@ final class MonitorOverlay: NSObject {
         buttons.removeAll()
         infoView?.removeFromSuperview()
         infoView = nil
-        forcedInteractionViews.forEach { $0.isUserInteractionEnabled = false }
-        forcedInteractionViews.removeAll()
+        shieldView?.removeFromSuperview()
+        shieldView = nil
         lastSelectedButton = nil
         rootView = nil
+    }
+
+    /// アプリ本体へのタッチを遮る盾を、計測 UI より先(=背面)に入れる。
+    private func addShieldView(to rootView: UIView) {
+        let shield = MonitorShieldView(frame: rootView.bounds)
+        shield.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        shield.backgroundColor = .clear
+        rootView.addSubview(shield)
+        shieldView = shield
     }
 
     private func addInfoView(to rootView: UIView) {
@@ -68,21 +112,57 @@ final class MonitorOverlay: NSObject {
         self.infoView = infoView
     }
 
-    private func addMonitorButton(on view: UIView) {
-        let button = MonitorButton(frame: CGRect(origin: .zero, size: view.frame.size))
+    /// 計測ボタンは UIKit 対象・SwiftUI 要素とも rootView 直下(盾より前面)に
+    /// 固定配置する。対象ビューの subview にすると盾との間に SwiftUI の
+    /// ホスティングビューが挟まり、その hitTest の非決定性でタッチが届かない
+    /// ことがある(MonitorShieldView のコメント参照)。
+    /// ViewMonitor は keyWindow を rootView として渡すため window 座標 = rootView 座標。
+    private func addMonitorButton(for target: MeasurementTarget, rootView: UIView) {
+        switch target {
+        case .uiKitView(let view):
+            // ボタンは固定配置のため、隠れた対象(大タイトル表示中の
+            // インラインナビタイトルなど)にボタンを付けると、何もない場所に
+            // ボタンだけが浮いてしまう。不可視の対象には付けない。
+            guard Self.isEffectivelyVisible(view) else {
+                return
+            }
+            let frame = ViewInspector.inspect(view, in: currentWindow).frameInWindow
+            let button = makeMonitorButton(for: target, frame: frame)
+            rootView.addSubview(button)
+        case .accessibilityElement(let info):
+            guard let element = info.element else {
+                return
+            }
+            let frame = ViewInspector.inspect(element: element, kind: info.kind, in: currentWindow).frameInWindow
+            let button = makeMonitorButton(for: target, frame: frame)
+            rootView.addSubview(button)
+        }
+    }
+
+    /// 対象が画面上で見えているか。自身または祖先が hidden か alpha ほぼ0なら不可視。
+    /// ウィンドウ自体の可視性は判断に含めない(隠れたウィンドウでは
+    /// そもそも何も表示されず、計測対象の取捨には意味を持たないため)。
+    static func isEffectivelyVisible(_ view: UIView) -> Bool {
+        var current: UIView? = view
+        while let view = current, !(view is UIWindow) {
+            if view.isHidden || view.alpha <= 0.01 {
+                return false
+            }
+            current = view.superview
+        }
+        return true
+    }
+
+    private func makeMonitorButton(for target: MeasurementTarget, frame: CGRect) -> MonitorButton {
+        let button = MonitorButton(frame: frame)
         let color = UIColor(monitorHex: configuration.overlayColorHex, alpha: configuration.overlayAlpha) ?? .green
         button.setBackgroundImage(.monitorSolidColor(color), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 15.0)
         button.addTarget(self, action: #selector(select(sender:)), for: .touchUpInside)
-        button.targetView = view
+        button.measurementTarget = target
         button.alpha = 0.2
         buttons.append(button)
-
-        if !view.isUserInteractionEnabled {
-            forcedInteractionViews.append(view)
-            view.isUserInteractionEnabled = true
-        }
-        view.addSubview(button)
+        return button
     }
 
     /// 選択状態の切り替え。実行時はボタンの target-action からのみ呼ばれる。
@@ -97,19 +177,13 @@ final class MonitorOverlay: NSObject {
         var referenceButton: MonitorButton?
         if sender.isSelected {
             infoView.isHidden = false
-            // 座標変換は show(on:) で受け取った rootView を基準にする。
-            // WindowProvider.keyWindow を都度引き直すと、iPad の
-            // マルチシーン環境でオーバーレイの取り付け先と foreground の
-            // シーンがずれたときに誤ったウィンドウで変換してしまう。
-            let window = rootView?.window ?? (rootView as? UIWindow)
-            let inspection = sender.targetView.map { ViewInspector.inspect($0, in: window) }
+            let window = currentWindow
+            let inspection = currentInspection(of: sender, in: window)
             let reference: ViewInspection? = {
-                guard let last = lastSelectedButton, last !== sender,
-                      let referenceView = last.targetView,
-                      let referenceWindow = referenceView.window, referenceWindow === window else {
+                guard let last = lastSelectedButton, last !== sender else {
                     return nil
                 }
-                return ViewInspector.inspect(referenceView, in: window)
+                return referenceInspection(of: last, in: window)
             }()
             infoView.update(rows: InfoRowBuilder.rows(from: inspection, comparedTo: reference))
             sender.layer.borderWidth = 2.0
@@ -136,5 +210,41 @@ final class MonitorOverlay: NSObject {
         let translation = sender.translation(in: container)
         view.center = CGPoint(x: view.center.x + translation.x, y: view.center.y + translation.y)
         sender.setTranslation(.zero, in: container)
+    }
+
+    /// ターゲットの現在値を計測する。要素が破棄されていれば nil。
+    /// `select` 内のローカル変数 `inspection` と衝突しないよう current を冠する。
+    private func currentInspection(of button: MonitorButton, in window: UIWindow?) -> ViewInspection? {
+        switch button.measurementTarget {
+        case .uiKitView(let view):
+            return ViewInspector.inspect(view, in: window)
+        case .accessibilityElement(let info):
+            guard let element = info.element else {
+                return nil
+            }
+            return ViewInspector.inspect(element: element, kind: info.kind, in: window)
+        case nil:
+            return nil
+        }
+    }
+
+    /// 参照(距離計測の相手)の計測。取り付け先の window が現在の window と
+    /// 一致するときだけ有効。画面遷移後の古いターゲットとペアにしない。
+    private func referenceInspection(of button: MonitorButton, in window: UIWindow?) -> ViewInspection? {
+        switch button.measurementTarget {
+        case .uiKitView(let view):
+            guard let referenceWindow = view.window, referenceWindow === window else {
+                return nil
+            }
+            return ViewInspector.inspect(view, in: window)
+        case .accessibilityElement(let info):
+            guard let hostingWindow = info.hostingView?.window, hostingWindow === window,
+                  let element = info.element else {
+                return nil
+            }
+            return ViewInspector.inspect(element: element, kind: info.kind, in: window)
+        case nil:
+            return nil
+        }
     }
 }

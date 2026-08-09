@@ -12,8 +12,9 @@ struct InfoRowBuilderTests {
         width: CGFloat = 343,
         height: CGFloat = 20,
         backgroundColorHex: String? = nil,
-        alpha: CGFloat = 1.0,
-        cornerRadius: CGFloat = 0.0,
+        alpha: CGFloat? = 1.0,
+        cornerRadius: CGFloat? = 0.0,
+        text: String? = nil,
         font: ViewInspection.FontInfo? = nil
     ) -> ViewInspection {
         ViewInspection(
@@ -23,6 +24,7 @@ struct InfoRowBuilderTests {
             backgroundColorHex: backgroundColorHex,
             alpha: alpha,
             cornerRadius: cornerRadius,
+            text: text,
             font: font
         )
     }
@@ -147,5 +149,22 @@ struct InfoRowBuilderTests {
         #expect(rows.count == 13)
         #expect(rows[10].title == "fontColor")
         #expect(rows[11] == InfoRow(title: "vs", value: "UILabel"))
+    }
+
+    @Test("alpha と cornerRadius が nil なら None と表示する")
+    func showsNoneForMissingAlphaAndCornerRadius() {
+        // SwiftUI のアクセシビリティ要素では取得できない項目。
+        let rows = InfoRowBuilder.rows(from: makeInspection(alpha: nil, cornerRadius: nil))
+
+        #expect(rows[6] == InfoRow(title: "alpha", value: "None"))
+        #expect(rows[7] == InfoRow(title: "cornerRadius", value: "None"))
+    }
+
+    @Test("text がある計測結果は共通8行の直後に text 行が入る")
+    func appendsTextRow() {
+        let rows = InfoRowBuilder.rows(from: makeInspection(text: "Hello"))
+
+        #expect(rows.count == 9)
+        #expect(rows[8] == InfoRow(title: "text", value: "Hello"))
     }
 }

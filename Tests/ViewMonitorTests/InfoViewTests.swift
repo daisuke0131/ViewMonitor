@@ -31,22 +31,13 @@ struct InfoViewTests {
         ]
     }
 
-    @Test("行を順序通りに title: value 形式で描画する")
+    @Test("行を順序通りに保持して SwiftUI ビューへ渡す")
     func rendersRowsInOrder() {
         let infoView = makeInfoView()
 
         infoView.update(rows: commonRows)
 
-        #expect(infoView.rowLabels.map(\.text) == [
-            "class: UIView",
-            "x: 16",
-            "y: 120",
-            "width: 343",
-            "height: 20",
-            "background: None",
-            "alpha: 1",
-            "cornerRadius: 0"
-        ])
+        #expect(infoView.displayedRows == commonRows)
     }
 
     @Test("行数が増えると高さが伸び、幅は 200 のまま")
@@ -70,8 +61,8 @@ struct InfoViewTests {
 
         infoView.update(rows: commonRows)
 
-        #expect(infoView.rowLabels.count == 8)
-        #expect(infoView.rowLabels.compactMap(\.text).allSatisfy { !$0.contains("Helvetica") })
+        #expect(infoView.displayedRows.count == 8)
+        #expect(infoView.displayedRows.allSatisfy { $0.value != "Helvetica" })
     }
 
     @Test("ドラッグ相当の origin 変更後も update で origin が動かない")
