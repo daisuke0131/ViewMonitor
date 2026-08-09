@@ -90,7 +90,7 @@ final class ViewMonitorUITests: XCTestCase {
         XCTAssertTrue(button.exists)
         let helloFrame = hello.frame
         let buttonFrame = button.frame
-        pauseForDemo(1.0)
+        pauseForDemo(0.5)
 
         let launcher = app.buttons["ViewMonitor.launcher"]
         XCTAssertTrue(launcher.waitForExistence(timeout: 10))
@@ -99,13 +99,13 @@ final class ViewMonitorUITests: XCTestCase {
             app.buttons.matching(identifier: "ViewMonitor.monitorButton")
                 .firstMatch.waitForExistence(timeout: 5)
         )
-        pauseForDemo(1.5)
+        pauseForDemo(0.5)
 
         app.coordinate(withNormalizedOffset: .zero)
             .withOffset(CGVector(dx: helloFrame.midX, dy: helloFrame.midY))
             .tap()
         XCTAssertTrue(app.staticTexts["class: Text"].waitForExistence(timeout: 5))
-        pauseForDemo(2.0)
+        pauseForDemo(0.75)
 
         app.coordinate(withNormalizedOffset: .zero)
             .withOffset(CGVector(dx: buttonFrame.midX, dy: buttonFrame.midY))
@@ -115,7 +115,7 @@ final class ViewMonitorUITests: XCTestCase {
             NSPredicate(format: "label BEGINSWITH %@", "gapY:")
         ).firstMatch
         XCTAssertTrue(gapRow.waitForExistence(timeout: 5))
-        pauseForDemo(3.0)
+        pauseForDemo(1.5)
     }
 
     func testListRowsGetMonitorButtons() {

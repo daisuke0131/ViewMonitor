@@ -6,7 +6,7 @@ import ImageIO
 import UniformTypeIdentifiers
 
 private let usage = """
-Usage: video-to-gif.swift <input-mp4> <output-gif> [--width 360] [--fps 10] [--max-bytes 10485760]
+Usage: video-to-gif.swift <input-mp4> <output-gif> [--start 0] [--width 360] [--fps 10] [--max-bytes 10485760]
 """
 
 private enum ToolError: LocalizedError {
@@ -27,6 +27,7 @@ private enum ToolError: LocalizedError {
 private struct Options {
     let inputURL: URL
     let outputURL: URL
+    let startSeconds: Double
     let width: Int
     let fps: Int
     let maxBytes: Int
@@ -43,6 +44,7 @@ private struct Options {
 
         let inputURL = URL(fileURLWithPath: arguments[0]).standardizedFileURL
         let outputURL = URL(fileURLWithPath: arguments[1]).standardizedFileURL
+        var startSeconds = 0.0
         var width = 360
         var fps = 10
         var maxBytes = 10_485_760
@@ -56,6 +58,11 @@ private struct Options {
             let name = arguments[index]
             let value = arguments[index + 1]
             switch name {
+            case "--start":
+                guard let parsed = Double(value), parsed.isFinite, parsed >= 0 else {
+                    throw ToolError.invalidArgument("--start must be a non-negative number.")
+                }
+                startSeconds = parsed
             case "--width":
                 guard let parsed = Int(value), (1...4_096).contains(parsed) else {
                     throw ToolError.invalidArgument("--width must be between 1 and 4096.")
@@ -80,6 +87,7 @@ private struct Options {
         return Options(
             inputURL: inputURL,
             outputURL: outputURL,
+            startSeconds: startSeconds,
             width: width,
             fps: fps,
             maxBytes: maxBytes
@@ -114,8 +122,14 @@ private enum VideoToGIF {
         guard durationSeconds.isFinite, durationSeconds > 0 else {
             throw ToolError.invalidVideo("Input video has no readable duration.")
         }
+        guard options.startSeconds < durationSeconds else {
+            throw ToolError.invalidArgument(
+                "--start (\(options.startSeconds)) must be before the video ends (\(durationSeconds))."
+            )
+        }
 
-        let frameCount = max(1, Int(ceil(durationSeconds * Double(options.fps))))
+        let convertedDuration = durationSeconds - options.startSeconds
+        let frameCount = max(1, Int(ceil(convertedDuration * Double(options.fps))))
         let outputDirectory = options.outputURL.deletingLastPathComponent()
         try fileManager.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
         let temporaryURL = outputDirectory.appendingPathComponent(
@@ -150,7 +164,7 @@ private enum VideoToGIF {
         var outputHeight = 0
         for frameIndex in 0..<frameCount {
             let requestedSeconds = min(
-                Double(frameIndex) / Double(options.fps),
+                options.startSeconds + Double(frameIndex) / Double(options.fps),
                 max(0, durationSeconds - 0.001)
             )
             let requestedTime = CMTime(seconds: requestedSeconds, preferredTimescale: 600)
@@ -195,6 +209,7 @@ private enum VideoToGIF {
 
         print("GIF: \(options.outputURL.path)")
         print("Dimensions: \(options.width)x\(outputHeight)")
+        print("Start: \(options.startSeconds) seconds")
         print("Frames: \(frameCount)")
         print("Bytes: \(bytes)")
     }

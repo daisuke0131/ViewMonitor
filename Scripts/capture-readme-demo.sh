@@ -104,6 +104,7 @@ trap - EXIT INT TERM
 "$converter_bin" \
   "$mp4_path" \
   "$output_gif" \
+  --start 3 \
   --width 360 \
   --fps 10 \
   --max-bytes 10485760
