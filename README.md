@@ -86,6 +86,10 @@ import ViewMonitor
 
 @main
 struct MyApp: App {
+    init() {
+        ViewMonitor.enableSwiftUIElementDetection()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -102,16 +106,26 @@ accessibility elements SwiftUI publishes, so measurement works without any
 changes to your views. A SwiftUI sample project is available at
 `Example/ViewMonitorSwiftUIExample`.
 
+iOS builds the accessibility tree only while an accessibility client is
+active, so without further setup no monitor buttons appear over SwiftUI
+views. Enable detection in one of these ways:
+
+- Call `ViewMonitor.enableSwiftUIElementDetection()` once at startup, as in
+  the snippet above (before or after `start()`, either is fine). This works
+  in **debug builds only**: it relies on a private accessibility API
+  internally, so in release builds the implementation is compiled out —
+  the call is a no-op that returns `false`, and no private-API symbol
+  names remain in the binary.
+- Alternatively, attach Xcode's Accessibility Inspector (Xcode > Open
+  Developer Tool > Accessibility Inspector) or enable VoiceOver, then
+  reopen the screen.
+
+When ViewMonitor finds SwiftUI content but no accessibility elements, the
+info panel shows a notice with these instructions instead of failing
+silently.
+
 Known limitations for SwiftUI elements:
 
-- SwiftUI elements are detected through the accessibility tree, which iOS
-  builds only while an accessibility client is active (VoiceOver, UI tests,
-  or Xcode's Accessibility Inspector). If no monitor buttons appear over
-  SwiftUI views, attach Accessibility Inspector (Xcode > Open Developer
-  Tool > Accessibility Inspector) or enable VoiceOver, then reopen the
-  screen. On the simulator you can also run
-  `xcrun simctl spawn booted defaults write com.apple.Accessibility AutomationEnabled 1`
-  before launching the app.
 - Measured values are limited to position, size, and text content
   (font / background / cornerRadius show `None`).
 - Monitor buttons do not follow scrolling; they refresh on screen
@@ -120,14 +134,15 @@ Known limitations for SwiftUI elements:
   measured as a single element, and `.accessibilityHidden(true)` views are
   not detected.
 
-### Running the sample on a device
+### Running the samples on a device
 
-The sample runs on the simulator as-is. To run it on a physical device, code
-signing needs your own team, so create a `Local.xcconfig` (git-ignored) with
-your Team ID before hitting Run:
+The samples run on the simulator as-is. To run one on a physical device,
+code signing needs your own team, so create a `Local.xcconfig` (git-ignored)
+next to the example you want to run, with your Team ID, before hitting Run:
 
 ```sh
 echo 'DEVELOPMENT_TEAM = XXXXXXXXXX' > Example/ViewMonitorExample/Local.xcconfig
+echo 'DEVELOPMENT_TEAM = XXXXXXXXXX' > Example/ViewMonitorSwiftUIExample/Local.xcconfig
 ```
 
 ## Author

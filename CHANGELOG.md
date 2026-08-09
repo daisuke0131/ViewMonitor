@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- SwiftUI 対応。SwiftUI 画面の `Text` / `Image` / `Button` を、SwiftUI が VoiceOver 向けに公開するアクセシビリティ要素経由で検出し、位置・サイズ・テキスト内容の計測と UIKit ビューとの距離計測に対応。検出にはアクセシビリティクライアント（VoiceOver / Accessibility Inspector など）が有効である必要がある。詳細は README を参照
+- SwiftUI 対応。SwiftUI 画面の `Text` / `Image` / `Button` を、SwiftUI が VoiceOver 向けに公開するアクセシビリティ要素経由で検出し、位置・サイズ・テキスト内容の計測と UIKit ビューとの距離計測に対応。検出にはアクセシビリティツリーの構築が必要（下記 `enableSwiftUIElementDetection()` か、VoiceOver / Accessibility Inspector などのクライアント接続）。詳細は README を参照
+- `ViewMonitor.enableSwiftUIElementDetection()`。外部のアクセシビリティクライアント無しで SwiftUI 要素の検出を有効化する。DEBUG ビルド限定（内部でプライベート API を使うため、リリースビルドでは実装ごとコンパイルから除外され常に false を返す）
 - SwiftUI ライフサイクルのアプリから起動するための `View.viewMonitor()` モディファイア
 - SwiftUI サンプルアプリ（`Example/ViewMonitorSwiftUIExample`）
+- ホスティングビューがあるのにアクセシビリティ要素を検出できない場合、InfoView に有効化手順の案内を表示（無言で0件のままにしない）
 
 ### Changed
 
