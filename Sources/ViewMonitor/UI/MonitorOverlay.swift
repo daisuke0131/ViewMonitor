@@ -16,6 +16,7 @@ final class MonitorOverlay: NSObject {
 
     private weak var rootView: UIView?
     private var infoView: InfoView?
+    private var shieldView: MonitorShieldView?
     private var buttons: [MonitorButton] = []
     /// 計測のために userInteractionEnabled を一時的に有効化したビュー。
     /// hide() で元に戻す。
@@ -40,9 +41,12 @@ final class MonitorOverlay: NSObject {
     }
 
     /// オーバーレイを構築して表示する。
+    /// 盾 → InfoView → 計測ボタンの順に追加し、盾が計測 UI の背面・
+    /// アプリ本体の前面に入るようにする。
     func show(on rootView: UIView) {
         hide()
         self.rootView = rootView
+        addShieldView(to: rootView)
         addInfoView(to: rootView)
         let targets = scanner.measurementTargets(in: rootView)
         for target in targets {
@@ -81,10 +85,21 @@ final class MonitorOverlay: NSObject {
         buttons.removeAll()
         infoView?.removeFromSuperview()
         infoView = nil
+        shieldView?.removeFromSuperview()
+        shieldView = nil
         forcedInteractionViews.forEach { $0.isUserInteractionEnabled = false }
         forcedInteractionViews.removeAll()
         lastSelectedButton = nil
         rootView = nil
+    }
+
+    /// アプリ本体へのタッチを遮る盾を、計測 UI より先(=背面)に入れる。
+    private func addShieldView(to rootView: UIView) {
+        let shield = MonitorShieldView(frame: rootView.bounds)
+        shield.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        shield.backgroundColor = .clear
+        rootView.addSubview(shield)
+        shieldView = shield
     }
 
     private func addInfoView(to rootView: UIView) {

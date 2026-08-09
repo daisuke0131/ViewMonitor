@@ -75,6 +75,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 Once running, tap the button that appears in the top-right corner of the screen to start measuring.
 A working sample project is available at `Example/ViewMonitorExample`.
 
+While measuring is ON, touches on the app itself are blocked so that
+accidental taps cannot navigate away, fire actions, or scroll the content
+(a screen transition would discard the measurement overlay). Only
+ViewMonitor's own UI — the measurement buttons, the info panel, and the
+toggle — receives touches. To interact with the app (e.g. scroll a list to
+measure items further down), toggle OFF, move the screen, then toggle ON
+again to re-scan.
+
 ### SwiftUI
 
 For apps using the SwiftUI lifecycle (`@main App`), attach `.viewMonitor()`

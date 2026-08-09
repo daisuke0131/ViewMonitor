@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SwiftUI サンプルアプリ（`Example/ViewMonitorSwiftUIExample`）
 - ホスティングビューがあるのにアクセシビリティ要素を検出できない場合、InfoView に有効化手順の案内を表示（無言で0件のままにしない）
 - `List` の行の検出。List はホスティングビューの下に UICollectionView を挟み、行のアクセシビリティ要素は各セル内のビューが公開するため、ホスティングビュー配下のすべてのビューを走査対象にした（行は List の仕様どおり1行=1要素として計測される）
+- 計測中はアプリ本体へのタッチ（タップ・スクロール・エッジスワイプ）を遮断。誤操作でアクションが発火したり、画面遷移で計測状態が破棄されたりしない。計測ボタン・InfoView・実行ボタンなど ViewMonitor 自身の UI だけが操作できる
 
 ### Changed
 
