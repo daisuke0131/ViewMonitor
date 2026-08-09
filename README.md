@@ -1,96 +1,58 @@
-![ViewMonitor](assets/viewmonitor.png)
-[![Version](https://img.shields.io/cocoapods/v/ViewMonitor.svg?style=flat)](http://cocoapods.org/pods/ViewMonitor)
-[![License](https://img.shields.io/cocoapods/l/ViewMonitor.svg?style=flat)](http://cocoapods.org/pods/ViewMonitor)
+<p align="center">
+  <img src="assets/viewmonitor.png" alt="ViewMonitor" width="425">
+</p>
 
-## What's ViewMonitor
+# ViewMonitor — In-app visual layout inspector for iOS
 
-ViewMonitor can measure view positions with accuracy.
-This library is to check design sheet from native app.
-behave like this.
+<p align="center">
+  <a href="https://github.com/daisuke0131/ViewMonitor/actions/workflows/ci.yml"><img src="https://github.com/daisuke0131/ViewMonitor/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/Swift-6.0-F05138.svg?logo=swift&amp;logoColor=white" alt="Swift 6.0">
+  <img src="https://img.shields.io/badge/iOS-15.0%2B-000000.svg?logo=apple" alt="iOS 15.0+">
+  <img src="https://img.shields.io/badge/Swift_Package_Manager-compatible-brightgreen.svg" alt="Swift Package Manager compatible">
+  <a href="https://cocoapods.org/pods/ViewMonitor"><img src="https://img.shields.io/cocoapods/v/ViewMonitor.svg?style=flat" alt="CocoaPods version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/daisuke0131/ViewMonitor" alt="MIT License"></a>
+</p>
 
-- UIViewController
-  ![demo](assets/demo.gif)
-- UITableViewController
-  ![demo](assets/table_demo.gif)
+**Inspect UIKit and SwiftUI layouts directly inside your app. Measure frames, spacing, insets, and view properties with a few taps.**
 
-## Requirements
+<p align="center">
+  <img src="assets/viewmonitor-swiftui-demo.gif" alt="ViewMonitor inspecting two SwiftUI elements and measuring the gap between them" width="360">
+</p>
 
-- iOS 15.0+
-- Xcode 26.0+
-- Swift 6.0+
+## Why ViewMonitor
 
-## Installation
+- **Inspect the running UI.** Check layout values without switching to Xcode's View Debugger.
+- **Verify UIKit and SwiftUI together.** Measure UIKit views, SwiftUI accessibility elements, or a pair containing both.
+- **Compare two elements.** See edge-to-edge gaps, overlap, or containment insets after two taps.
+- **Read implementation details.** Inspect frames, colors, alpha, corner radius, text, and font properties when the framework exposes them.
+- **Shorten design QA.** Compare a design specification with the implementation directly on a simulator or device.
 
-### Swift Package Manager
+## Quick Start
 
-In Xcode, go to File > Add Package Dependencies and add the following URL.
+### 1. Add the package
 
-```
+In Xcode, choose **File > Add Package Dependencies** and enter:
+
+```text
 https://github.com/daisuke0131/ViewMonitor.git
 ```
 
-If you're using `Package.swift` directly, add it as follows:
+Or add ViewMonitor to `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/daisuke0131/ViewMonitor.git", from: "2.0.0")
+    .package(
+        url: "https://github.com/daisuke0131/ViewMonitor.git",
+        from: "2.0.0"
+    )
 ]
 ```
 
-### cocoaPods
+### 2. Start ViewMonitor
 
-ViewMonitor is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line in your Podfile:
+#### SwiftUI
 
-```ruby
-pod "ViewMonitor"
-```
-
-This library use swift.
-So, you have to add `use_frameworks!` in Podfile.
-after that, please run
-
-```ruby
-pod install
-```
-
-## How to use
-
-Call `ViewMonitor.start()` after your app has launched.
-
-```swift
-import ViewMonitor
-
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-    func scene(
-        _ scene: UIScene,
-        willConnectTo session: UISceneSession,
-        options connectionOptions: UIScene.ConnectionOptions
-    ) {
-        ViewMonitor.start()
-    }
-}
-```
-
-Once running, tap the button that appears in the top-right corner of the screen to start measuring.
-A working sample project is available at `Example/ViewMonitorExample`.
-
-While measuring is ON, touches on the app itself are blocked so that
-accidental taps cannot navigate away, fire actions, or scroll the content
-(a screen transition would discard the measurement overlay). Only
-ViewMonitor's own UI — the measurement buttons, the info panel, and the
-toggle — receives touches. Measurement buttons are pinned at the positions
-captured when the toggle was turned ON. If the screen still changes while
-measuring (device rotation, or a programmatic transition such as a timer-
-driven push), measuring stays ON and the new screen is re-scanned; the
-current selection resets. To interact with the app (e.g. scroll a list to
-measure items further down), toggle OFF, move the screen, then toggle ON
-again to re-scan.
-
-### SwiftUI
-
-For apps using the SwiftUI lifecycle (`@main App`), attach `.viewMonitor()`
-to the root view:
+Enable SwiftUI element detection in a debug build, then attach `.viewMonitor()` to the root view:
 
 ```swift
 import SwiftUI
@@ -111,64 +73,126 @@ struct MyApp: App {
 }
 ```
 
-Calling `ViewMonitor.start()` from `App.init()` also works.
+#### UIKit
 
-SwiftUI's `Text`, `Image`, and `Button` are detected through the
-accessibility elements SwiftUI publishes, so measurement works without any
-changes to your views. A SwiftUI sample project is available at
-`Example/ViewMonitorSwiftUIExample`.
+Call `ViewMonitor.start()` after the app has a window:
 
-iOS builds the accessibility tree only while an accessibility client is
-active, so without further setup no monitor buttons appear over SwiftUI
-views. Enable detection in one of these ways:
+```swift
+import UIKit
+import ViewMonitor
 
-- Call `ViewMonitor.enableSwiftUIElementDetection()` once at startup, as in
-  the snippet above (before or after `start()`, either is fine). This works
-  in **debug builds only**: it relies on a private accessibility API
-  internally, so in release builds the implementation is compiled out —
-  the call is a no-op that returns `false`, and no private-API symbol
-  names remain in the binary.
-- Alternatively, attach Xcode's Accessibility Inspector (Xcode > Open
-  Developer Tool > Accessibility Inspector) or enable VoiceOver, then
-  reopen the screen.
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
+        ViewMonitor.start()
+    }
+}
+```
 
-When ViewMonitor finds SwiftUI content but no accessibility elements, the
-info panel shows a notice with these instructions instead of failing
-silently.
+Tap the ViewMonitor button in the top-right corner to enter measurement mode.
 
-Known limitations for SwiftUI elements:
+## What You Can Inspect
 
-- Measured values are limited to position, size, and text content
-  (font / background / cornerRadius show `None`).
-- Views combined with `.accessibilityElement(children: .combine)` are
-  measured as a single element, and `.accessibilityHidden(true)` views are
-  not detected.
+| Capability | UIKit | SwiftUI |
+| --- | --- | --- |
+| Position and size | Yes | Yes |
+| Text content | Labels and buttons | Published accessibility text |
+| Background, alpha, corner radius | Yes | Not available |
+| Font family, size, color | Labels and button titles | Not available |
+| Gap, overlap, containment insets | Yes | Yes, including UIKit-to-SwiftUI comparisons |
 
-### Running the samples on a device
+ViewMonitor detects common UIKit controls such as labels, image views, and buttons, plus the accessibility elements published by SwiftUI.
 
-The samples run on the simulator as-is. To run one on a physical device,
-code signing needs your own team, so create a `Local.xcconfig` (git-ignored)
-next to the example you want to run, with your Team ID, before hitting Run:
+## Measure Relationships Between Views
+
+Select one element, then select another. The previous element receives a blue outline, the current element receives a red outline, and the info panel describes their relationship:
+
+- `gapX` / `gapY` — edge-to-edge spacing when the elements are separated.
+- `overlapX` / `overlapY` — overlap on each axis when their frames intersect.
+- `top` / `left` / `bottom` / `right` — inner insets when one frame contains the other.
+
+The values come from the frames shown in the running app, so the same flow works for UIKit-to-UIKit, SwiftUI-to-SwiftUI, and UIKit-to-SwiftUI comparisons.
+
+## Measurement Mode
+
+While measurement mode is on:
+
+- Tap an overlay button to inspect that element.
+- ViewMonitor blocks touches from reaching the app, preventing accidental navigation, actions, or scrolling.
+- Overlay buttons stay at the positions captured when measurement started.
+- Rotation and programmatic screen changes keep measurement mode on, re-scan the new screen, and clear the previous selection.
+
+To scroll or interact with the app, turn measurement mode off, move to the desired state, then turn it on again.
+
+## SwiftUI Detection and Limitations
+
+ViewMonitor inspects the accessibility elements that SwiftUI publishes for `Text`, `Image`, `Button`, list rows, and other accessible content. Your views do not need ViewMonitor-specific modifiers beyond the root `.viewMonitor()` startup modifier.
+
+<details>
+<summary>Why SwiftUI detection must be enabled in debug builds</summary>
+
+iOS builds the SwiftUI accessibility tree only while an accessibility client is active. `ViewMonitor.enableSwiftUIElementDetection()` activates that tree from inside the process so the overlay can find SwiftUI elements without VoiceOver or Accessibility Inspector attached.
+
+The helper relies on a private accessibility API and is therefore compiled into **debug builds only**. In release builds it is a no-op that returns `false`, and the private symbol names are not included in the binary. As an alternative, attach Xcode's Accessibility Inspector or enable VoiceOver, then reopen the screen.
+
+If ViewMonitor finds SwiftUI content but no accessibility elements, the info panel displays these instructions instead of failing silently.
+
+SwiftUI limitations:
+
+- Position, size, element type, and published text are available; font, background, alpha, and corner radius are not.
+- Views using `.accessibilityElement(children: .combine)` are measured as one element.
+- Views using `.accessibilityHidden(true)` are not detected.
+
+</details>
+
+## Examples
+
+- SwiftUI lifecycle example: `Example/ViewMonitorSwiftUIExample`
+- UIKit lifecycle example: `Example/ViewMonitorExample`
+
+Both examples run on the simulator as-is. For a physical device, create a git-ignored `Local.xcconfig` next to the example you want to run and set your Apple Developer Team ID:
 
 ```sh
 echo 'DEVELOPMENT_TEAM = XXXXXXXXXX' > Example/ViewMonitorExample/Local.xcconfig
 echo 'DEVELOPMENT_TEAM = XXXXXXXXXX' > Example/ViewMonitorSwiftUIExample/Local.xcconfig
 ```
 
-## Author
+### UIKit examples
 
-### developer
+| View controller | Table view controller |
+| --- | --- |
+| ![ViewMonitor inspecting a UIKit view controller](assets/demo.gif) | ![ViewMonitor inspecting a UIKit table view controller](assets/table_demo.gif) |
 
-[Daisuke Yamashita](https://github.com/daisuke0131)
+## Requirements
 
-### designer
+- iOS 15.0+
+- Xcode 26.0+
+- Swift 6.0+
 
-[Satomi Nogawa](https://github.com/stmngw)
+## CocoaPods
+
+ViewMonitor is also available through [CocoaPods](https://cocoapods.org/pods/ViewMonitor):
+
+```ruby
+pod "ViewMonitor"
+```
+
+Then run `pod install`.
+
+## Authors
+
+- Developer: [Daisuke Yamashita](https://github.com/daisuke0131)
+- Designer: [Satomi Nogawa](https://github.com/stmngw)
+
+## History
+
+ViewMonitor began in 2015 and was revived in 2026 with Swift 6, Swift Package Manager, modern scene support, two-view measurement, and SwiftUI inspection. See the [changelog](CHANGELOG.md) for release details.
+
+The original presentation, [How to measure UIView position on Native App](https://www.slideshare.net/daisukeyamashita180/18potatotips-yamashita), was given at potatotips #18.
 
 ## License
 
-ViewMonitor is available under the MIT license. See the LICENSE file for more info.
-
-## Other
-
-[How to measure UIView position on Native App](http://www.slideshare.net/daisukeyamashita180/18potatotips-yamashita) at potatotips #18
+ViewMonitor is available under the MIT license. See [LICENSE](LICENSE) for details.
