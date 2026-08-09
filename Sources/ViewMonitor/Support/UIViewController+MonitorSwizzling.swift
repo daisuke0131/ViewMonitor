@@ -65,6 +65,8 @@ extension UIViewController {
         guard !(self is MonitorInternalViewController) else {
             return
         }
-        ViewMonitor.detectedViewDidAppear()
+        // isBeingPresented は viewDidAppear の時点でまだ true になっている。
+        // モーダル提示(アラート等)を計測 UI で覆わないための判定に使う。
+        ViewMonitor.detectedViewDidAppear(isBeingPresented: isBeingPresented)
     }
 }

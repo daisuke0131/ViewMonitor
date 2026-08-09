@@ -27,6 +27,10 @@ final class MonitorLauncherButton: UIButton {
         super.init(frame: CGRect(origin: origin, size: Self.size))
         // UI テスト(XCUITest)から実行ボタンを特定するための識別子。
         accessibilityIdentifier = "ViewMonitor.launcher"
+        // 右上に係留する。回転の reload が万一リサイズ完了前の bounds で
+        // 配置しても、その後のウィンドウリサイズで右上に追従し、
+        // 画面外に取り残されない(停止操作を失わない)ための保険。
+        autoresizingMask = [.flexibleLeftMargin, .flexibleBottomMargin]
         setBackgroundImage(ViewMonitorAsset.button ?? .monitorSolidColor(.black), for: .normal)
         setBackgroundImage(ViewMonitorAsset.buttonSelected ?? .monitorSolidColor(.red), for: .selected)
         addTarget(self, action: #selector(toggle), for: .touchUpInside)

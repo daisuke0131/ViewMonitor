@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- faceUp / faceDown など、インターフェイスが回転せずジオメトリが変わらない向きの変化のたびに reload が走り、選択状態（赤枠・距離計測の参照・InfoView の表示）が無言で破棄されていた。ジオメトリが変わらない場合は貼り直さない
+- 計測中にアプリがモーダル（アラート・シート等）をプログラム提示すると、計測維持のシールドがダイアログの上に乗り、OK ボタン等が押せなくなっていた。モーダル提示の遷移では従来どおり計測を終了する
+- 1回の物理回転で複数届く向き通知のたびに全再スキャンが走り、ちらつきや引っかかりの原因になっていた。貼り直しの予約を1つに集約
+- 貼り直し先のウィンドウが見つからないとき「計測中」状態だけが残留し、後の遷移で表示のないままシールドが復活し得た。計測中かどうかを実行ボタンの選択状態から導出する方式に変更し、状態の二重持ちを解消
+- 実行ボタンを右上に係留（autoresizing）。回転時の貼り直しが万一リサイズ完了前に走っても、ウィンドウのリサイズに追従して画面内に留まる
+
 ## [2.4.0] - 2026-08-09
 
 ### Added
