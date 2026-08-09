@@ -119,6 +119,75 @@ struct ViewMonitorLifecycleTests {
         ViewMonitor.stop()
     }
 
+    @Test("計測中に reload が起きても ON を維持して新画面を再スキャンする")
+    func reloadKeepsMeasuringAndRescans() throws {
+        // 回転やプログラム起因の画面遷移で reload() が走ると、従来は実行ボタンが
+        // OFF の新品に差し替わり計測が無言で終わっていた。シールドがタップ起因の
+        // 遷移を塞いだ今、残るこの2経路でも計測を維持し、新しい画面を
+        // 再スキャンして貼り直す。
+        ViewMonitor.stop()
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        window.addSubview(UILabel(frame: CGRect(x: 16, y: 100, width: 100, height: 20)))
+        ViewMonitor.simulateLauncherButtonAttachedForTesting(to: window)
+        let launcher = try #require(window.subviews.compactMap { $0 as? MonitorLauncherButton }.first)
+        launcher.isSelected = true
+        launcher.onToggle?(true)
+        #expect(window.subviews.contains { $0 is MonitorButton })
+
+        // 回転・画面遷移相当。次の画面には別の対象がある。
+        let nextWindow = UIWindow(frame: CGRect(x: 0, y: 0, width: 480, height: 320))
+        nextWindow.addSubview(UIImageView(frame: CGRect(x: 10, y: 10, width: 60, height: 40)))
+        ViewMonitor.simulateReloadForTesting(on: nextWindow)
+
+        let newLauncher = try #require(nextWindow.subviews.compactMap { $0 as? MonitorLauncherButton }.first)
+        #expect(newLauncher.isSelected, "reload で計測が OFF に戻ってしまった")
+        #expect(nextWindow.subviews.contains { $0 is MonitorButton }, "新画面が再スキャンされていない")
+        // 実行ボタン(停止操作)は再スキャン後も最前面。
+        let launcherIndex = try #require(nextWindow.subviews.firstIndex { $0 === newLauncher })
+        #expect(launcherIndex == nextWindow.subviews.count - 1)
+
+        newLauncher.onToggle?(false)
+        ViewMonitor.stop()
+    }
+
+    @Test("計測 OFF なら reload しても OFF のまま")
+    func reloadStaysOffWhenNotMeasuring() throws {
+        ViewMonitor.stop()
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        ViewMonitor.simulateLauncherButtonAttachedForTesting(to: window)
+
+        let nextWindow = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        nextWindow.addSubview(UILabel(frame: CGRect(x: 16, y: 100, width: 100, height: 20)))
+        ViewMonitor.simulateReloadForTesting(on: nextWindow)
+
+        let launcher = try #require(nextWindow.subviews.compactMap { $0 as? MonitorLauncherButton }.first)
+        #expect(!launcher.isSelected)
+        #expect(!nextWindow.subviews.contains { $0 is MonitorButton })
+        ViewMonitor.stop()
+    }
+
+    @Test("stop すると計測中フラグもリセットされる")
+    func stopClearsMeasuringState() throws {
+        // stop() 後に start() し直したとき、前回の計測中フラグが残っていると
+        // 最初の reload でいきなりオーバーレイが開いてしまう。
+        // stop() は started ガードを持つため、実運用どおり start() を通す。
+        ViewMonitor.stop()
+        ViewMonitor.start()
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        ViewMonitor.simulateLauncherButtonAttachedForTesting(to: window)
+        let launcher = try #require(window.subviews.compactMap { $0 as? MonitorLauncherButton }.first)
+        launcher.isSelected = true
+        launcher.onToggle?(true)
+
+        ViewMonitor.stop()
+
+        let nextWindow = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        ViewMonitor.simulateReloadForTesting(on: nextWindow)
+        let newLauncher = try #require(nextWindow.subviews.compactMap { $0 as? MonitorLauncherButton }.first)
+        #expect(!newLauncher.isSelected)
+        ViewMonitor.stop()
+    }
+
     @Test("画面遷移で実行ボタンが差し替わると直前のボタンが解放される")
     func replacedLauncherButtonIsDeallocated() throws {
         // onToggle クロージャが自身の button を強参照キャプチャすると

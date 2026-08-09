@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- 実行ボタン・計測ボタン・InfoView に accessibilityIdentifier（`ViewMonitor.launcher` / `ViewMonitor.monitorButton` / `ViewMonitor.infoView`）。UI テストなどの自動化から ViewMonitor の UI を特定できる
+
+### Changed
+
+- 計測中に回転やプログラム起因の画面遷移が起きても、計測 OFF に戻さず新しい画面を再スキャンして計測を続ける（従来は無言で OFF に戻っていた）。選択状態（赤枠・距離計測の参照）は旧画面のビューと結びついているため引き継がない
+
+### Fixed
+
+- 横向きから縦に戻すと実行ボタンが画面外に出ることがある不具合。orientationDidChange はウィンドウのリサイズ完了前に届くため、貼り直しを次の runloop に遅らせてリサイズ後のジオメトリで配置するようにした
+
 ## [2.3.0] - 2026-08-09
 
 ### Added

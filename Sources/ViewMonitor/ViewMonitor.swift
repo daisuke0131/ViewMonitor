@@ -19,6 +19,9 @@ public final class ViewMonitor: NSObject {
     private var launcherButton: MonitorLauncherButton?
     private weak var rootView: UIView?
     private var started = false
+    /// 計測中(トグル ON)かどうか。実行ボタンの isSelected は reload() で
+    /// ボタンごと作り直されて消えるため、状態はここが持つ。
+    private var measuring = false
 
     /// 計測を開始する。実行ボタンが画面に表示される。
     public static func start() {
@@ -62,6 +65,7 @@ public final class ViewMonitor: NSObject {
         shared.removeLauncherButton()
         shared.stopObservingOrientation()
         shared.started = false
+        shared.measuring = false
     }
 
     /// `viewDidAppear` の swizzling から呼ばれる。
@@ -74,10 +78,27 @@ public final class ViewMonitor: NSObject {
 
     /// 画面が入れ替わったので、オーバーレイと実行ボタンを貼り直す。
     private func reload() {
+        reload(on: WindowProvider.keyWindow)
+    }
+
+    /// テスト用に rootView を注入できる本体。ユニットテストのバンドルには
+    /// 接続済みの window scene が無く `WindowProvider.keyWindow` が常に nil に
+    /// なるため、貼り直し先を差し替えられるようにしている。
+    private func reload(on newRootView: UIView?) {
         overlay.hide()
         removeLauncherButton()
-        rootView = WindowProvider.keyWindow
+        rootView = newRootView
         addLauncherButton()
+        // 計測中に reload が起きた(回転・プログラム起因の画面遷移。タップ起因の
+        // 遷移はシールドが塞いでいる)場合は、OFF に戻さず新しい画面を
+        // 再スキャンして計測を続ける。選択状態(赤枠・距離の参照)は旧画面の
+        // ビューと結びついているため引き継がない。
+        guard measuring, let launcherButton, let rootView else {
+            return
+        }
+        launcherButton.isSelected = true
+        overlay.show(on: rootView)
+        rootView.bringSubviewToFront(launcherButton)
     }
 
     private func addLauncherButton() {
@@ -97,6 +118,7 @@ public final class ViewMonitor: NSObject {
             guard let self, let rootView = self.rootView else {
                 return
             }
+            self.measuring = isSelected
             if isSelected {
                 self.overlay.show(on: rootView)
                 // 計測ボタンは rootView に直接addSubviewされるため、
@@ -129,6 +151,12 @@ public final class ViewMonitor: NSObject {
         shared.addLauncherButton()
     }
 
+    /// テスト用: 画面遷移・回転相当の `reload()` を任意の rootView で実行する。
+    /// 公開 API には含まれない。
+    static func simulateReloadForTesting(on view: UIView) {
+        shared.reload(on: view)
+    }
+
     private func removeLauncherButton() {
         launcherButton?.removeFromSuperview()
         launcherButton = nil
@@ -156,6 +184,15 @@ public final class ViewMonitor: NSObject {
         guard started else {
             return
         }
-        reload()
+        // orientationDidChange はウィンドウのリサイズ完了前に届くため、
+        // ここで即 reload すると旧 bounds のまま配置してしまう
+        // (横→縦で実行ボタンが x=705 など画面外に出る)。次の runloop に
+        // 遅らせ、リサイズ後のジオメトリで貼り直す。
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.started else {
+                return
+            }
+            self.reload()
+        }
     }
 }
