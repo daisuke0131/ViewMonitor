@@ -164,6 +164,24 @@ final class ViewMonitorUITests: XCTestCase {
         }
     }
 
+    func testFaceUpOrientationKeepsSelection() {
+        let app = XCUIApplication()
+        launchAndStartMeasuring(app)
+
+        let hello = app.staticTexts["Hello, ViewMonitor!"]
+        XCTAssertTrue(hello.exists)
+        tapCenter(of: hello)
+        XCTAssertTrue(app.staticTexts["class: Text"].waitForExistence(timeout: 5))
+
+        // 端末を水平に置く(faceUp)。インターフェイスは回転せずジオメトリも
+        // 変わらないので、選択状態と InfoView は維持されるべき。
+        XCUIDevice.shared.orientation = .faceUp
+        Thread.sleep(forTimeInterval: 1.5)
+
+        XCTAssertTrue(app.staticTexts["class: Text"].exists, "faceUp で選択状態が破棄された")
+        XCTAssertTrue(app.buttons["ViewMonitor.launcher"].isSelected)
+    }
+
     func testShieldBlocksAppInteractionWhileMeasuring() {
         let app = XCUIApplication()
         app.launch()

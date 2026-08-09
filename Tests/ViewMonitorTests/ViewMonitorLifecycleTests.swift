@@ -150,6 +150,47 @@ struct ViewMonitorLifecycleTests {
         ViewMonitor.stop()
     }
 
+    @Test("モーダル提示の遷移では計測を終了する(ダイアログを覆わない)")
+    func modalPresentationCancelsMeasuring() throws {
+        // モーダル(エラーダイアログ等)はシールドで塞げない遷移で、計測を
+        // 維持するとシールドがダイアログの上に乗り、OK ボタンが押せなくなる。
+        // モーダル提示だけは従来どおり計測を終了する。
+        ViewMonitor.stop()
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        window.addSubview(UILabel(frame: CGRect(x: 16, y: 100, width: 100, height: 20)))
+        ViewMonitor.simulateLauncherButtonAttachedForTesting(to: window)
+        let launcher = try #require(window.subviews.compactMap { $0 as? MonitorLauncherButton }.first)
+        launcher.isSelected = true
+        launcher.onToggle?(true)
+
+        let dialogWindow = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        dialogWindow.addSubview(UILabel(frame: CGRect(x: 16, y: 100, width: 100, height: 20)))
+        ViewMonitor.simulateTransitionForTesting(isBeingPresented: true, on: dialogWindow)
+
+        let newLauncher = try #require(dialogWindow.subviews.compactMap { $0 as? MonitorLauncherButton }.first)
+        #expect(!newLauncher.isSelected, "モーダル提示でも計測が維持されてしまった")
+        #expect(!dialogWindow.subviews.contains { $0 is MonitorShieldView }, "シールドがダイアログを覆っている")
+        ViewMonitor.stop()
+    }
+
+    @Test("push 相当の遷移(モーダルでない)では計測を維持する")
+    func nonModalTransitionKeepsMeasuring() throws {
+        ViewMonitor.stop()
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        ViewMonitor.simulateLauncherButtonAttachedForTesting(to: window)
+        let launcher = try #require(window.subviews.compactMap { $0 as? MonitorLauncherButton }.first)
+        launcher.isSelected = true
+        launcher.onToggle?(true)
+
+        let nextWindow = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+        ViewMonitor.simulateTransitionForTesting(isBeingPresented: false, on: nextWindow)
+
+        let newLauncher = try #require(nextWindow.subviews.compactMap { $0 as? MonitorLauncherButton }.first)
+        #expect(newLauncher.isSelected)
+        newLauncher.onToggle?(false)
+        ViewMonitor.stop()
+    }
+
     @Test("計測 OFF なら reload しても OFF のまま")
     func reloadStaysOffWhenNotMeasuring() throws {
         ViewMonitor.stop()
@@ -166,9 +207,9 @@ struct ViewMonitorLifecycleTests {
         ViewMonitor.stop()
     }
 
-    @Test("stop すると計測中フラグもリセットされる")
+    @Test("stop すると計測中状態もリセットされる")
     func stopClearsMeasuringState() throws {
-        // stop() 後に start() し直したとき、前回の計測中フラグが残っていると
+        // stop() 後に start() し直したとき、前回の計測中状態が残っていると
         // 最初の reload でいきなりオーバーレイが開いてしまう。
         // stop() は started ガードを持つため、実運用どおり start() を通す。
         ViewMonitor.stop()
