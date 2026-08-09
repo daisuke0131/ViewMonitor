@@ -31,6 +31,28 @@ public final class ViewMonitor: NSObject {
         shared.reload()
     }
 
+    /// SwiftUI 要素の検出を、外部のアクセシビリティクライアント無しで有効にする。
+    ///
+    /// iOS はアクセシビリティクライアント(VoiceOver / Accessibility Inspector /
+    /// UI テスト)が接続している間しかアクセシビリティツリーを構築しないため、
+    /// 何もしないと SwiftUI 要素は検出されない。このメソッドはプロセス内から
+    /// ツリーの構築を有効化する。`ViewMonitor.start()` の前後どちらで呼んでもよい。
+    ///
+    /// 内部でプライベート API を使うため **DEBUG ビルド限定**。リリースビルドでは
+    /// 実装ごとコンパイルから除外され、常に false を返す何もしないメソッドになる
+    /// (バイナリにプライベート API のシンボル名文字列も残らない)。
+    ///
+    /// - Returns: 有効化できたら true。リリースビルドと、シンボルを解決できない
+    ///   環境では false。
+    @discardableResult
+    public static func enableSwiftUIElementDetection() -> Bool {
+        #if DEBUG
+        return AccessibilityActivator.activate()
+        #else
+        return false
+        #endif
+    }
+
     /// 計測を終了し、追加した表示をすべて取り除く。
     public static func stop() {
         guard shared.started else {
