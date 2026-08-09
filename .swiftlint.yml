@@ -2,6 +2,7 @@ included:
   - Sources
   - Tests
   - Example/ViewMonitorExample/ViewMonitorExample
+  - Example/ViewMonitorExample/ViewMonitorExampleUITests
   - Example/ViewMonitorSwiftUIExample/ViewMonitorSwiftUIExample
   - Example/ViewMonitorSwiftUIExample/ViewMonitorSwiftUIExampleUITests
 
