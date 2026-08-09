@@ -3,6 +3,7 @@ included:
   - Tests
   - Example/ViewMonitorExample/ViewMonitorExample
   - Example/ViewMonitorSwiftUIExample/ViewMonitorSwiftUIExample
+  - Example/ViewMonitorSwiftUIExample/ViewMonitorSwiftUIExampleUITests
 
 excluded:
   - .build

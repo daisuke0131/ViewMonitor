@@ -6,6 +6,12 @@ import UIKit
 @MainActor
 struct MonitorLauncherButtonTests {
 
+    @Test("UI テストから掴める accessibilityIdentifier を持つ")
+    func exposesAccessibilityIdentifier() {
+        let button = MonitorLauncherButton(origin: .zero)
+        #expect(button.accessibilityIdentifier == "ViewMonitor.launcher")
+    }
+
     @Test("safe area インセットがゼロなら右上に配置され y == 20 になる")
     func zeroInsetsPlacesButtonAtTopRight() {
         let bounds = CGRect(x: 0, y: 0, width: 390, height: 844)

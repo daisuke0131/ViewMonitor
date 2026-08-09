@@ -24,6 +24,8 @@ final class InfoView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        // UI テスト(XCUITest)から InfoView を特定するための識別子。
+        accessibilityIdentifier = "ViewMonitor.infoView"
         layer.cornerRadius = 10.0
         hostingController.view.backgroundColor = .clear
         hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]

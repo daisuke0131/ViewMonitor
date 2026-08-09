@@ -69,6 +69,18 @@ jobs:
             -scheme ViewMonitorSwiftUIExample \
             -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }}"
 
+      # Real-touch regression tests. Unit tests reproduce taps with
+      # sendActions / one-shot hitTest, which can diverge from the real touch
+      # pipeline (this is how the launcher toggle and shield hit-test bugs
+      # shipped). XCUITest drives the app through backboardd and also acts as
+      # an accessibility client, so SwiftUI element detection is active.
+      - name: UI test SwiftUI example
+        run: |
+          xcodebuild test \
+            -project Example/ViewMonitorSwiftUIExample/ViewMonitorSwiftUIExample.xcodeproj \
+            -scheme ViewMonitorSwiftUIExample \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }}"
+
   pod-lint:
     name: pod lib lint
     runs-on: macos-latest

@@ -6,6 +6,11 @@ import UIKit
 @MainActor
 struct MonitorButtonTests {
 
+    @Test("UI テストから掴める accessibilityIdentifier を持つ")
+    func exposesAccessibilityIdentifier() {
+        #expect(MonitorButton().accessibilityIdentifier == "ViewMonitor.monitorButton")
+    }
+
     @Test("measurementTarget に設定したビューをそのまま保持する")
     func retainsMeasurementTarget() throws {
         let button = MonitorButton()

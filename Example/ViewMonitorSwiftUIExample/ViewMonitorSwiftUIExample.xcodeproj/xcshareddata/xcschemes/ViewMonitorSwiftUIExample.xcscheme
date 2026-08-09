@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A3156E7133E7E80387CAD402"
+               BlueprintIdentifier = "1DB5BD313D139C7ECE01295D"
                BuildableName = "ViewMonitorSwiftUIExample.app"
                BlueprintName = "ViewMonitorSwiftUIExample"
                ReferencedContainer = "container:ViewMonitorSwiftUIExample.xcodeproj">
@@ -30,13 +30,23 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A3156E7133E7E80387CAD402"
+            BlueprintIdentifier = "1DB5BD313D139C7ECE01295D"
             BuildableName = "ViewMonitorSwiftUIExample.app"
             BlueprintName = "ViewMonitorSwiftUIExample"
             ReferencedContainer = "container:ViewMonitorSwiftUIExample.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "27B0A3AF0978DC51A78BDC41"
+               BuildableName = "ViewMonitorSwiftUIExampleUITests.xctest"
+               BlueprintName = "ViewMonitorSwiftUIExampleUITests"
+               ReferencedContainer = "container:ViewMonitorSwiftUIExample.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -53,7 +63,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A3156E7133E7E80387CAD402"
+            BlueprintIdentifier = "1DB5BD313D139C7ECE01295D"
             BuildableName = "ViewMonitorSwiftUIExample.app"
             BlueprintName = "ViewMonitorSwiftUIExample"
             ReferencedContainer = "container:ViewMonitorSwiftUIExample.xcodeproj">
@@ -70,7 +80,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A3156E7133E7E80387CAD402"
+            BlueprintIdentifier = "1DB5BD313D139C7ECE01295D"
             BuildableName = "ViewMonitorSwiftUIExample.app"
             BlueprintName = "ViewMonitorSwiftUIExample"
             ReferencedContainer = "container:ViewMonitorSwiftUIExample.xcodeproj">

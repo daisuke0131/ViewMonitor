@@ -10,6 +10,11 @@ struct InfoViewTests {
         InfoView(frame: CGRect(origin: .zero, size: .zero))
     }
 
+    @Test("UI テストから掴める accessibilityIdentifier を持つ")
+    func exposesAccessibilityIdentifier() {
+        #expect(makeInfoView().accessibilityIdentifier == "ViewMonitor.infoView")
+    }
+
     private var commonRows: [InfoRow] {
         [
             InfoRow(title: "class", value: "UIView"),
