@@ -48,6 +48,20 @@ struct ViewHierarchyScanner {
         return result
     }
 
+    /// `root` を含む階層にホスティングビューがあるか。
+    /// SwiftUI 要素が「検出できて0件」なのか「そもそも SwiftUI が無い」のかを
+    /// 呼び出し側が区別するために使う。除外規則は measurementTargets と揃える。
+    @MainActor
+    func hasHostingView(in root: UIView) -> Bool {
+        guard !isRejected(root) else {
+            return false
+        }
+        if isHostingView(root) {
+            return true
+        }
+        return root.subviews.contains { hasHostingView(in: $0) }
+    }
+
     /// `root` を含む階層から計測対象の UIKit ビューだけを集める。
     @MainActor
     func targets(in root: UIView) -> [UIView] {

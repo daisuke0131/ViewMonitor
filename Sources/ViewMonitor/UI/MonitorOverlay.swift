@@ -44,15 +44,35 @@ final class MonitorOverlay: NSObject {
         hide()
         self.rootView = rootView
         addInfoView(to: rootView)
-        for target in scanner.measurementTargets(in: rootView) {
+        let targets = scanner.measurementTargets(in: rootView)
+        for target in targets {
             addMonitorButton(for: target, rootView: rootView)
         }
+        showAccessibilityNoticeIfNeeded(for: targets, rootView: rootView)
         // SwiftUI 要素のボタンは rootView に直接addSubviewするため、
         // infoView より後に追加されると重なり順で上に乗ってしまう。
         // ドラッグ用ジェスチャの奪い合いを防ぐため、追加後に最前面へ戻す。
         if let infoView {
             rootView.bringSubviewToFront(infoView)
         }
+    }
+
+    /// ホスティングビューがあるのにアクセシビリティ要素を1つも検出できなかった
+    /// 場合、InfoView に案内を出す。iOS はアクセシビリティクライアント接続中しか
+    /// ツリーを構築しないため、この状態は珍しくない。無言のままだと利用者には
+    /// 不具合と区別がつかない(実際に「トグルが効かない」と報告された)。
+    private func showAccessibilityNoticeIfNeeded(for targets: [MeasurementTarget], rootView: UIView) {
+        let detectedAccessibilityElement = targets.contains { target in
+            if case .accessibilityElement = target {
+                return true
+            }
+            return false
+        }
+        guard !detectedAccessibilityElement, scanner.hasHostingView(in: rootView), let infoView else {
+            return
+        }
+        infoView.update(rows: InfoRowBuilder.swiftUIDetectionUnavailableRows())
+        infoView.isHidden = false
     }
 
     /// オーバーレイを取り除き、変更したビューの状態を元に戻す。

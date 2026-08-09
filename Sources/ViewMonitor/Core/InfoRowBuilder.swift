@@ -49,6 +49,21 @@ enum InfoRowBuilder {
         return rows
     }
 
+    /// SwiftUI 要素が検出できない状態(ホスティングビューはあるのに
+    /// アクセシビリティ要素が1つも取れない)を知らせる案内行。
+    /// iOS はアクセシビリティクライアント接続中しかツリーを構築しないため、
+    /// 無言のままだと利用者には不具合と区別がつかない。
+    static func swiftUIDetectionUnavailableRows() -> [InfoRow] {
+        [
+            InfoRow(title: "SwiftUI", value: "elements not detected"),
+            InfoRow(
+                title: "fix",
+                value: "call ViewMonitor.enableSwiftUIElementDetection() in a debug build, "
+                    + "or attach Accessibility Inspector / VoiceOver, then toggle again"
+            )
+        ]
+    }
+
     /// vs 行と、矩形関係に応じた距離行。
     /// 分離時に投影が重なっている軸（nil）は行を出さない。
     private static func distanceRows(
