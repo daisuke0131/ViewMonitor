@@ -18,9 +18,6 @@ final class MonitorOverlay: NSObject {
     private var infoView: InfoView?
     private var shieldView: MonitorShieldView?
     private var buttons: [MonitorButton] = []
-    /// 計測のために userInteractionEnabled を一時的に有効化したビュー。
-    /// hide() で元に戻す。
-    private var forcedInteractionViews: [UIView] = []
     /// 直前に選択したボタン。距離計測の参照元。
     /// weak なので hide() / 画面遷移の reload でボタンが破棄されれば
     /// 自動的に nil に戻り、古い画面のビューとペアになることがない。
@@ -53,8 +50,8 @@ final class MonitorOverlay: NSObject {
             addMonitorButton(for: target, rootView: rootView)
         }
         showAccessibilityNoticeIfNeeded(for: targets, rootView: rootView)
-        // SwiftUI 要素のボタンは rootView に直接addSubviewするため、
-        // infoView より後に追加されると重なり順で上に乗ってしまう。
+        // 計測ボタンは rootView に直接addSubviewするため、infoView より後に
+        // 追加されると重なり順で上に乗ってしまう。
         // ドラッグ用ジェスチャの奪い合いを防ぐため、追加後に最前面へ戻す。
         if let infoView {
             rootView.bringSubviewToFront(infoView)
@@ -87,8 +84,6 @@ final class MonitorOverlay: NSObject {
         infoView = nil
         shieldView?.removeFromSuperview()
         shieldView = nil
-        forcedInteractionViews.forEach { $0.isUserInteractionEnabled = false }
-        forcedInteractionViews.removeAll()
         lastSelectedButton = nil
         rootView = nil
     }
@@ -117,25 +112,45 @@ final class MonitorOverlay: NSObject {
         self.infoView = infoView
     }
 
+    /// 計測ボタンは UIKit 対象・SwiftUI 要素とも rootView 直下(盾より前面)に
+    /// 固定配置する。対象ビューの subview にすると盾との間に SwiftUI の
+    /// ホスティングビューが挟まり、その hitTest の非決定性でタッチが届かない
+    /// ことがある(MonitorShieldView のコメント参照)。
+    /// ViewMonitor は keyWindow を rootView として渡すため window 座標 = rootView 座標。
     private func addMonitorButton(for target: MeasurementTarget, rootView: UIView) {
         switch target {
         case .uiKitView(let view):
-            let button = makeMonitorButton(for: target, frame: CGRect(origin: .zero, size: view.frame.size))
-            if !view.isUserInteractionEnabled {
-                forcedInteractionViews.append(view)
-                view.isUserInteractionEnabled = true
+            // ボタンは固定配置のため、隠れた対象(大タイトル表示中の
+            // インラインナビタイトルなど)にボタンを付けると、何もない場所に
+            // ボタンだけが浮いてしまう。不可視の対象には付けない。
+            guard Self.isEffectivelyVisible(view) else {
+                return
             }
-            view.addSubview(button)
+            let frame = ViewInspector.inspect(view, in: currentWindow).frameInWindow
+            let button = makeMonitorButton(for: target, frame: frame)
+            rootView.addSubview(button)
         case .accessibilityElement(let info):
             guard let element = info.element else {
                 return
             }
-            // ViewMonitor は keyWindow を rootView として渡すため window 座標 = rootView 座標。
-            // 対象の UIView が存在しないので rootView 直下に固定配置する(スクロール非追従)。
             let frame = ViewInspector.inspect(element: element, kind: info.kind, in: currentWindow).frameInWindow
             let button = makeMonitorButton(for: target, frame: frame)
             rootView.addSubview(button)
         }
+    }
+
+    /// 対象が画面上で見えているか。自身または祖先が hidden か alpha ほぼ0なら不可視。
+    /// ウィンドウ自体の可視性は判断に含めない(隠れたウィンドウでは
+    /// そもそも何も表示されず、計測対象の取捨には意味を持たないため)。
+    static func isEffectivelyVisible(_ view: UIView) -> Bool {
+        var current: UIView? = view
+        while let view = current, !(view is UIWindow) {
+            if view.isHidden || view.alpha <= 0.01 {
+                return false
+            }
+            current = view.superview
+        }
+        return true
     }
 
     private func makeMonitorButton(for target: MeasurementTarget, frame: CGRect) -> MonitorButton {

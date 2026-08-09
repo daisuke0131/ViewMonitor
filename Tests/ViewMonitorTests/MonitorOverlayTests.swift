@@ -12,8 +12,21 @@ struct MonitorOverlayTests {
         UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
     }
 
+    /// 計測ボタンは対象の種類によらず rootView(=window)直下に付く。
+    /// `view` が対象の UIKit ビューならそのボタンを、`view` が window なら
+    /// SwiftUI 要素(アクセシビリティ要素)のボタンを返す。
     private func monitorButton(on view: UIView) -> MonitorButton? {
-        view.subviews.compactMap { $0 as? MonitorButton }.first
+        let root = (view as? UIWindow) ?? view.window
+        return root?.subviews.compactMap { $0 as? MonitorButton }.first { button in
+            switch button.measurementTarget {
+            case .uiKitView(let target):
+                return target === view
+            case .accessibilityElement:
+                return view is UIWindow
+            case nil:
+                return false
+            }
+        }
     }
 
     private func infoView(in root: UIView) -> InfoView? {

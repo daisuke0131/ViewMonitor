@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `UIHostingController` を埋め込んだ画面でも SwiftUI 要素に計測ボタンが表示されるように
 - `InfoView` の内部描画を SwiftUI 化（挙動変更なし）
+- 計測ボタンは UIKit 対象・SwiftUI 要素とも rootView 直下の固定配置に統一（対象ビューの subview には追加しない）。SwiftUI のホスティングビューのヒットテストが非決定的で、対象ビュー内に置いたボタンへのタッチが実機で届かないことがあるため。あわせて、隠れている対象（大タイトル表示中のインラインナビタイトルなど）にはボタンを付けない
 
 ## [2.2.0] - 2026-08-06
 

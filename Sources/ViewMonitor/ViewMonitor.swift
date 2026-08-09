@@ -99,7 +99,7 @@ public final class ViewMonitor: NSObject {
             }
             if isSelected {
                 self.overlay.show(on: rootView)
-                // SwiftUI 要素のボタンは rootView に直接addSubviewされるため、
+                // 計測ボタンは rootView に直接addSubviewされるため、
                 // show(on:) の後だと実行ボタンより前面に乗ってしまう。
                 // 実行ボタン(停止操作)がタップやドラッグを奪われないよう最前面に戻す。
                 if let button {
