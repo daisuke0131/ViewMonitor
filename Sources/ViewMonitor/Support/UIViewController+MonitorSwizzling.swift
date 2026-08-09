@@ -58,6 +58,13 @@ extension UIViewController {
     func viewMonitor_viewDidAppear(animated: Bool) {
         // 入れ替え後はこの呼び出しが元の viewDidAppear を指す。
         viewMonitor_viewDidAppear(animated: animated)
+        // ViewMonitor 自身の UI(InfoView が内包するホスティングコントローラ)も
+        // viewDidAppear を発火させる。これを画面遷移として扱うと reload() が走り、
+        // いま表示したばかりのオーバーレイを畳んだうえに、実行ボタンまで OFF の
+        // 新品へ差し替えてしまう(「トグルを押しても ON にならない」症状)。
+        guard !(self is MonitorInternalViewController) else {
+            return
+        }
         ViewMonitor.detectedViewDidAppear()
     }
 }

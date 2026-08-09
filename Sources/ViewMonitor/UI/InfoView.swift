@@ -13,7 +13,11 @@ final class InfoView: UIView {
     /// 表示幅。高さは行数に応じて `update(rows:)` が決める。
     static let width: CGFloat = 200.0
 
-    private let hostingController = UIHostingController(rootView: InfoRowsView(rows: []))
+    /// ViewMonitor 内部の VC だと判別できる専用型を使う。素の
+    /// `UIHostingController` だと、この VC が発火させる `viewDidAppear` を
+    /// swizzling がアプリの画面遷移と誤認し、表示直後のオーバーレイを
+    /// `reload()` が畳んでしまう。
+    private let hostingController = MonitorHostingController(rootView: InfoRowsView(rows: []))
 
     /// 現在表示中の行。表示内容の検証用。
     var displayedRows: [InfoRow] { hostingController.rootView.rows }

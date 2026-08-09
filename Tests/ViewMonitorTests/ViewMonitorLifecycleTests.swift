@@ -45,11 +45,10 @@ struct ViewMonitorLifecycleTests {
         // ボタンに前面を奪われ、停止タップやドラッグが要素側に吸われていた。
         //
         // ViewMonitor.start() は呼ばない: simulateLauncherButtonAttachedForTesting は
-        // started 状態に依存せず実行ボタンを取り付けられる。start() を呼ぶと
-        // viewDidAppear の swizzling が有効化され、addInfoView() 内で
-        // UIHostingController.sizeThatFits が誘発する viewDidAppear が
-        // 無関係な reload() を引き起こしてしまう(このテストバンドルには
-        // 接続中の window scene が無いため reload() が実行ボタンを再アタッチできない)。
+        // started 状態に依存せず実行ボタンを取り付けられるため、この検証には不要。
+        // (かつては addInfoView() 内の UIHostingController が誘発する viewDidAppear で
+        // reload() が走ってしまうため start() を避けていたが、内部 VC を
+        // MonitorInternalViewController として検知対象から外したので解消済み。)
         ViewMonitor.stop()
 
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
@@ -79,6 +78,45 @@ struct ViewMonitorLifecycleTests {
 
         // 後始末: overlay を閉じる。実行ボタン自体は window ごと ARC で解放される。
         launcher.onToggle?(false)
+    }
+
+    @Test("自前の InfoView が発火させる viewDidAppear で計測状態が畳まれない")
+    func internalHostingControllerAppearanceKeepsMonitoringOn() throws {
+        // InfoView は描画を UIHostingController に委譲しているため、overlay を
+        // 表示すると自身の viewDidAppear が発火する。これを画面遷移として扱うと
+        // reload() が走り、いま開いたばかりのオーバーレイを自分で畳んだうえに
+        // 実行ボタンまで OFF の新品へ差し替えてしまう(実機では「トグルを押しても
+        // ON にならない」という症状になる)。自前の VC は検知対象から外す。
+        ViewMonitor.stop()
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
+
+        // swizzling を有効にするため start() を通す。
+        ViewMonitor.start()
+        ViewMonitor.simulateLauncherButtonAttachedForTesting(to: window)
+        let launcher = try #require(window.subviews.compactMap { $0 as? MonitorLauncherButton }.first)
+
+        launcher.isSelected = true
+        launcher.onToggle?(true)
+        let infoView = try #require(window.subviews.compactMap { $0 as? InfoView }.first)
+
+        // InfoView が内包するホスティングコントローラを responder chain から取り出す。
+        // SwiftUI が中間レスポンダ(UIKitKeyPressResponder)を挟むため、
+        // next を1つ辿るだけでは届かない。最初の UIViewController まで遡る。
+        let hostedView = try #require(infoView.subviews.first)
+        var responder: UIResponder? = hostedView.next
+        while let current = responder, !(current is UIViewController) {
+            responder = current.next
+        }
+        let hostingController = try #require(responder as? UIViewController)
+        hostingController.viewDidAppear(false)
+
+        // オーバーレイも実行ボタンもそのままであること。
+        #expect(window.subviews.contains { $0 === infoView })
+        #expect(window.subviews.contains { $0 === launcher })
+        #expect(launcher.isSelected)
+
+        launcher.onToggle?(false)
+        ViewMonitor.stop()
     }
 
     @Test("画面遷移で実行ボタンが差し替わると直前のボタンが解放される")
